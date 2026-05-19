@@ -13,7 +13,14 @@
     --text: #f2f2f7;
   }
 }
-
+html.dark {
+  --background: #262b33;
+  --text: #f2f2f7;
+}
+html.light {
+  --background: #f2f2f7;
+  --text: #262b33;
+}
 @theme {
   /* Couleurs UI Kit */
   --color-simpson-yellow: #ffde00;
@@ -21,6 +28,7 @@
   --color-simpson-blue: #315491;
   --color-simpson-lightblue: #0094d3;
   --color-simpson-dark: #262b33;
+  --color-simpson-darklight: #2d3644;
   --color-simpson-light: #f4f2ee;
   --color-simpson-gray: #f2f2f7;
 
