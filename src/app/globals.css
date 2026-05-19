@@ -1,26 +1,17 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Variables pour le mode clair */
   --background: #f2f2f7;
   --text: #262b33;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Variables pour le mode sombre */
-    --background: #262b33;
-    --text: #f2f2f7;
-  }
-}
 html.dark {
   --background: #262b33;
   --text: #f2f2f7;
 }
-html.light {
-  --background: #f2f2f7;
-  --text: #262b33;
-}
+
 @theme {
   /* Couleurs UI Kit */
   --color-simpson-yellow: #ffde00;

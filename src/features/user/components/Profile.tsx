@@ -1,26 +1,33 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes"; // 👈 Import de next-themes
 import { useProfile } from "../hooks/useProfile";
-import { RootState } from "../../../store/store";
-import { toggleUserTheme, ThemeMode } from "../../../reducers/user";
 
 interface ProfileProps {
   userId: string;
 }
 
 export default function Profile({ userId }: ProfileProps) {
-  const dispatch = useDispatch();
-  const userTheme = useSelector((state: RootState) => state.user.theme);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-9 h-9 absolute top-4 right-4" />;
+  }
 
   return (
     <div className="bg-white dark:bg-simpson-darklight p-6 rounded-2xl border-2 border-simpson-dark shadow-[4px_4px_0px_0px_rgba(38,43,51,1)] max-w-sm relative">
       <button
-        onClick={() => dispatch(toggleUserTheme())}
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         className="absolute top-4 right-4 p-2 rounded-xl border-2 border-simpson-dark bg-amber-400 dark:bg-slate-700 hover:scale-105 active:scale-95 transition-transform cursor-pointer shadow-[2px_2px_0px_0px_rgba(38,43,51,1)]"
         aria-label="Changer de thème"
       >
-        {userTheme === ThemeMode.DARK ? (
+        {theme === "dark" ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
