@@ -1,17 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Variables pour le mode clair */
   --background: #f2f2f7;
   --text: #262b33;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Variables pour le mode sombre */
-    --background: #262b33;
-    --text: #f2f2f7;
-  }
+html.dark {
+  --background: #262b33;
+  --text: #f2f2f7;
 }
 
 @theme {
@@ -21,6 +19,7 @@
   --color-simpson-blue: #315491;
   --color-simpson-lightblue: #0094d3;
   --color-simpson-dark: #262b33;
+  --color-simpson-darklight: #2d3644;
   --color-simpson-light: #f4f2ee;
   --color-simpson-gray: #f2f2f7;
 
@@ -38,30 +37,6 @@ body {
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-h1 {
-  font-family: var(--font-main);
-  font-size: 30px;
-  font-weight: 600; /* Semi-bold */
-}
-
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-main);
-  font-size: 24px;
-  font-weight: 500; /* Medium */
-}
-
-p,
-span,
-li {
-  font-family: var(--font-main);
-  font-size: 14px;
-  font-weight: 300; /* Light */
 }
 
 @utility text-title {

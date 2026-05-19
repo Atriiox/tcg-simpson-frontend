@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { StoreProvider } from "../store/store";
+import { ThemeProvider } from "next-themes";
 
 const fredokaVariable = localFont({
   src: "./fonts/Fredoka-Variable.ttf",
@@ -22,9 +24,14 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${fredokaVariable.variable} h-full antialiased`}
+      className={`${fredokaVariable.variable} antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-svh flex flex-col">
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <StoreProvider>{children}</StoreProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
