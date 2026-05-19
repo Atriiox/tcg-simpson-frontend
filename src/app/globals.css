@@ -28,6 +28,8 @@
   --color-text: var(--text);
 
   --font-main: var(--font-fredoka), sans-serif;
+
+  --size-screen-content: calc(100vh - 100px);
 }
 
 body {
