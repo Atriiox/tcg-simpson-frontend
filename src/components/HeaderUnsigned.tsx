@@ -5,7 +5,7 @@ import logo from '../../public/Logo1.webp'
 
 function HeaderUnsigned() {
     return (
-        <header className="flex gap-100 bg-white shadow-lg">
+        <header className="flex gap-150 bg-white shadow-lg">
     <Image src={logo} alt ="logo"/>
     <div className="flex gap-10 text-title">
     <button>Accueil</button>

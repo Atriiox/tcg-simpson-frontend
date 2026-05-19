@@ -10,7 +10,7 @@ function Home() {
     <div className="place-content-between">
       <HeaderUnsigned />
 
-      <main className="gap-0">
+      <main>
         <div className="flex justify-end">
         <Image src={spiderCochon} alt="SpiderCochon" />
         </div>
