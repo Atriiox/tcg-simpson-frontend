@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import localFont from "next/font/local";
+
+const fredokaVariable = localFont({
+  src: "./fonts/Fredoka-Variable.ttf",
+  weight: "300 700",
+  style: "normal",
+  variable: "--font-fredoka",
+});
 
 export const metadata: Metadata = {
   title: "Trading Cards Game Simpson",
@@ -13,8 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
-      className={`h-full antialiased`}
+      lang="fr"
+      className={`${fredokaVariable.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

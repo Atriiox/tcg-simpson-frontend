@@ -1,81 +1,87 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* Variables pour le mode clair */
-  --background: #F2F2F7;
-  --text: #262B33;
+  --background: #f2f2f7;
+  --text: #262b33;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* Variables pour le mode sombre */
-    --background: #262B33;
-    --text: #F2F2F7;
+    --background: #262b33;
+    --text: #f2f2f7;
   }
 }
 
 @theme {
   /* Couleurs UI Kit */
-  --color-simpson-yellow: #FFDE00;
-  --color-simpson-orange: #E95029;
+  --color-simpson-yellow: #ffde00;
+  --color-simpson-orange: #e95029;
   --color-simpson-blue: #315491;
-  --color-simpson-lightblue: #0094D3;
-  --color-simpson-dark: #262B33;
-  --color-simpson-light: #F4F2EE;
-  --color-simpson-gray: #F2F2F7;
+  --color-simpson-lightblue: #0094d3;
+  --color-simpson-dark: #262b33;
+  --color-simpson-light: #f4f2ee;
+  --color-simpson-gray: #f2f2f7;
 
   --color-background: var(--background);
   --color-text: var(--text);
 
-  /* Configuration de la police par défaut */
-  --font-fredoka: "Fredoka", sans-serif;
+  --font-main: var(--font-fredoka), sans-serif;
 }
 
 body {
   background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-fredoka);
+  color: var(--text);
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1 {
-  font-family: var(--font-fredoka);
+  font-family: var(--font-main);
   font-size: 30px;
   font-weight: 600; /* Semi-bold */
 }
 
-h2, h3, h4, h5, h6 {
-  font-family: var(--font-fredoka);
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-main);
   font-size: 24px;
   font-weight: 500; /* Medium */
 }
 
-p, span, li {
-  font-family: var(--font-fredoka);
+p,
+span,
+li {
+  font-family: var(--font-main);
   font-size: 14px;
   font-weight: 300; /* Light */
 }
+
 @utility text-title {
-  font-family: var(--font-title);
+  font-family: var(--font-main);
   font-size: 30px;
   font-weight: 600;
 }
 
 @utility text-subtitle {
-  font-family: var(--font-title);
+  font-family: var(--font-main);
   font-size: 24px;
   font-weight: 500;
 }
+
 @utility text-medium {
-  font-family: var(--font-text);
+  font-family: var(--font-main);
   font-size: 16px;
   font-weight: 300;
 }
 
 @utility text-body {
-  font-family: var(--font-text);
+  font-family: var(--font-main);
   font-size: 14px;
   font-weight: 300;
 }
