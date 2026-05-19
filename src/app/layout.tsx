@@ -24,10 +24,10 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${fredokaVariable.variable} min-h-full antialiased`}
+      className={`${fredokaVariable.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="h-full flex flex-col">
+      <body className="min-h-svh flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light">
           <StoreProvider>{children}</StoreProvider>
         </ThemeProvider>
