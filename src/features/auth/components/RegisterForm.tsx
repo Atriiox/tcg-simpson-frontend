@@ -69,6 +69,7 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="pseudo"
                         type="text"
                         placeholder="Entre ton pseudo"
+                        maxLength={20}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("pseudo")}
                     />
@@ -93,6 +94,7 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="email"
                         type="text"
                         placeholder="Entre ton email"
+                          maxLength={254}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("email")}
                     />
@@ -117,6 +119,7 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="password"
                         type="password"
                         placeholder="Entre ton mot de passe"
+                        maxLength={72}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("password")}
                     />
