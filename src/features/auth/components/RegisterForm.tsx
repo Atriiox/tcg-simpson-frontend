@@ -124,7 +124,7 @@ export default function RegisterForm({ onSwitch }: Props) {
       <button
         onClick={() => formik.handleSubmit()}
         disabled={formik.isSubmitting}
-        className="w-full py-2.5 mt-2 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+        className="w-full py-2.5 mt-8 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
       >
         {formik.isSubmitting ? 'Inscription...' : "S'inscrire"}
       </button>
