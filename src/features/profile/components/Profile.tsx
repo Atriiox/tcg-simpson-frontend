@@ -10,6 +10,7 @@ import {
 } from "@headlessui/react";
 import { FaUser, FaEnvelope, FaLock, FaTimes } from "react-icons/fa";
 import Image from "next/image";
+import { useProfile } from "../hooks/useProfile";
 
 interface ProfileProps {
   userId: string;
@@ -21,15 +22,23 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  const { profile, isLoading, updateProfile } = useProfile(isOpen);
+
   // Etats pour le Pseudo
-  const [confirmedUsername, setConfirmedUsername] = useState("HomerFan99");
-  const [tempUsername, setTempUsername] = useState("HomerFan99");
+  const [confirmedUsername, setConfirmedUsername] = useState("");
+  const [tempUsername, setTempUsername] = useState("");
   const isEditingUsername = tempUsername !== confirmedUsername;
 
   // Etats pour le Mot de passe
-  const [password, setPassword] = useState("supersecretpassword");
-  const [oldPassword, setOldPassword] = useState("supersecretpassword");
+  const [password, setPassword] = useState("********");
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setConfirmedUsername(profile.pseudo);
+      setTempUsername(profile.pseudo);
+    }
+  }, [profile]);
 
   useEffect(() => {
     setMounted(true);
@@ -42,9 +51,12 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
   const isDark = theme === "dark";
 
   // Actions Pseudo
-  const handleSaveUsername = () => {
-    if (tempUsername.trim() !== "") {
-      setConfirmedUsername(tempUsername.trim());
+  const handleSaveUsername = async () => {
+    if (tempUsername.trim() !== "" && tempUsername !== confirmedUsername) {
+      const result = await updateProfile({ pseudo: tempUsername.trim() });
+      if (result.ok) {
+        setConfirmedUsername(tempUsername.trim());
+      }
     } else {
       setTempUsername(confirmedUsername);
     }
@@ -56,20 +68,20 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
 
   // Actions Mot de passe
   const handleStartEditPassword = () => {
-    setOldPassword(password);
     setPassword("");
     setIsEditingPassword(true);
   };
 
-  const handleSavePassword = () => {
-    if (password.trim() === "") {
-      setPassword(oldPassword);
+  const handleSavePassword = async () => {
+    if (password.trim() !== "") {
+      await updateProfile({ password: password.trim() });
     }
+    setPassword("********");
     setIsEditingPassword(false);
   };
 
   const handleCancelPassword = () => {
-    setPassword(oldPassword);
+    setPassword("********");
     setIsEditingPassword(false);
   };
 
@@ -123,10 +135,12 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <h2 className="text-title font-bold">{confirmedUsername}</h2>
+                  <h2 className="text-title font-bold">
+                    {isLoading ? "Chargement..." : confirmedUsername}
+                  </h2>
                   <div className="flex items-center gap-2">
                     <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
-                      1,250
+                      {profile?.money?.toLocaleString() || 0}
                     </span>
                     <Image
                       src="/donuts.webp"
@@ -170,6 +184,7 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
                     value={tempUsername}
                     onChange={(e) => setTempUsername(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSaveUsername()}
+                    disabled={isLoading}
                     className="w-full h-full border-none outline-none text-body text-text bg-transparent font-medium focus:ring-0 focus:bg-transparent"
                     placeholder="Choisis un pseudo"
                   />
@@ -183,7 +198,7 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
                   <FaEnvelope className="w-4 h-4 text-text/30 shrink-0" />
                   <input
                     type="text"
-                    value="homer.simpson@springfield.com"
+                    value={profile?.email || ""}
                     readOnly
                     className="w-full h-full border-none outline-none text-body text-text/70 bg-transparent font-medium cursor-not-allowed"
                   />
@@ -226,6 +241,7 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
                     onChange={(e) => setPassword(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSavePassword()}
                     readOnly={!isEditingPassword}
+                    disabled={isLoading}
                     className={`w-full h-full border-none outline-none text-body bg-transparent focus:ring-0 focus:bg-transparent ${
                       isEditingPassword
                         ? "text-text font-medium"
