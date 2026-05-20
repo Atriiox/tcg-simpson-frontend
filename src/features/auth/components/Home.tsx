@@ -1,57 +1,65 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
-import {useState} from "react";
+import { useState } from "react";
 import RegisterForm from "./RegisterForm";
 
-type ModalMode = 'signin' | 'register' | null;
+type ModalMode = "signin" | "register" | null;
 
 function Home() {
-
   const [modal, setModal] = useState<ModalMode>(null);
-
 
   return (
     <>
-    <main className="h-(--size-screen-content) relative overflow-hidden flex flex-col items-center">
-      <div className="absolute right-16 top-0">
-        <Image
-          className="w-auto h-auto"
-          src="/spiderCochon.webp"
-          width={110}
-          height={79}
-          alt="SpiderCochon"
-          loading="eager"
-        />
-      </div>
-      <div className="w-fit h-fit flex flex-col items-center justify-center">
-        <div className="">
+      {/* 1. Remplacement de flex-col par justify-center pour centrer verticalement le contenu principal */}
+      <main className="min-h-(--size-screen-content) h-full relative overflow-hidden flex items-center justify-center">
+        <div className="absolute right-16 top-0">
           <Image
             className="w-auto h-auto"
-            src="/welcomeSimpson.webp"
-            alt="WelcomeImage"
-            height={370}
-            width={375}
+            src="/spiderCochon.webp"
+            width={110}
+            height={79}
+            alt="SpiderCochon"
             loading="eager"
           />
         </div>
-        <div className="flex flex-col gap-7">
-          <Button>Se connecter</Button>
-          <button className="cursor-pointer border-b" onClick={() => setModal('register')}
->
-            Pas encore de compte ? S'inscrire
-          </button>
+        
+        {/* 2. Optimisation du conteneur central : il prend toute la hauteur disponible (sans taille fixe) */}
+        <div className="w-full max-w-md h-full flex flex-col items-center justify-center p-6 gap-6">
+          
+          {/* 3. L'image grandit de manière flexible grâce à flex-1 et max-h-[50vh] pour ne pas écraser les boutons */}
+          <div className="flex-1 w-full max-h-[50vh] flex items-center justify-center">
+            <Image
+              className="w-full h-full object-contain" // 💡 object-contain évite que l'image soit rognée/déformée
+              src="/welcomeSimpson.webp"
+              alt="WelcomeImage"
+              height={375}
+              width={370}
+              loading="eager"
+            />
+          </div>
+
+          {/* 4. Bloc boutons ajusté */}
+          <div className="flex flex-col gap-4 w-full max-w-xs items-center shrink-0">
+            <Button className="w-full">Se connecter</Button>
+            <button
+              className="cursor-pointer border-b border-text/60 text-sm pb-0.5 hover:text-simpson-orange dark:hover:text-simpson-jaune transition-colors duration-200"
+              onClick={() => setModal("register")}
+            >
+              Pas encore de compte ? S'inscrire
+            </button>
+          </div>
         </div>
-      </div>
-    </main>
-     <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
-        {modal === 'register' && (
-          <RegisterForm onSwitch={() => setModal('signin')} />
+      </main>
+      
+      <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
+        {modal === "register" && (
+          <RegisterForm onSwitch={() => setModal("signin")} />
         )}
       </Modal>
-      </>
+    </>
   );
 }
 

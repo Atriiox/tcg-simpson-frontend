@@ -54,10 +54,12 @@ export default function RegisterForm({ onSwitch }: Props) {
         className="mx-auto block mb-2"
       />
 
-      <h2 className="text-title text-text mb-4">Créer un compte</h2>
+      <span className="text-title text-text mb-4 w-full flex justify-center">
+        Créer un compte
+      </span>
 
       {/* Pseudo */}
-      <div className="flex flex-col gap-1.5 mb-3">
+      <div className="flex flex-col gap-1.5 mb-1">
         <label htmlFor="pseudo" className="text-body font-medium text-text">
           Pseudo
         </label>
@@ -77,20 +79,23 @@ export default function RegisterForm({ onSwitch }: Props) {
             {...formik.getFieldProps("pseudo")}
           />
         </div>
-        <div className="flex justify-start items-center gap-2">
+        {/* 🎯 h-5 réserve l'espace pour que rien ne bouge au toggle de l'erreur */}
+        <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
           <span
-            className={`text-xs ${formik.values.pseudo.length >= PSEUDO_MAX ? "text-red-500" : "text-text/40"}`}
+            className={`text-xs shrink-0 ${formik.values.pseudo.length >= PSEUDO_MAX ? "text-red-500" : "text-text/40"}`}
           >
             {formik.values.pseudo.length}/{PSEUDO_MAX}
           </span>
           {formik.touched.pseudo && formik.errors.pseudo && (
-            <p className="text-red-500 text-body">{formik.errors.pseudo}</p>
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.pseudo}
+            </p>
           )}
         </div>
       </div>
 
       {/* Email */}
-      <div className="flex flex-col gap-1.5 mb-3">
+      <div className="flex flex-col gap-1.5 mb-1">
         <label htmlFor="email" className="text-body font-medium text-text">
           Email
         </label>
@@ -110,13 +115,18 @@ export default function RegisterForm({ onSwitch }: Props) {
             {...formik.getFieldProps("email")}
           />
         </div>
-        {formik.touched.email && formik.errors.email && (
-          <p className="text-red-500 text-body mt-1">{formik.errors.email}</p>
-        )}
+        {/* 🎯 h-5 bloque la hauteur ici aussi pour l'email */}
+        <div className="h-5 mt-0.5 flex items-center">
+          {formik.touched.email && formik.errors.email && (
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.email}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Password */}
-      <div className="flex flex-col gap-1.5 mb-4">
+      <div className="flex flex-col gap-1.5 mb-2">
         <label htmlFor="password" className="text-body font-medium text-text">
           Mot de passe
         </label>
@@ -136,14 +146,17 @@ export default function RegisterForm({ onSwitch }: Props) {
             {...formik.getFieldProps("password")}
           />
         </div>
-        <div className="flex justify-start items-center gap-2">
+        {/* 🎯 h-5 bloque la hauteur sous le password */}
+        <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
           <span
-            className={`text-xs ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}
+            className={`text-xs shrink-0 ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}
           >
             {formik.values.password.length}/{PASSWORD_MAX}
           </span>
           {formik.touched.password && formik.errors.password && (
-            <p className="text-red-500 text-body">{formik.errors.password}</p>
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.password}
+            </p>
           )}
         </div>
       </div>
@@ -152,7 +165,7 @@ export default function RegisterForm({ onSwitch }: Props) {
       <Button
         onClick={() => formik.handleSubmit()}
         disabled={formik.isSubmitting}
-        className="w-full py-2.5 mt-8 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+        className="w-full py-2.5 mb-4"
       >
         {formik.isSubmitting ? "Inscription..." : "S'inscrire"}
       </Button>
