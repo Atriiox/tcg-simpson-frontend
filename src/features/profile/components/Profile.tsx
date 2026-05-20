@@ -115,7 +115,7 @@ export default function Profile({ userId, onClose, isOpen }: ProfileProps) {
               <div className="flex items-center gap-4 mb-2">
                 <div className="w-20 h-20 rounded-full border border-simpson-gray dark:border-simpson-dark overflow-hidden bg-simpson-light p-1">
                   <Image
-                    src="/default_avatar.webp"
+                    src="/defaultAvatar.webp"
                     alt="Avatar"
                     width={70}
                     height={70}

@@ -32,6 +32,11 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/consistent-type-imports": "warn",
     },
+      "check-file/filename-naming-convention": [
+        "error",
+        { "**/*.{webp,ts}": "CAMEL_CASE" },
+        { "**/*.{tsx}": "PASCAL_CASE" },
+      ],
   },
 ];
 

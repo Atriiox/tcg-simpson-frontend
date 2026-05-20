@@ -1,30 +1,57 @@
-import React from "react";
-import HeaderUnsigned from "../../../components/HeaderUnsigned";
-import Footer from "../../../components/Footer";
+"use client"
+
 import Image from "next/image";
-import welcomeImage from "../../../../public/simsponAccueil1.webp";
-import spiderCochon from "../../../../public/spiderCochon1.webp";
+import Button from "@/components/ui/Button";
+import Modal from "@/components/ui/Modal";
+import {useState} from "react";
+import RegisterForm from "./RegisterForm";
+
+type ModalMode = 'signin' | 'register' | null;
 
 function Home() {
+
+  const [modal, setModal] = useState<ModalMode>(null);
+
+
   return (
-    <div>
-      <HeaderUnsigned />
-
-      <main className="h-(--size-screen-content)">
-        <div className="flex justify-end">
-        <Image src={spiderCochon} alt="SpiderCochon" />
+    <main className="h-(--size-screen-content) relative overflow-hidden flex flex-col items-center">
+      <div className="absolute right-16 top-0">
+        <Image
+          className="w-auto h-auto"
+          src="/spiderCochon.webp"
+          width={110}
+          height={79}
+          alt="SpiderCochon"
+          loading="eager"
+        />
+      </div>
+      <div className="w-fit h-fit flex flex-col items-center justify-center">
+        <div className="">
+          <Image
+            className="w-auto h-auto"
+            src="/welcomeSimpson.webp"
+            alt="WelcomeImage"
+            height={370}
+            width={375}
+            loading="eager"
+          />
         </div>
-        <div className=" flex flex-col items-center" >
-        <Image src={welcomeImage} alt="WelcomeImage" height={573} width={539} />
         <div className="flex flex-col gap-7">
-        <button className="bg-simpson-orange rounded-md text-white px-5 h-10 cursor-pointer text-medium" >Se connecter</button>
-        <button className="cursor-pointer border-b">Pas encore de compte ? S'inscrire</button>
+          <Button>Se connecter</Button>
+          <button className="cursor-pointer border-b" onClick={() => setModal('register')}
+>
+            Pas encore de compte ? S'inscrire
+          </button>
         </div>
-        </div>
-      </main>
+      </div>
 
-      <Footer />
-    </div>
+     <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
+        {modal === 'register' && (
+          <RegisterForm onSwitch={() => setModal('signin')} />
+        )}
+      </Modal>
+
+    </main>
   );
 }
 

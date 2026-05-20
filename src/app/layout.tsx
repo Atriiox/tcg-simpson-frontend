@@ -3,6 +3,8 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { StoreProvider } from "../store/store";
 import { ThemeProvider } from "next-themes";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const fredokaVariable = localFont({
   src: "./fonts/Fredoka-Variable.ttf",
@@ -29,7 +31,11 @@ export default function RootLayout({
     >
       <body className="min-h-svh flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="light">
-          <StoreProvider>{children}</StoreProvider>
+          <StoreProvider>
+            <Header />
+            {children}
+            <Footer />
+            </StoreProvider>
         </ThemeProvider>
       </body>
     </html>
