@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Profile from "../../features/user/components/Profile";
+import Profile from "../../features/profile/components/Profile";
 
 export default function ProfilePage() {
   const [isProfileOpen, setIsProfileOpen] = useState(true);
   const handleClose = () => {
     setIsProfileOpen(false);
   };
-  const mockUserId = "simpson-fan-123";
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-neutral-100 dark:bg-neutral-950">
