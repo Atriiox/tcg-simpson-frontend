@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f2f2f7;
+  --background: #ffffff;
   --text: #262b33;
 }
 
@@ -21,7 +21,7 @@ html.dark {
   --color-simpson-dark: #262b33;
   --color-simpson-darklight: #2d3644;
   --color-simpson-light: #f4f2ee;
-  --color-simpson-gray: #f2f2f7;
+  --color-simpson-gray: #8e8e93;
 
   --color-background: var(--background);
   --color-text: var(--text);
