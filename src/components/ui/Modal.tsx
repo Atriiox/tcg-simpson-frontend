@@ -37,7 +37,7 @@ export default function Modal({ isOpen, onClose, children }: Props) {
           />
         </TransitionChild>
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex min-h-full items-center justify-center p-4">
           <TransitionChild
             enter="transition duration-300 ease-out"
             enterFrom="opacity-0 scale-95"
@@ -46,7 +46,7 @@ export default function Modal({ isOpen, onClose, children }: Props) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <DialogPanel className="relative w-full max-w-lg bg-background text-text p-8 rounded-xl shadow-xl border border-simpson-gray dark:border-simpson-dark text-left flex flex-col gap-4 overflow-y-auto max-h-[90vh]">
+            <DialogPanel className="relative w-full max-w-lg mx-auto bg-background text-text p-8 rounded-xl shadow-xl border border-simpson-gray dark:border-simpson-dark text-left flex flex-col gap-4 overflow-y-auto max-h-[90vh]">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 text-text/40 hover:text-text transition-colors rounded-full hover:bg-simpson-light dark:hover:bg-simpson-darklight cursor-pointer"

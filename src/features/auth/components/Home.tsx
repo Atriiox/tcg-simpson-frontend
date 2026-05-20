@@ -14,6 +14,7 @@ function Home() {
 
 
   return (
+    <>
     <main className="h-(--size-screen-content) relative overflow-hidden flex flex-col items-center">
       <div className="absolute right-16 top-0">
         <Image
@@ -44,14 +45,13 @@ function Home() {
           </button>
         </div>
       </div>
-
+    </main>
      <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
         {modal === 'register' && (
           <RegisterForm onSwitch={() => setModal('signin')} />
         )}
       </Modal>
-
-    </main>
+      </>
   );
 }
 
