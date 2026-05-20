@@ -3,22 +3,20 @@ import Image from "next/image";
 import logo from "../../public/logo.webp";
 import Link from "next/link";
 
-function HeaderUnsigned() {
+function Header() {
   return (
     <header className="flex bg-white shadow-lg h-17.5 items-center">
       <div className="w-2/12">
-        <Image src={logo} alt="logo" width={110} height={60} />
+        <Image loading="eager" src={logo} alt="logo" width={110} height={60} />
       </div>
-      <div className="w-8/12 flex items-center justify-center gap-10 text-subtitle">
+      <div className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold">
         <Link href="/">Accueil</Link>
         <Link href="/collection">Collection</Link>
-        <Link href="/gameRules">Règles du jeu</Link>
+        <Link href="/regles-du-jeu">Règles du jeu</Link>
       </div>
-      <div className="w-2/12">
-
-      </div>
+      <div className="w-2/12"></div>
     </header>
   );
 }
 
-export default HeaderUnsigned;
+export default Header;
