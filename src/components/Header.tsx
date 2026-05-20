@@ -73,7 +73,7 @@ function Header() {
               />
             </div>
           </div>
-          <div className="w-16 h-16 rounded-full overflow-hidden p-1">
+          <div className="min-w-16 h-16 rounded-full overflow-hidden p-1">
             <Image
               src="/defaultAvatar.webp"
               alt="Avatar"
