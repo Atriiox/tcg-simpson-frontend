@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const registerSchema = z.object({
   pseudo: z.string({ error: 'Pseudonyme requis' }).min(3, 'Minimum 3 caractères').max(20, 'Maximum 20 caractères'),
