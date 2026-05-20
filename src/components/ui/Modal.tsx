@@ -46,7 +46,7 @@ export default function Modal({ isOpen, onClose, children }: Props) {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <DialogPanel className="relative w-full max-w-lg mx-auto bg-white dark:bg-simpson-darklight text-text p-2 rounded-xl shadow-xl border border-simpson-gray dark:border-simpson-dark text-left flex flex-col gap-4 overflow-y-auto max-h-[90vh]">
+            <DialogPanel className="relative min-w-xs w-fit max-w-lg mx-auto bg-white dark:bg-simpson-darklight text-text p-4 rounded-xl shadow-xl border border-simpson-gray dark:border-simpson-dark text-left flex flex-col gap-4 overflow-y-auto max-h-[90vh]">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 p-2 text-text/40 hover:text-text transition-colors rounded-full hover:bg-simpson-light dark:hover:bg-simpson-darklight cursor-pointer"
