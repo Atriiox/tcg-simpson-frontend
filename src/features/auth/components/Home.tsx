@@ -5,8 +5,9 @@ import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import {useState} from "react";
 import RegisterForm from "./RegisterForm";
+import ConnectForm from "./ConnectForm";
 
-type ModalMode = 'signin' | 'register' | null;
+type ModalMode = 'connect' | 'register' | null;
 
 function Home() {
 
@@ -37,7 +38,7 @@ function Home() {
           />
         </div>
         <div className="flex flex-col gap-7">
-          <Button>Se connecter</Button>
+          <Button onClick={() => setModal('connect')}>Se connecter</Button>
           <button className="cursor-pointer border-b" onClick={() => setModal('register')}
 >
             Pas encore de compte ? S'inscrire
@@ -47,8 +48,13 @@ function Home() {
 
      <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
         {modal === 'register' && (
-          <RegisterForm onSwitch={() => setModal('signin')} />
+          <RegisterForm onSwitch={() => setModal('connect')} />
         )}
+
+        {modal === 'connect' && (
+          <ConnectForm onSwitch={() => setModal('register')} />
+        )}
+
       </Modal>
 
     </main>
