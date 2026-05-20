@@ -1,120 +1,165 @@
-import { useFormik } from 'formik';
-import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { registerSchema, RegisterFormValues } from '../schemas/register.schema';
-import { useRegister } from '../hooks/useRegister';
+// components/RegisterForm/RegisterForm.tsx
+import { useFormik } from "formik";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { registerSchema, RegisterFormValues } from "../schemas/register.schema";
+import { useRegister } from "../hooks/useRegister";
+import Image from "next/image";
+import Button from "@/components/ui/Button";
+import { useRouter } from 'next/navigation';
+
+const PSEUDO_MAX = 20;
+const PASSWORD_MAX = 72;
 
 interface Props {
-  onSwitch: () => void;
+    onSwitch: () => void;
 }
 
 export default function RegisterForm({ onSwitch }: Props) {
-  const { register } = useRegister();
+    const { register } = useRegister();
+    const router = useRouter();
 
-  const formik = useFormik<RegisterFormValues>({
-    initialValues: { pseudo: '', email: '', password: '' },
-    validationSchema: toFormikValidationSchema(registerSchema),
-    onSubmit: async (values, { setFieldError, setSubmitting }) => {
-      try {
-        const { token } = await register(values);
-        console.log('token:', token);
-        // redirect ou stockage token ici
-      } catch (err) {
-        if (err instanceof Error) {
-          switch (err.message) {
-            case 'EMAIL_TAKEN':
-              setFieldError('email', 'This email is already taken');
-              break;
-            case 'NETWORK_ERROR':
-              setFieldError('email', 'Network error, please try again');
-              break;
-            default:
-              setFieldError('email', 'Something went wrong');
-          }
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
-  });
+    const formik = useFormik<RegisterFormValues>({
+        initialValues: { pseudo: "", email: "", password: "" },
+        validationSchema: toFormikValidationSchema(registerSchema),
+        onSubmit: async (values, { setFieldError, setSubmitting }) => {
+            try {
+                await register(values);
+                router.push('/collection');
+            } catch (err) {
+                if (err instanceof Error) {
+                    switch (err.message) {
+                        case "EMAIL_TAKEN":
+                            setFieldError("email", "Cet email est déjà utilisé");
+                            break;
+                        case "NETWORK_ERROR":
+                            setFieldError("email", "Erreur réseau, réessaie");
+                            break;
+                        default:
+                            setFieldError("email", "Une erreur est survenue");
+                    }
+                }
+            } finally {
+                setSubmitting(false);
+            }
+        },
+    });
 
-  return (
-    <div className="p-8 w-full">
-        {/* Pseudo */}
-        <div className="mb-5">
-          <label htmlFor="pseudo" className="block text-sm font-medium text-gray-800 mb-1.5">
-            Pseudo
-          </label>
-          <div className={`flex items-center border rounded-lg px-3 bg-gray-50 ${
-            formik.touched.pseudo && formik.errors.pseudo ? 'border-red-400' : 'border-gray-300'
-          }`}>
-            <input
-              id="pseudo"
-              type="text"
-              placeholder="Enter your pseudo"
-              className="flex-1 border-none bg-transparent outline-none py-2.5 text-sm text-gray-900 placeholder-gray-400"
-              {...formik.getFieldProps('pseudo')}
+    return (
+        <div className="p-2 max-w-xs w-full m-auto">
+            <Image
+                src="/poisson1.webp"
+                alt="poisson authentification"
+                width={100}
+                height={100}
+                className="mx-auto block mb-2"
             />
-          </div>
-          {formik.touched.pseudo && formik.errors.pseudo && (
-            <p className="text-red-500 text-xs mt-1">{formik.errors.pseudo}</p>
-          )}
-        </div>
 
-        {/* Email */}
-        <div className="mb-5">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-1.5">
-            Email
-          </label>
-          <div className={`flex items-center border rounded-lg px-3 bg-gray-50 ${
-            formik.touched.email && formik.errors.email ? 'border-red-400' : 'border-gray-300'
-          }`}>
-            <input
-              id="email"
-              type="text"
-              placeholder="Enter your Email"
-              className="flex-1 border-none bg-transparent outline-none py-2.5 text-sm text-gray-900 placeholder-gray-400"
-              {...formik.getFieldProps('email')}
-            />
-          </div>
-          {formik.touched.email && formik.errors.email && (
-            <p className="text-red-500 text-xs mt-1">{formik.errors.email}</p>
-          )}
-        </div>
+            <h2 className="text-title text-text mb-4">Créer un compte</h2>
 
-        {/* Password */}
-        <div className="mb-5">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-1.5">
-            Password
-          </label>
-          <div className={`flex items-center border rounded-lg px-3 bg-gray-50 ${
-            formik.touched.password && formik.errors.password ? 'border-red-400' : 'border-gray-300'
-          }`}>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your Password"
-              className="flex-1 border-none bg-transparent outline-none py-2.5 text-sm text-gray-900 placeholder-gray-400"
-              {...formik.getFieldProps('password')}
-            />
-          </div>
-          {formik.touched.password && formik.errors.password && (
-            <p className="text-red-500 text-xs mt-1">{formik.errors.password}</p>
-          )}
-        </div>
+            {/* Pseudo */}
+            <div className="flex flex-col gap-1.5 mb-3">
+                <label htmlFor="pseudo" className="text-body font-medium text-text">
+                    Pseudo
+                </label>
+                <div
+                    className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${formik.touched.pseudo && formik.errors.pseudo
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-simpson-dark"
+                        }`}
+                >
+                    <input
+                        id="pseudo"
+                        type="text"
+                        placeholder="Entre ton pseudo"
+                        maxLength={PSEUDO_MAX}
+                        className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+                        {...formik.getFieldProps("pseudo")}
+                    />
+                </div>
+                <div className="flex justify-start items-center gap-2">
+                    <span className={`text-xs ${formik.values.pseudo.length >= PSEUDO_MAX ? "text-red-500" : "text-text/40"}`}>
+                        {formik.values.pseudo.length}/{PSEUDO_MAX}
+                    </span>
+                    {formik.touched.pseudo && formik.errors.pseudo && (
+                        <p className="text-red-500 text-body">{formik.errors.pseudo}</p>
+                    )}
+                </div>
+            </div>
 
-        {/* Submit */}
-        <button
-          onClick={() => formik.handleSubmit()}
-          disabled={formik.isSubmitting}
-          className="w-full py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {formik.isSubmitting ? 'Signing up...' : 'Sign Up'}
-        </button>
- <p className="text-center text-sm text-gray-500 mt-4">
-          Déjà un compte ?{' '}
-          <button onClick={onSwitch} className="text-blue-600 font-medium hover:underline">
-            Se connecter
-          </button>
-        </p>
-      </div>  );
+            {/* Email */}
+            <div className="flex flex-col gap-1.5 mb-3">
+                <label htmlFor="email" className="text-body font-medium text-text">
+                    Email
+                </label>
+                <div
+                    className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${formik.touched.email && formik.errors.email
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-simpson-dark"
+                        }`}
+                >
+                    <input
+                        id="email"
+                        type="text"
+                        placeholder="Entre ton email"
+                        maxLength={254}
+                        className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+                        {...formik.getFieldProps("email")}
+                    />
+                </div>
+                {formik.touched.email && formik.errors.email && (
+                    <p className="text-red-500 text-body mt-1">{formik.errors.email}</p>
+                )}
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col gap-1.5 mb-4">
+                <label htmlFor="password" className="text-body font-medium text-text">
+                    Mot de passe
+                </label>
+                <div
+                    className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${formik.touched.password && formik.errors.password
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-simpson-dark"
+                        }`}
+                >
+                    <input
+                        id="password"
+                        type="password"
+                        placeholder="Entre ton mot de passe"
+                        maxLength={PASSWORD_MAX}
+                        className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+                        {...formik.getFieldProps("password")}
+                    />
+                </div>
+                <div className="flex justify-start items-center gap-2">
+                    <span className={`text-xs ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}>
+                        {formik.values.password.length}/{PASSWORD_MAX}
+                    </span>
+                    {formik.touched.password && formik.errors.password && (
+                        <p className="text-red-500 text-body">{formik.errors.password}</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Submit */}
+            <Button
+                onClick={() => formik.handleSubmit()}
+                disabled={formik.isSubmitting}
+                className="w-full py-2.5 mt-8 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+            >
+                {formik.isSubmitting ? "Inscription..." : "S'inscrire"}
+            </Button>
+
+            {/* Switch */}
+            <p className="text-center text-body text-text/60">
+                Déjà un compte ?{" "}
+                <button
+                    onClick={onSwitch}
+                    className="text-simpson-lightblue font-semibold hover:underline cursor-pointer"
+                >
+                    Se connecter
+                </button>
+            </p>
+        </div>
+    );
 }
