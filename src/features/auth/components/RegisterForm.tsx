@@ -7,6 +7,8 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 import { useRouter } from 'next/navigation';
 
+const PSEUDO_MAX = 20;
+const PASSWORD_MAX = 72;
 
 interface Props {
     onSwitch: () => void;
@@ -21,7 +23,7 @@ export default function RegisterForm({ onSwitch }: Props) {
         validationSchema: toFormikValidationSchema(registerSchema),
         onSubmit: async (values, { setFieldError, setSubmitting }) => {
             try {
-                await register(values)
+                await register(values);
                 router.push('/collection');
             } catch (err) {
                 if (err instanceof Error) {
@@ -69,14 +71,19 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="pseudo"
                         type="text"
                         placeholder="Entre ton pseudo"
-                        maxLength={20}
+                        maxLength={PSEUDO_MAX}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("pseudo")}
                     />
                 </div>
-                {formik.touched.pseudo && formik.errors.pseudo && (
-                    <p className="text-red-500 text-body mt-1">{formik.errors.pseudo}</p>
-                )}
+                <div className="flex justify-start items-center gap-2">
+                    <span className={`text-xs ${formik.values.pseudo.length >= PSEUDO_MAX ? "text-red-500" : "text-text/40"}`}>
+                        {formik.values.pseudo.length}/{PSEUDO_MAX}
+                    </span>
+                    {formik.touched.pseudo && formik.errors.pseudo && (
+                        <p className="text-red-500 text-body">{formik.errors.pseudo}</p>
+                    )}
+                </div>
             </div>
 
             {/* Email */}
@@ -94,7 +101,7 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="email"
                         type="text"
                         placeholder="Entre ton email"
-                          maxLength={254}
+                        maxLength={254}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("email")}
                     />
@@ -119,16 +126,19 @@ export default function RegisterForm({ onSwitch }: Props) {
                         id="password"
                         type="password"
                         placeholder="Entre ton mot de passe"
-                        maxLength={72}
+                        maxLength={PASSWORD_MAX}
                         className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
                         {...formik.getFieldProps("password")}
                     />
                 </div>
-                {formik.touched.password && formik.errors.password && (
-                    <p className="text-red-500 text-body mt-1">
-                        {formik.errors.password}
-                    </p>
-                )}
+                <div className="flex justify-start items-center gap-2">
+                    <span className={`text-xs ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}>
+                        {formik.values.password.length}/{PASSWORD_MAX}
+                    </span>
+                    {formik.touched.password && formik.errors.password && (
+                        <p className="text-red-500 text-body">{formik.errors.password}</p>
+                    )}
+                </div>
             </div>
 
             {/* Submit */}
