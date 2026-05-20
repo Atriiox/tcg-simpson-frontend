@@ -58,7 +58,7 @@ export default function RegisterForm({ onSwitch }: Props) {
         </label>
         <div className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${
           formik.touched.pseudo && formik.errors.pseudo
-            ? 'border-simpson-orange'
+            ? 'border-red-500'
             : 'border-gray-300 dark:border-simpson-dark'
         }`}>
           <input
@@ -70,7 +70,7 @@ export default function RegisterForm({ onSwitch }: Props) {
           />
         </div>
         {formik.touched.pseudo && formik.errors.pseudo && (
-          <p className="text-simpson-orange text-body mt-1">{formik.errors.pseudo}</p>
+          <p className="text-red-500 text-body mt-1">{formik.errors.pseudo}</p>
         )}
       </div>
 
@@ -81,7 +81,7 @@ export default function RegisterForm({ onSwitch }: Props) {
         </label>
         <div className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${
           formik.touched.email && formik.errors.email
-            ? 'border-simpson-orange'
+            ? 'border-red-500'
             : 'border-gray-300 dark:border-simpson-dark'
         }`}>
           <input
@@ -93,7 +93,7 @@ export default function RegisterForm({ onSwitch }: Props) {
           />
         </div>
         {formik.touched.email && formik.errors.email && (
-          <p className="text-simpson-orange text-body mt-1">{formik.errors.email}</p>
+          <p className="text-red-500 text-body mt-1">{formik.errors.email}</p>
         )}
       </div>
 
@@ -104,7 +104,7 @@ export default function RegisterForm({ onSwitch }: Props) {
         </label>
         <div className={`flex items-center border rounded-lg px-3 bg-white dark:bg-simpson-darklight ${
           formik.touched.password && formik.errors.password
-            ? 'border-simpson-orange'
+            ? 'border-red-500'
             : 'border-gray-300 dark:border-simpson-dark'
         }`}>
           <input
@@ -116,7 +116,7 @@ export default function RegisterForm({ onSwitch }: Props) {
           />
         </div>
         {formik.touched.password && formik.errors.password && (
-          <p className="text-simpson-orange text-body mt-1">{formik.errors.password}</p>
+          <p className="text-red-500 text-body mt-1">{formik.errors.password}</p>
         )}
       </div>
 
@@ -124,7 +124,7 @@ export default function RegisterForm({ onSwitch }: Props) {
       <button
         onClick={() => formik.handleSubmit()}
         disabled={formik.isSubmitting}
-        className="w-full py-2.5 mt-5 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+        className="w-full py-2.5 mt-2 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
       >
         {formik.isSubmitting ? 'Inscription...' : "S'inscrire"}
       </button>
