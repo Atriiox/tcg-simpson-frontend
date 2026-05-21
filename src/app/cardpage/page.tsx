@@ -14,6 +14,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Homer et Marge",
     serie: { name_serie: "Série 1", position: 1 },
+    description:
+      "Père de famille dévoué à la recherche constante du combo canapé, Duff et donuts. Sa résistance légendaire défie toute logique médicale.",
   },
   {
     name: "Marge futuriste",
@@ -25,6 +27,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Homer et Marge",
     serie: { name_serie: "Série 1", position: 2 },
+    description:
+      "Pilier central du foyer doté d'une patience infinie et d'une coiffure bleue défiant la gravité, parée ici pour les défis du futur.",
   },
   {
     name: "Barto",
@@ -36,6 +40,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Bart et Lisa",
     serie: { name_serie: "Série 1", position: 3 },
+    description:
+      "Spécialiste mondial de la canular téléphonique et des graffitis sous le pseudonyme d'El Barto. Un esprit rebelle monté sur roulettes.",
   },
   {
     name: "Lisa",
@@ -47,6 +53,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Bart et Lisa",
     serie: { name_serie: "Série 1", position: 4 },
+    description:
+      "La conscience morale de Springfield. Activiste, végétarienne et surdouée, elle combat l'ignorance à grands coups de solos de saxophone.",
   },
   {
     name: "Maggie",
@@ -58,6 +66,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 5 },
+    description:
+      "Ne vous fiez pas au bruit de sa tétine. Ce bébé silencieux cache un instinct de survie redoutable et une précision de tir chirurgicale.",
   },
   {
     name: "Mr. Burns",
@@ -69,6 +79,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Burns et Smithers",
     serie: { name_serie: "Série 1", position: 6 },
+    description:
+      "Magnat de l'énergie cruel, avare et d'un âge indéterminé. Sa faiblesse physique n'a d'égale que la férocité de ses chiens de garde.",
   },
   {
     name: "Waylon Smithers",
@@ -80,6 +92,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Burns et Smithers",
     serie: { name_serie: "Série 1", position: 7 },
+    description:
+      "Bras droit loyal et collectionneur obsessionnel de poupées Malibu Stacy. Prêt à tout pour obtenir un compliment de son tyrannique patron.",
   },
   {
     name: "Chef Wiggum",
@@ -91,6 +105,8 @@ const cartesData = [
     family: "Police",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 8 },
+    description:
+      "Représentant suprême de l'incompétence policière de Springfield. Plus rapide pour repérer un magasin de boîte de donuts qu'un criminel en fuite.",
   },
   {
     name: "Milhouse",
@@ -102,6 +118,8 @@ const cartesData = [
     family: "Van Houten",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 9 },
+    description:
+      "Le souffre-douleur préféré de l'école. Eternel amoureux de Lisa et acolyte de Bart, il est perdu sans ses lunettes à monture rouge.",
   },
   {
     name: "Luann",
@@ -113,6 +131,8 @@ const cartesData = [
     family: "Van Houten",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 10 },
+    description:
+      "Mère de Milhouse originaire de Shelbyville. Elle gère d'une main de fer le quotidien familial après avoir traversé de mémorables crises conjugales.",
   },
   {
     name: "Kirk",
@@ -124,6 +144,8 @@ const cartesData = [
     family: "Van Houten",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 11 },
+    description:
+      "Ancien cadre dans une usine de biscuits, symbole ultime de la crise de la quarantaine. Sa chanson 'Emprunte-moi un sentiment' est restée tristement célèbre.",
   },
   {
     name: "Apu",
@@ -135,6 +157,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 12 },
+    description:
+      "Gérant dévoué du Kwik-E-Mart travaillant 24h/24. Expert pour vendre des produits périmés avec un sourire poli et une politesse légendaire.",
   },
   {
     name: "Moe",
@@ -146,6 +170,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 13 },
+    description:
+      "Le barman le plus grincheux de la ville. Cible favorite des canulars de Bart, il passe ses journées à servir de la Duff tiède à ses rares clients.",
   },
   {
     name: "Ned Flanders",
@@ -157,6 +183,8 @@ const cartesData = [
     family: "Flanders",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 14 },
+    description:
+      "Le voisin horripilant de perfection. Ultra-religieux, toujours de bonne humeur et adepte du jargon 'salut-les-amis', au grand désespoir d'Homer.",
   },
   {
     name: "Willie",
@@ -168,6 +196,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 15 },
+    description:
+      "Jardinier écossais au tempérament de feu et aux abdos d'acier. Il nettoie l'école primaire et hurle sa haine du proviseur Skinner dès que l'occasion se présente.",
   },
   {
     name: "Maison des Simpson",
@@ -179,6 +209,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 16 },
+    description:
+      "Le 742 Evergreen Terrace. Un foyer chaleureux au canapé iconique, miraculeusement solide malgré les innombrables catastrophes qu'il a subies.",
   },
   {
     name: "Centrale nucléaire",
@@ -190,6 +222,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 17 },
+    description:
+      "Source majeure de pollution de la ville et lieu de travail d'Homer. Les normes de sécurité y sont purement optionnelles et les poissons y ont trois yeux.",
   },
   {
     name: "Kwik-E-Mart",
@@ -201,6 +235,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 18 },
+    description:
+      "L'épicerie de nuit incontournable de la ville. Célèbre pour ses boissons glacées ultra-sucrées (les Squishees) et ses prix outrageusement élevés.",
   },
   {
     name: "Saxophone",
@@ -212,6 +248,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 19 },
+    description:
+      "L'instrument fétiche de Lisa. Reçu en cadeau pour stimuler son génie musical, il lui sert d'exutoire pour expresser son blues au quotidien.",
   },
   {
     name: "Skateboard",
@@ -223,6 +261,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 20 },
+    description:
+      "Le moyen de transport privilégié de Bart. Idéal pour fuir le principal Skinner, semer le chaos en ville ou sauter par-dessus les gorges de Springfield.",
   },
   {
     name: "Tétine",
@@ -234,6 +274,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 21 },
+    description:
+      "L'accessoire indispensable de Maggie. Sa boussole émotionnelle et, occasionnellement, un excellent moyen de calmer les tensions familiales d'un simple bruit de succion.",
   },
   {
     name: "Krusty",
@@ -245,6 +287,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 22 },
+    description:
+      "Le clown star de la télévision locale. Cynique, accro au jeu et entouré de produits dérivés dangereux, il adore l'argent bien plus que les enfants.",
   },
   {
     name: "Spider Cochon",
@@ -256,6 +300,8 @@ const cartesData = [
     family: "Animaux",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 23 },
+    description:
+      "Le cochon adopté par Homer devenu une icône. Il sait marcher au plafond, porte une cape et répond aussi au doux nom de Harry Crotter.",
   },
   {
     name: "Professeur Frink",
@@ -267,6 +313,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 24 },
+    description:
+      "Le savant fou excentrique de la ville. Ses inventions sont révolutionnaires mais finissent systématiquement par exploser ou provoquer des catastrophes.",
   },
   {
     name: "Eddie",
@@ -278,6 +326,8 @@ const cartesData = [
     family: "Police",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 25 },
+    description:
+      "Officier de police de Springfield aux côtés de Lou et Wiggum. Il brille par son silence et son exécution passive des ordres les plus absurdes.",
   },
   {
     name: "Tahiti Bob",
@@ -289,6 +339,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 26 },
+    description:
+      "Ancien assistant de Krusty à l'intellect surdéveloppé et à la chevelure de palmier. Sa vie n'a plus qu'un but : éliminer définitivement Bart Simpson.",
   },
   {
     name: "Nelson",
@@ -300,6 +352,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 27 },
+    description:
+      "La terreur en gilet de la cour de récréation. Son rire moqueur 'Ha-Ha !' ponctue cruellement chaque moment d'embarras ou d'échec de ses camarades.",
   },
   {
     name: "Otto",
@@ -311,6 +365,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 28 },
+    description:
+      "Conducteur de bus scolaire fanatique de Heavy Metal. Sa conduite est chaotique, son hygiène douteuse, mais son amour du rock reste inébranlable.",
   },
   {
     name: "Petit Papa Noël",
@@ -322,6 +378,8 @@ const cartesData = [
     family: "Animaux",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 29 },
+    description:
+      "Lévrier maladroit sauvé des pistes de course par Bart et Homer le soir de Noël. Pas très intelligent, mais membre indispensable de la famille.",
   },
   {
     name: "Boule de neige 2",
@@ -333,6 +391,8 @@ const cartesData = [
     family: "Animaux",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 30 },
+    description:
+      "Le chat noir des Simpson. Il passe ses journées à dormir, à snober la famille et à survivre mystérieusement aux étranges aventures domestiques.",
   },
   {
     name: "Ralph",
@@ -344,6 +404,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 31 },
+    description:
+      "Fils du chef Wiggum, vivant dans son propre monde imaginaire. Connu pour ses répliques absurdes, son goût pour la colle et sa naïveté touchante.",
   },
   {
     name: "Cletus",
@@ -355,6 +417,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 32 },
+    description:
+      "Le stéréotype du campagnard de Springfield. Vivant dans une cabane avec sa gigantesque famille, il possède un bon fond mais des idées très rustiques.",
   },
   {
     name: "Patty",
@@ -366,6 +430,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 33 },
+    description:
+      "Sœur jumelle de Selma travaillant au service des permis de conduire. Sa voix rauque, sa consommation de cigarettes et sa haine viscérale pour Homer la définissent.",
   },
   {
     name: "Selma",
@@ -377,6 +443,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 34 },
+    description:
+      "Sœur de Marge, éternelle célibataire malgré de multiples mariages ratés avec des célébrités locales. Partage le même mépris légendaire pour son beau-frère.",
   },
   {
     name: "Blinky",
@@ -388,6 +456,8 @@ const cartesData = [
     family: "Animaux",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 35 },
+    description:
+      "Le célèbre poisson à trois yeux muté près de la centrale nucléaire. Symbole vivant de la gestion environnementale catastrophique de Mr. Burns.",
   },
   {
     name: "Eleanor Abernathy",
@@ -399,6 +469,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 36 },
+    description:
+      "Plus connue sous le nom de 'La folle aux chats'. Ancienne avocate de renom devenue excentrique, s'exprimant uniquement par des cris en lançant ses félins.",
   },
   {
     name: "Révérend Lovejoy",
@@ -410,6 +482,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 37 },
+    description:
+      "Le pasteur blasé de l'église locale. Ses sermons interminables et monotones endorment toute la ville, et les crises religieuses de Ned Flanders l'exaspèrent au plus haut point.",
   },
   {
     name: "Abraham",
@@ -421,6 +495,8 @@ const cartesData = [
     family: "Simpson",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 38 },
+    description:
+      "Le grand-père Simpson. Vétéran acariâtre vivant à la maison de retraite, célèbre pour s'endormir au milieu de ses vieilles histoires sans queue ni tête.",
   },
   {
     name: "Barney",
@@ -432,6 +508,8 @@ const cartesData = [
     family: "Sans Famille",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 39 },
+    description:
+      "Meilleur ami d'Homer et pilier de bar indéboulonnable chez Moe. Reconnaissable entre mille à son rot légendaire et sa fidélité absolue à la bière Duff.",
   },
   {
     name: "Tony",
@@ -443,6 +521,8 @@ const cartesData = [
     family: "Méchants",
     affinity: "Sans Affinité",
     serie: { name_serie: "Série 1", position: 40 },
+    description:
+      "Gros Tony, le parrain courtois mais impitoyable de la mafia italo-américaine locale. Il contrôle les affaires louches de Springfield depuis son club privé.",
   },
 ];
 
