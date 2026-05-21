@@ -26,10 +26,10 @@ function Home() {
             loading="eager"
           />
         </div>
-        
+
         {/* 2. Optimisation du conteneur central : il prend toute la hauteur disponible (sans taille fixe) */}
         <div className="w-full max-w-md h-full flex flex-col items-center justify-center p-6 gap-6">
-          
+
           {/* 3. L'image grandit de manière flexible grâce à flex-1 et max-h-[50vh] pour ne pas écraser les boutons */}
           <div className="flex-1 w-full max-h-[50vh] flex items-center justify-center">
             <Image
@@ -53,8 +53,8 @@ function Home() {
             </button>
           </div>
         </div>
-        </div>
-      
+      </div>
+
       <Modal isOpen={modal !== null} onClose={() => setModal(null)}>
         {modal === "register" && (
           <RegisterForm onSwitch={() => setModal("connect")} />
@@ -63,8 +63,6 @@ function Home() {
         {modal === 'connect' && (
           <ConnectForm onSwitch={() => setModal('register')} />
         )}
-
-
       </Modal>
     </>
   );

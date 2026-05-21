@@ -22,6 +22,8 @@ html.dark {
   --color-simpson-darklight: #2d3644;
   --color-simpson-light: #f4f2ee;
   --color-simpson-gray: #8e8e93;
+  --color-simpson-white: #f2f2f7;
+
 
   --color-background: var(--background);
   --color-text: var(--text);
