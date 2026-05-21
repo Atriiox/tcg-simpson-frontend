@@ -1,0 +1,171 @@
+.card {
+  aspect-ratio: 2.5 / 3.5;
+  cursor: pointer;
+  border: 1px solid #000;
+  border-radius: 8px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  width: 200px;
+  transition: background-position 0.5s;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 8px #0003;
+  background-color: #7bbfe9;
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.card.rare{
+   background-size: cover;
+}
+
+.videoBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+.headerCard,
+.contentCard,
+.footerCard {
+  position: relative;
+  z-index: 1;
+}
+.card.personnage {
+  background: #f4e47c;
+}
+.card.terrain {
+  background: #c0e090;
+}
+.card.objet {
+  background: #f49d7d;
+}
+.type-personnage {
+  border-color: #000000;
+}
+.type-pterrain {
+  border-color: #0e7412;
+}
+.type-pobjet {
+  border-color: #cd690b;
+}
+
+.headerCard {
+  color: #fff;
+  width: fit-content;
+  padding: 2px 16px 4px 8px;
+  margin-top: 2px;
+  border-radius: 0px 4px 18px 0px;
+}
+.headerCard .name {
+  text-shadow: 1px 1px #000000;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.contentCard {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-top: 4px;
+  gap: 4px;
+  position: relative;
+  padding: 0 0 4px;
+}
+.stats {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  font-size: 14px;
+  display: flex;
+  position: absolute;
+  bottom: -26px;
+  right: 6px;
+}
+.stats .pv,
+.stats .atk {
+  border-radius: 8px;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 10px 6px;
+  font-weight: 700;
+  display: flex;
+  color: #fff;
+}
+.stats .atk {
+  background-color: #11568adc;
+}
+.stats .pv {
+  background-color: #ad3311d7;
+}
+.stats .pv svg {
+  color: #ffccc1;
+}
+.stats .atk svg {
+  color: #fdd903;
+}
+
+.desc {
+  width: 100%;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  color: white;
+  gap: 1px;
+}
+
+.famille,
+.affinite,
+.terrain,
+.objet {
+  text-align: center;
+  border-radius: 0 4px 4px 0;
+  gap: 2px;
+  width: fit-content;
+  font-size: 10px;
+  display: flex;
+  padding: 2px;
+  text-shadow: 1px 1px #000000;
+}
+.famille {
+  background: #c38500d6;
+}
+.affinite {
+  background: #bc00c3d6;
+}
+.terrain {
+  background: #27c300d6;
+}
+.objet {
+  background: #0082c3d6;
+}
+
+.footerCard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  font-size: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 2px 4px;
+  text-shadow: 1px 1px #000000;
+  gap: 4px;
+}
+.footerCard span {
+  display: flex;
+  align-items: center;
+}
+.footerCard span svg {
+  filter: drop-shadow(0.9px 0.9px 0px #000000);
+}
