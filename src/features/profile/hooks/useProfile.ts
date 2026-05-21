@@ -34,7 +34,7 @@ export const useProfile = () => {
     let res: Response;
 
     try {
-      res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/meprofile`, {
+      res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
