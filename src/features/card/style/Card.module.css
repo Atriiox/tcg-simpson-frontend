@@ -17,8 +17,11 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-.card.rare{
-   background-size: cover;
+.card.rare {
+  background-size: cover;
+}
+.card.legendaire {
+  background-size: cover;
 }
 
 .videoBackground {
@@ -132,10 +135,10 @@
   border-radius: 0 4px 4px 0;
   gap: 2px;
   width: fit-content;
-  font-size: 10px;
+  font-size: 12px;
   display: flex;
   padding: 2px;
-  text-shadow: 1px 1px #000000;
+  font-weight: 500;
 }
 .famille {
   background: #c38500d6;
