@@ -28,7 +28,7 @@ export default function FilterPanel() {
   };
 
   return (
-    <div className="h-full w-64 bg-simpson-light flex flex-col p-7 border-r border-simpson-gray/20 overflow-y-auto">
+    <div className="h-full w-64 bg-simpson-white flex flex-col p-7 border-r border-simpson-gray/20 overflow-y-auto shadow-md">
       
       <h2 className="text-center text-title text-simpson-dark mb-5 tracking-wide uppercase text-[22px] [text-shadow:1px_1px_2px_rgba(0,0,0,0.7)]">
         Filtrer

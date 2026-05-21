@@ -9,7 +9,7 @@ export default function RightPanel() {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
 
   return (
-<div className="flex flex-col min-h-full w-64 bg-simpson-light border-l border-simpson-gray/20">
+<div className="flex flex-col min-h-full w-64 bg-simpson-white border-l border-simpson-gray/20 shadow-md">
       {/* Tabs */}
       <div className="flex border-b border-simpson-gray/20">
         {(["boosters", "decks"] as Tab[]).map((tab) => (
