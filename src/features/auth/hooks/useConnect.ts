@@ -1,6 +1,6 @@
 import type { ConnectFormValues } from "../schemas/connect.schema";
 import { useDispatch } from "react-redux";
-import { setToken } from "@/reducers/user";
+import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
 
 export function useConnect() {
@@ -20,7 +20,7 @@ export function useConnect() {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    dispatch(setToken(data.token));
+    dispatch(setAuth(data.token));
   };
 
   return { connect };
