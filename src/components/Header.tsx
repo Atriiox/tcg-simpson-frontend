@@ -14,7 +14,7 @@ import { RootState } from "@/store/store";
 function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const { token, pseudo, monnaie } = useSelector(
+  const { token, pseudo, money } = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -70,7 +70,7 @@ function Header() {
                 <span className="font-semibold">{pseudo || "Pseudo"}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
-                    {monnaie?.toLocaleString() || 0}
+                    {money?.toLocaleString() || 0}
                   </span>
                   <Image
                     src="/donuts.webp"
@@ -102,7 +102,10 @@ function Header() {
       </header>
 
       <Modal isOpen={isProfileOpen} onClose={handleClose}>
-        <ProfileForm isOpen={isProfileOpen} />
+        <ProfileForm
+          isOpen={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+        />
       </Modal>
     </>
   );

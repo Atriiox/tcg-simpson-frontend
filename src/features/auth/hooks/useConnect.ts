@@ -20,7 +20,17 @@ export function useConnect() {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    dispatch(setAuth(data.token));
+
+    const { token, pseudo, email, money, theme } = data;
+    dispatch(
+      setAuth({
+        token,
+        pseudo,
+        email: email || null,
+        money,
+        theme: typeof theme === "boolean" ? theme : false,
+      }),
+    );
   };
 
   return { connect };
