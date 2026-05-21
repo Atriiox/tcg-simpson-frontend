@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "../../public/logo.webp";
 import Link from "next/link";
@@ -13,16 +13,22 @@ import { RootState } from "@/store/store";
 
 function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false); // 🎯 Évite les bugs d'hydratation Redux / SSR
 
   const { token, pseudo, money } = useSelector(
     (state: RootState) => state.user,
   );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleClose = () => setIsProfileOpen(false);
 
   return (
     <>
       <header className="flex bg-white dark:bg-simpson-darklight shadow-md h-17.5 items-center px-6">
+        {/* LOGO */}
         <div className="w-2/12 flex items-center">
           <Image
             className="w-auto h-auto max-h-12.5 object-contain"
@@ -35,14 +41,16 @@ function Header() {
           />
         </div>
 
+        {/* NAVIGATION */}
         <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
-          {!token && (
+          {/* 🎯 Condition sécurisée par le flag mounted */}
+          {mounted && !token && (
             <Link
               href="/"
               className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
             >
               Accueil
-              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow  transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
             </Link>
           )}
 
@@ -59,12 +67,14 @@ function Header() {
             className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
           >
             Règles du jeu
-            <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow  transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+            <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
           </Link>
         </nav>
 
-        <div className="w-2/12 flex justify-end items-center gap-4">
-          {token && (
+        {/* ESPACE UTILISATEUR / ACTIONS */}
+        <div className="w-2/12 flex justify-end items-center gap-4 min-h-16">
+          {/* 🎯 On attend d'être monté sur le client pour évaluer le token persistant */}
+          {mounted && token && (
             <>
               <div className="flex flex-col items-end justify-center">
                 <span className="font-semibold">{pseudo || "Pseudo"}</span>
@@ -92,7 +102,7 @@ function Header() {
               </div>
               <button
                 onClick={() => setIsProfileOpen(true)}
-                className="text-text/60 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200"
+                className="text-text/60 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none"
               >
                 <IoMdSettings size={22} />
               </button>
@@ -101,6 +111,7 @@ function Header() {
         </div>
       </header>
 
+      {/* MODAL PROFIL */}
       <Modal isOpen={isProfileOpen} onClose={handleClose}>
         <ProfileForm
           isOpen={isProfileOpen}

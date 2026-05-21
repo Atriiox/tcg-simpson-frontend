@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import { StoreProvider } from "../store/store";
-import { ThemeProvider } from "next-themes";
+import { StoreProvider } from "../store/store"; // Ton StoreProvider qui va gérer le thème
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -27,18 +26,14 @@ export default function RootLayout({
     <html
       lang="fr"
       className={`${fredokaVariable.variable} antialiased`}
-      suppressHydrationWarning
+      suppressHydrationWarning // On le garde au cas où une extension chrome touche au DOM
     >
       <body className="min-h-svh flex flex-col" suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <StoreProvider>
-            <Header /> 
-            <main className="flex-1 relative overflow-hidden">
-            {children}
-            </main>
-            <Footer />
-          </StoreProvider>
-        </ThemeProvider>
+        <StoreProvider>
+          <Header />
+          <main className="flex-1 relative overflow-hidden">{children}</main>
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );

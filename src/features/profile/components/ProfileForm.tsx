@@ -6,11 +6,11 @@ import { profileSchema, ProfileFormValues } from "../schemas/profile.schemas";
 import { FaUser, FaEnvelope, FaLock, FaSignOutAlt } from "react-icons/fa";
 import Image from "next/image";
 import { useProfile } from "../hooks/useProfile";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setAuth } from "@/reducers/user"; // Assure-toi que setAuth accepte des valeurs vides ou crée une action logout
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth, toggleTheme } from "@/reducers/user"; // 🎯 Import de toggleTheme
+import { RootState } from "@/store/store";
 
 const PSEUDO_MAX = 20;
 const PASSWORD_MAX = 72;
@@ -21,13 +21,15 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
-  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
   const { profile, isLoading, updateProfile } = useProfile();
+
+  // 🎯 On lit directement l'état dans ton store Redux persistant
+  const isDark = useSelector((state: RootState) => state.user.isDarkMode);
 
   const formik = useFormik<ProfileFormValues>({
     initialValues: {
@@ -73,7 +75,6 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
   }, [isOpen]);
 
   if (!mounted) return null;
-  const isDark = theme === "dark";
 
   const handleCancelUsername = () => {
     if (profile) formik.setFieldValue("pseudo", profile.pseudo);
@@ -94,10 +95,10 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
     localStorage.removeItem("token");
     dispatch(
       setAuth({
-        token: "",
-        pseudo: "",
-        email: "",
-        money: 0,
+        token: null,
+        pseudo: null,
+        email: null,
+        money: null,
         theme: false,
       }),
     );
@@ -199,7 +200,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         </div>
       </div>
 
-      {/* INPUT 2 : EMAIL (Lecture seule) */}
+      {/* INPUT 2 : EMAIL */}
       <div className="flex flex-col gap-1.5 mb-1">
         <label className="text-body font-medium text-text">Email</label>
         <div className="h-12 border mb-2 border-gray-300 dark:border-simpson-dark rounded-xl flex items-center px-4 gap-3 bg-white/60 dark:bg-simpson-darklight/60 opacity-60 cursor-not-allowed select-none">
@@ -294,7 +295,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         <span className="text-body font-medium text-text">Thème sombre :</span>
         <button
           type="button"
-          onClick={() => setTheme(isDark ? "light" : "dark")}
+          onClick={() => dispatch(toggleTheme())} // 🎯 Déclenche l'action Redux directement
           className="group relative w-13 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-[#252532] border border-[#32303e] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
           aria-label="Changer de thème"
         >
@@ -311,7 +312,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         </button>
       </div>
 
-      {/* 🎯 BOUTON SE DÉCONNECTER */}
+      {/* BOUTON SE DÉCONNECTER */}
       <button
         type="button"
         onClick={handleLogout}

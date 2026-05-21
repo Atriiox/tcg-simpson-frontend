@@ -91,7 +91,7 @@
   font-size: 14px;
   display: flex;
   position: absolute;
-  bottom: -26px;
+  bottom: -30px;
   right: 6px;
 }
 .stats .pv,
@@ -100,7 +100,7 @@
   align-items: center;
   gap: 3px;
   padding: 2px 6px 10px 6px;
-  font-weight: 700;
+  font-weight: 600;
   display: flex;
   color: #fff;
 }
@@ -160,9 +160,9 @@
   justify-content: start;
   font-size: 8px;
   color: white;
-  font-weight: bold;
+  font-weight: 500;
   padding: 2px 4px;
-  text-shadow: 1px 1px #000000;
+  text-shadow: 0px 0px 2px #000000;
   gap: 4px;
 }
 .footerCard span {

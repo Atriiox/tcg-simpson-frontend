@@ -1,4 +1,7 @@
-import Card from "../../features/card/components/card";
+"use client";
+import Card from "@/features/card/components/card";
+import { useState } from "react";
+import CardDetailModal from "@/features/card/components/CardDetailModal";
 
 const cartesData = [
   {
@@ -444,6 +447,9 @@ const cartesData = [
 ];
 
 export default function CardPage() {
+  // 🎯 L'état qui mémorise la carte cliquée (ou null si aucune n'est ouverte)
+  const [selectedCard, setSelectedCard] = useState<any | null>(null);
+
   return (
     <div className="min-h-screen dark:bg-slate-900 p-8">
       <header className="mb-8 text-center">
@@ -458,9 +464,23 @@ export default function CardPage() {
       {/* 📊 Grille responsive */}
       <main className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 justify-items-center max-w-7xl mx-auto">
         {cartesData.map((data, index) => {
-          return <Card key={index} {...data} />;
+          return (
+            <Card
+              key={index}
+              {...data}
+              // 🎯 On envoie la data au setter au moment du clic
+              onClick={() => setSelectedCard(data)}
+            />
+          );
         })}
       </main>
+
+      {/* 🎯 La modal s'affiche uniquement si selectedCard n'est pas null */}
+      <CardDetailModal
+        isOpen={!!selectedCard}
+        card={selectedCard}
+        onClose={() => setSelectedCard(null)}
+      />
     </div>
   );
 }

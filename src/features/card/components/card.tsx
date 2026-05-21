@@ -30,6 +30,7 @@ interface CardProps {
       position: number;
     };
   };
+  onClick?: () => void;
 }
 
 function Card(props: CardProps) {
@@ -67,6 +68,7 @@ function Card(props: CardProps) {
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
       }}
+      onClick={props.onClick}
     >
       {/* 🎥 Vidéo d'arrière-plan pour les cartes Ultra Rares / Légendaires */}
       {rarity === "3" && (
