@@ -4,14 +4,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface UserState {
   token: string | null;
   pseudo: string | null;
-  monnaie: number | null;
+  money: number | null;
   isDarkMode: boolean;
 }
 
 const initialState: UserState = {
   token: null,
   pseudo: null,
-  monnaie: null,
+  money: null,
   isDarkMode: false,
 };
 
@@ -24,13 +24,13 @@ export const userSlice = createSlice({
       action: PayloadAction<{
         token: string;
         pseudo: string;
-        monnaie: number;
+        money: number;
         theme: boolean;
       }>,
     ) => {
       state.token = action.payload.token;
       state.pseudo = action.payload.pseudo;
-      state.monnaie = action.payload.monnaie;
+      state.money = action.payload.money;
       state.isDarkMode = action.payload.theme;
     },
 
@@ -45,7 +45,7 @@ export const userSlice = createSlice({
     clearAuth: (state) => {
       state.token = null;
       state.pseudo = null;
-      state.monnaie = null;
+      state.money = null;
     },
   },
 });

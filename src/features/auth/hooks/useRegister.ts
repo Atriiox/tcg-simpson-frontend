@@ -21,12 +21,12 @@ export function useRegister() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    const { token, pseudo, monnaie, theme } = data;
+    const { token, pseudo, money, theme } = data;
     dispatch(
       setAuth({
         token,
         pseudo,
-        monnaie,
+        money,
         theme: typeof theme === "boolean" ? theme : false,
       }),
     );
