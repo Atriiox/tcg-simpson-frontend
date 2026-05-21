@@ -1,4 +1,3 @@
-// components/Profile/ProfileForm.tsx
 "use client";
 
 import { useFormik } from "formik";
@@ -10,6 +9,9 @@ import { useProfile } from "../hooks/useProfile";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
+const PSEUDO_MAX = 20;
+const PASSWORD_MAX = 72;
+
 interface ProfileFormProps {
   isOpen: boolean;
 }
@@ -19,13 +21,15 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
   const [mounted, setMounted] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
 
-  const { profile, isLoading, updateProfile } = useProfile(isOpen);
+  // 🎯 Récupère le profil synchrone depuis Redux
+  const { profile, isLoading, updateProfile } = useProfile();
 
   const formik = useFormik<ProfileFormValues>({
     initialValues: {
-      pseudo: "",
+      pseudo: profile?.pseudo || "", // Instantané !
       password: "********",
     },
+    enableReinitialize: true, // Crucial pour suivre les updates après le PUT
     validationSchema: toFormikValidationSchema(profileSchema),
     onSubmit: async (values) => {
       const updateData: Partial<ProfileFormValues> = {};
@@ -45,7 +49,7 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
 
       if (Object.keys(updateData).length > 0) {
         const result = await updateProfile(updateData);
-        if (result.ok) {
+        if (result?.ok) {
           setIsEditingPassword(false);
           formik.setFieldValue("password", "********");
         }
@@ -53,15 +57,17 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
     },
   });
 
-  useEffect(() => {
-    if (profile) {
-      formik.setFieldValue("pseudo", profile.pseudo);
-    }
-  }, [profile]);
-
+  // 🎯 3. On nettoie les anciens useEffect de resynchronisation manuelle qui devenus obsolètes
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Si la modal se ferme, on réinitialise l'état d'édition du mot de passe
+  useEffect(() => {
+    if (!isOpen) {
+      setIsEditingPassword(false);
+    }
+  }, [isOpen]);
 
   if (!mounted) return null;
   const isDark = theme === "dark";
@@ -86,7 +92,7 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
     <div className="w-full flex flex-col gap-4">
       {/* Header Profil */}
       <div className="flex items-center gap-4 mb-2">
-        <div className="w-20 h-20 rounded-full overflow-hidden p-1">
+        <div className="w-20 h-20 rounded-full overflow-hidden p-1 bg-gray-100 dark:bg-simpson-dark">
           <Image
             src="/defaultAvatar.webp"
             alt="Avatar"
@@ -96,12 +102,17 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
           />
         </div>
         <div className="flex flex-col">
-          <h2 className="text-title font-bold">
-            {isLoading ? "Chargement..." : profile?.pseudo}
-          </h2>
-          <div className="flex items-center gap-2">
+          {/* 🎯 Affichage sécurisé pendant le chargement */}
+          <span className="text-title font-bold text-text">
+            {isLoading && !profile
+              ? "Chargement..."
+              : profile?.pseudo || "Utilisateur"}
+          </span>
+          <div className="flex items-center gap-2 mt-0.5">
             <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
-              {profile?.money?.toLocaleString() || 0}
+              {isLoading && !profile
+                ? "..."
+                : profile?.money?.toLocaleString() || 0}
             </span>
             <Image
               src="/donuts.webp"
@@ -115,9 +126,9 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
       </div>
 
       {/* INPUT 1 : PSEUDO */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5 mb-1">
         <div className="flex justify-between items-center">
-          <label htmlFor="pseudo" className="text-body font-medium">
+          <label htmlFor="pseudo" className="text-body font-medium text-text">
             Nom d'utilisateur
           </label>
           {isEditingUsername && (
@@ -140,41 +151,61 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
           )}
         </div>
         <div
-          className={`h-12 border rounded-xl flex items-center px-4 gap-3 transition-all bg-white dark:bg-simpson-darklight ${formik.errors.pseudo && formik.touched.pseudo ? "border-red-500" : "border-simpson-gray dark:border-simpson-dark focus-within:border-simpson-lightblue focus-within:dark:border-simpson-lightblue"}`}
+          className={`h-12 border rounded-xl flex items-center px-4 gap-3 transition-all bg-white dark:bg-simpson-darklight ${
+            formik.touched.pseudo && formik.errors.pseudo
+              ? "border-red-500"
+              : "border-gray-300 dark:border-simpson-dark focus-within:border-simpson-lightblue focus-within:dark:border-simpson-lightblue"
+          }`}
         >
           <FaUser className="w-4 h-4 text-text/40 shrink-0" />
           <input
             id="pseudo"
             type="text"
+            maxLength={PSEUDO_MAX}
             disabled={isLoading}
-            className="w-full h-full border-none outline-none text-body text-text bg-transparent font-medium"
-            placeholder="Choisis un pseudo"
+            className="w-full h-full border-none outline-none text-medium text-text bg-transparent"
+            placeholder="Chargement du pseudo..."
             {...formik.getFieldProps("pseudo")}
           />
         </div>
-        {formik.errors.pseudo && formik.touched.pseudo && (
-          <p className="text-red-500 text-xs">{formik.errors.pseudo}</p>
-        )}
-      </div>
-
-      {/* INPUT 2 : EMAIL (Lecture seule) */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-body font-medium">Email</label>
-        <div className="h-12 border border-simpson-gray dark:border-simpson-dark rounded-xl flex items-center px-4 gap-3 bg-white/60 dark:bg-simpson-darklight/60 opacity-60 cursor-not-allowed select-none">
-          <FaEnvelope className="w-4 h-4 text-text/30 shrink-0" />
-          <input
-            type="text"
-            value={profile?.email || ""}
-            readOnly
-            className="w-full h-full border-none outline-none text-body text-text/70 bg-transparent font-medium cursor-not-allowed"
-          />
+        <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
+          <span
+            className={`text-xs shrink-0 ${formik.values.pseudo.length >= PSEUDO_MAX ? "text-red-500" : "text-text/40"}`}
+          >
+            {formik.values.pseudo.length}/{PSEUDO_MAX}
+          </span>
+          {formik.touched.pseudo && formik.errors.pseudo && (
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.pseudo}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* INPUT 3 : MOT DE PASSE */}
-      <div className="flex flex-col gap-1.5">
+      {/* INPUT 2 : EMAIL (Lecture seule) */}
+      <div className="flex flex-col gap-1.5 mb-1">
+        <label className="text-body font-medium text-text">Email</label>
+        <div className="h-12 border border-gray-300 dark:border-simpson-dark rounded-xl flex items-center px-4 gap-3 bg-white/60 dark:bg-simpson-darklight/60 opacity-60 cursor-not-allowed select-none">
+          <FaEnvelope className="w-4 h-4 text-text/30 shrink-0" />
+          <input
+            type="text"
+            /* 🎯 On affiche directement la valeur du profil ou un texte d'attente */
+            value={
+              isLoading && !profile
+                ? "Chargement de l'email..."
+                : profile?.email || ""
+            }
+            readOnly
+            className="w-full h-full border-none outline-none text-medium text-text/70 bg-transparent cursor-not-allowed"
+          />
+        </div>
+        <div className="h-5 mt-0.5" />
+      </div>
+
+      {/* INPUT 3 : MOT DE PASSE (Inchangé) */}
+      <div className="flex flex-col gap-1.5 mb-1">
         <div className="flex justify-between items-center">
-          <label htmlFor="password" className="text-body font-medium">
+          <label htmlFor="password" className="text-body font-medium text-text">
             Mot de passe
           </label>
           {isEditingPassword ? (
@@ -205,27 +236,47 @@ export default function ProfileForm({ isOpen }: ProfileFormProps) {
           )}
         </div>
         <div
-          className={`h-12 border rounded-xl flex items-center px-4 gap-3 transition-all bg-white dark:bg-simpson-darklight ${formik.errors.password && formik.touched.password ? "border-red-500" : "border-simpson-gray dark:border-simpson-dark focus-within:border-simpson-lightblue focus-within:dark:border-simpson-lightblue"}`}
+          className={`h-12 border rounded-xl flex items-center px-4 gap-3 transition-all bg-white dark:bg-simpson-darklight ${
+            formik.touched.password && formik.errors.password
+              ? "border-red-500"
+              : "border-gray-300 dark:border-simpson-dark focus-within:border-simpson-lightblue focus-within:dark:border-simpson-lightblue"
+          }`}
         >
           <FaLock className="w-4 h-4 text-text/40 shrink-0" />
           <input
             id="password"
             type={isEditingPassword ? "text" : "password"}
             readOnly={!isEditingPassword}
+            maxLength={PASSWORD_MAX}
             disabled={isLoading}
-            className={`w-full h-full border-none outline-none text-body bg-transparent ${isEditingPassword ? "text-text font-medium" : "text-text/50 tracking-widest font-mono"}`}
+            className={`w-full h-full border-none outline-none text-medium bg-transparent ${
+              isEditingPassword
+                ? "text-text"
+                : "text-text/50 tracking-widest font-mono"
+            }`}
             placeholder={isEditingPassword ? "Nouveau mot de passe" : ""}
             {...formik.getFieldProps("password")}
           />
         </div>
-        {formik.errors.password && formik.touched.password && (
-          <p className="text-red-500 text-xs">{formik.errors.password}</p>
-        )}
+        <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
+          {isEditingPassword && (
+            <span
+              className={`text-xs shrink-0 ${(formik.values.password || "").length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}
+            >
+              {(formik.values.password || "").length}/{PASSWORD_MAX}
+            </span>
+          )}
+          {formik.touched.password && formik.errors.password && (
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.password}
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* TOGGLE THEME INTERNE */}
-      <div className="flex justify-between items-center mt-4 pt-4 border-t border-simpson-dark dark:border-simpson-gray">
-        <span className="text-body font-medium">Theme dark :</span>
+      {/* TOGGLE THEME INTERNE (Inchangé) */}
+      <div className="flex justify-between items-center mt-2 pt-4 border-t border-gray-300 dark:border-simpson-dark">
+        <span className="text-body font-medium text-text">Thème sombre :</span>
         <button
           type="button"
           onClick={() => setTheme(isDark ? "light" : "dark")}
