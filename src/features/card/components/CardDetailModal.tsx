@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaHeart } from "react-icons/fa";
 import { LuDonut } from "react-icons/lu";
+import { PiHandFistFill } from "react-icons/pi";
 import { useEffect, useState } from "react";
 
 interface CardData {
@@ -60,6 +61,11 @@ export default function CardDetailModal({
     },
   };
   const currentRarity = rarityConfig[card.rarity || "1"] || rarityConfig["1"];
+
+  // ⚔️ Détermination du libellé selon le type de carte
+  const isPersonnage = card.type === "Personnage";
+  const atkLabel = isPersonnage ? "ATK" : "BONUS ATK";
+  const pvLabel = isPersonnage ? "PV" : "BONUS PV";
 
   return (
     <div
@@ -150,6 +156,33 @@ export default function CardDetailModal({
                   ))}
                 </div>
               </div>
+
+              {/* ⚔️ Affichage des statistiques harmonisé avec le style des cartes */}
+              {((card.ATK !== undefined && card.ATK > 0) || (card.PV !== undefined && card.PV > 0)) && (
+                <div className="flex items-center gap-4 mt-1">
+                  {card.ATK !== undefined && card.ATK > 0 && (
+                    <div className="flex items-center gap-2 bg-simpson-blue/10 dark:bg-simpson-blue/20 border border-simpson-blue/20 px-3 py-1.5 rounded-xl">
+                      <span className="text-xs font-bold text-simpson-blue dark:text-simpson-lightblue tracking-wider uppercase">
+                        {atkLabel}
+                      </span>
+                      <span className="text-lg font-black text-simpson-blue dark:text-simpson-lightblue flex items-center gap-1">
+                        {card.ATK} <PiHandFistFill className="w-5 h-5" />
+                      </span>
+                    </div>
+                  )}
+
+                  {card.PV !== undefined && card.PV > 0 && (
+                    <div className="flex items-center gap-2 bg-simpson-orange/10 dark:bg-simpson-orange/20 border border-simpson-orange/20 px-3 py-1.5 rounded-xl">
+                      <span className="text-xs font-bold text-simpson-orange tracking-wider uppercase">
+                        {pvLabel}
+                      </span>
+                      <span className="text-lg font-black text-simpson-orange flex items-center gap-1">
+                        {card.PV} <FaHeart className="w-4 h-4" />
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Utilisation de l'utilitaire text-medium pour le descriptif */}
               <p className="text-medium text-text/80 dark:text-text/70 leading-relaxed mt-2">
