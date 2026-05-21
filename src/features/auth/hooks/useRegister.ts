@@ -1,27 +1,35 @@
-import type { RegisterFormValues } from '../schemas/register.schema';
-import { setToken } from '@/reducers/user';
-import { useDispatch } from 'react-redux';
-import { env } from '@/config/env';
+import type { RegisterFormValues } from "../schemas/register.schema";
+import { setAuth } from "@/reducers/user";
+import { useDispatch } from "react-redux";
+import { env } from "@/config/env";
 
 export function useRegister() {
   const dispatch = useDispatch();
 
-  const register = async (values: 
-    RegisterFormValues) => {
+  const register = async (values: RegisterFormValues) => {
     let res: Response;
     try {
       res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
     } catch {
-      throw new Error('NETWORK_ERROR');
+      throw new Error("NETWORK_ERROR");
     }
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
-    dispatch(setToken(data.token));
+
+    const { token, pseudo, monnaie, theme } = data;
+    dispatch(
+      setAuth({
+        token,
+        pseudo,
+        monnaie,
+        theme: typeof theme === "boolean" ? theme : false,
+      }),
+    );
   };
 
   return { register };
