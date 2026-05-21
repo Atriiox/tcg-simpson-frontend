@@ -445,12 +445,12 @@ const cartesData = [
 
 export default function CardPage() {
   return (
-    <div className="min-h-screen bg-slate-900 p-8">
+    <div className="min-h-screen dark:bg-slate-900 p-8">
       <header className="mb-8 text-center">
-        <h1 className="text-3xl font-extrabold text-white tracking-wider uppercase">
+        <h1 className="text-3xl font-extrabold dark:text-white tracking-wider uppercase">
           🃏 Ma Collection de Cartes Test
         </h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <p className="dark:text-slate-400 text-sm mt-1">
           PROTOTYPE UI - {cartesData.length} CARTES VRAIES
         </p>
       </header>
