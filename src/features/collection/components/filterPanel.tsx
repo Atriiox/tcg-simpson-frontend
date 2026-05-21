@@ -73,7 +73,7 @@ export default function FilterPanel() {
                     </svg>
                   )}
                 </span>
-                <span className="text-medium text-simpson-dark">{item}</span>
+                <span className="text-sm text-simpson-dark">{item}</span>
               </label>
             ))}
           </div>
