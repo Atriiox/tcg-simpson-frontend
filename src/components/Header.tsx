@@ -36,13 +36,15 @@ function Header() {
         </div>
 
         <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
-          <Link
-            href="/"
-            className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
-          >
-            Accueil
-            <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow  transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
-          </Link>
+          {!token && (
+            <Link
+              href="/"
+              className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
+            >
+              Accueil
+              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow  transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+            </Link>
+          )}
 
           <Link
             href="/collection"
@@ -67,7 +69,6 @@ function Header() {
               <div className="flex flex-col items-end justify-center">
                 <span className="font-semibold">{pseudo || "Pseudo"}</span>
                 <div className="flex items-center gap-2">
-             
                   <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
                     {monnaie?.toLocaleString() || 0}
                   </span>

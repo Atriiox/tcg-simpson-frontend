@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { connectSchema, ConnectFormValues } from "../schemas/connect.schema";
 import { useConnect } from "../hooks/useConnect";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
 
@@ -21,19 +21,17 @@ export default function SignIn({ onSwitch }: Props) {
     validationSchema: toFormikValidationSchema(connectSchema),
     onSubmit: async (values, { setFieldError, setSubmitting }) => {
       try {
-                await connect(values);
-                router.push('/collection');
+        await connect(values);
+        router.push("/collection");
       } catch (err) {
         if (err instanceof Error) {
           switch (err.message) {
             case "CREDENTIALS_UNKNOWN":
-              setFieldError("email", "These credentials are unknown");
-              break;
             case "WRONG_CREDENTIALS":
-              setFieldError("email", "These credentials are unknown");
+              setFieldError("email", "Identifiants incorrects");
               break;
             default:
-              setFieldError("email", "Something went wrong");
+              setFieldError("email", "Une erreur est survenue");
           }
         }
       } finally {
@@ -43,7 +41,7 @@ export default function SignIn({ onSwitch }: Props) {
   });
 
   return (
-    <div className="p-2 max-w-xs w-full m-auto">
+    <div className="p-2 w-sm m-auto">
       <Image
         src="/poisson1.webp"
         alt="poisson authentification"
@@ -52,10 +50,12 @@ export default function SignIn({ onSwitch }: Props) {
         className="mx-auto block mb-2"
       />
 
-      <h2 className="text-title text-text mb-4 flex justify-center">Connexion</h2>
+      <span className="text-title text-text mb-4 w-full flex justify-center">
+        Connexion
+      </span>
 
       {/* Email */}
-      <div className="flex flex-col gap-1.5 mb-3">
+      <div className="flex flex-col gap-1.5 mb-1">
         <label htmlFor="email" className="text-body font-medium text-text">
           Email
         </label>
@@ -75,13 +75,18 @@ export default function SignIn({ onSwitch }: Props) {
             {...formik.getFieldProps("email")}
           />
         </div>
-        {formik.touched.email && formik.errors.email && (
-          <p className="text-red-500 text-body mt-1">{formik.errors.email}</p>
-        )}
+        {/* 🎯 h-5 bloque la hauteur sous l'email pour éviter les sauts d'interface */}
+        <div className="h-5 mt-0.5 flex items-center">
+          {formik.touched.email && formik.errors.email && (
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.email}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Password */}
-      <div className="flex flex-col gap-1.5 mb-4">
+      <div className="flex flex-col gap-1.5 mb-2">
         <label htmlFor="password" className="text-body font-medium text-text">
           Mot de passe
         </label>
@@ -101,14 +106,17 @@ export default function SignIn({ onSwitch }: Props) {
             {...formik.getFieldProps("password")}
           />
         </div>
-        <div className="flex justify-start items-center gap-2">
+        {/* 🎯 h-5 bloque la hauteur sous le mot de passe avec le compteur de caractères */}
+        <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
           <span
-            className={`text-xs ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}
+            className={`text-xs shrink-0 ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}
           >
             {formik.values.password.length}/{PASSWORD_MAX}
           </span>
           {formik.touched.password && formik.errors.password && (
-            <p className="text-red-500 text-body">{formik.errors.password}</p>
+            <p className="text-red-500 text-xs truncate">
+              {formik.errors.password}
+            </p>
           )}
         </div>
       </div>
@@ -117,7 +125,7 @@ export default function SignIn({ onSwitch }: Props) {
       <Button
         onClick={() => formik.handleSubmit()}
         disabled={formik.isSubmitting}
-        className="w-full py-2.5 mt-8 bg-simpson-orange text-white rounded-lg text-medium font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+        className="w-full py-2.5 mb-4"
       >
         {formik.isSubmitting ? "Connexion..." : "Se connecter"}
       </Button>
