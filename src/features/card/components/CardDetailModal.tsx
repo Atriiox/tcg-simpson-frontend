@@ -62,10 +62,8 @@ export default function CardDetailModal({
   };
   const currentRarity = rarityConfig[card.rarity || "1"] || rarityConfig["1"];
 
-  // ⚔️ Détermination du libellé selon le type de carte
-  const isPersonnage = card.type === "Personnage";
-  const atkLabel = isPersonnage ? "ATK" : "BONUS ATK";
-  const pvLabel = isPersonnage ? "PV" : "BONUS PV";
+  // ⚔️ Détection si c'est une carte de type bonus (Objet ou Terrain)
+  const isBonusType = card.type === "Objet" || card.type === "Terrain";
 
   return (
     <div
@@ -95,17 +93,17 @@ export default function CardDetailModal({
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             {card.family && card.family !== "Sans Famille" && (
-              <span className="text-body px-4 py-1.5 bg-simpson-light dark:bg-simpson-dark rounded-full text-simpson-gray border border-simpson-white dark:border-simpson-darklight shadow-inner-xs">
+              <span className="cursor-pointer text-body px-4 py-1.5 bg-simpson-orange/5 dark:bg-simpson-orange/10 rounded-full text-text border border-simpson-orange/20 backdrop-blur-md shadow-xs transition-all hover:bg-simpson-orange/10">
                 Famille{" "}
-                <strong className="text-simpson-orange dark:text-simpson-yellow font-semibold">
+                <strong className="text-simpson-orange dark:text-simpson-yellow font-bold ml-1">
                   {card.family}
                 </strong>
               </span>
             )}
             {card.affinity && card.affinity !== "Sans Affinité" && (
-              <span className="text-body px-4 py-1.5 bg-simpson-light dark:bg-simpson-dark rounded-full text-simpson-gray border border-simpson-white dark:border-simpson-darklight shadow-inner-xs">
+              <span className="cursor-pointer text-body px-4 py-1.5 bg-[#a855f7]/5 dark:bg-[#a855f7]/10 rounded-full text-text border border-[#a855f7]/20 backdrop-blur-md shadow-xs transition-all hover:bg-[#a855f7]/10">
                 Affinité{" "}
-                <strong className="text-[#a855f7] font-semibold">
+                <strong className="text-[#a855f7] dark:text-[#c084fc] font-bold ml-1">
                   {card.affinity}
                 </strong>
               </span>
@@ -124,7 +122,9 @@ export default function CardDetailModal({
               sizes={card.rarity === "3" ? "640px" : "340"}
               priority
               className={`rounded-2xl ${
-                card.rarity === "1" ? "object-contain" : "object-cover shadow-xl"
+                card.rarity === "1"
+                  ? "object-contain"
+                  : "object-cover shadow-xl"
               }`}
             />
           </div>
@@ -146,48 +146,57 @@ export default function CardDetailModal({
                   </span>
                 </div>
 
-                {/* Donuts de rareté */}
-                <div className="flex gap-0.5 text-simpson-orange dark:text-simpson-yellow bg-simpson-light dark:bg-simpson-dark p-1.5 rounded-xl border border-simpson-white dark:border-simpson-darklight shadow-inner-xs">
+                {/* 🍩 Donuts de rareté  */}
+                <div className="flex gap-1.5 text-simpson-orange dark:text-simpson-yellow bg-simpson-orange/5 dark:bg-simpson-yellow/5 px-3 py-1.5 rounded-full backdrop-blur-md">
                   {Array.from({ length: rarityCount }).map((_, i) => (
                     <LuDonut
                       key={i}
-                      className="w-5 h-5 shrink-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]"
+                      className="w-4.5 h-4.5 shrink-0 filter drop-shadow-[0_1.5px_2px_rgba(233,80,41,0.2)] dark:drop-shadow-[0_1.5px_2px_rgba(255,222,0,0.3)]"
                     />
                   ))}
                 </div>
               </div>
 
-              {/* ⚔️ Affichage des statistiques harmonisé avec le style des cartes */}
-              {((card.ATK !== undefined && card.ATK > 0) || (card.PV !== undefined && card.PV > 0)) && (
-                <div className="flex items-center gap-4 mt-1">
+              {/* ⚔️ Statistiques */}
+              {((card.ATK !== undefined && card.ATK > 0) ||
+                (card.PV !== undefined && card.PV > 0)) && (
+                <div className="flex items-center gap-4 mt-2 select-none">
+                  {isBonusType && (
+                    <span className="text-body uppercase font-black tracking-wider text-simpson-gray dark:text-simpson-white/40 bg-simpson-light dark:bg-simpson-dark/40 px-2.5 py-1 rounded-md">
+                      Bonus
+                    </span>
+                  )}
+
                   {card.ATK !== undefined && card.ATK > 0 && (
-                    <div className="flex items-center gap-2 bg-simpson-blue/10 dark:bg-simpson-blue/20 border border-simpson-blue/20 px-3 py-1.5 rounded-xl">
-                      <span className="text-xs font-bold text-simpson-blue dark:text-simpson-lightblue tracking-wider uppercase">
-                        {atkLabel}
-                      </span>
-                      <span className="text-lg font-black text-simpson-blue dark:text-simpson-lightblue flex items-center gap-1">
-                        {card.ATK} <PiHandFistFill className="w-5 h-5" />
+                    <div className="flex items-center gap-2.5 bg-simpson-blue/5 dark:bg-simpson-blue/10 border border-simpson-blue/15 pl-1.5 pr-3.5 py-1 rounded-full group transition-colors hover:bg-simpson-blue/10">
+                      <div className="w-8 h-8 rounded-full bg-[#11568adc] flex items-center justify-center shadow-md">
+                        <PiHandFistFill className="w-4.5 h-4.5 text-simpson-yellow drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]" />
+                      </div>
+                      <span className="text-xl font-extrabold text-simpson-blue dark:text-simpson-lightblue tracking-tight">
+                        {card.ATK}
                       </span>
                     </div>
                   )}
 
                   {card.PV !== undefined && card.PV > 0 && (
-                    <div className="flex items-center gap-2 bg-simpson-orange/10 dark:bg-simpson-orange/20 border border-simpson-orange/20 px-3 py-1.5 rounded-xl">
-                      <span className="text-xs font-bold text-simpson-orange tracking-wider uppercase">
-                        {pvLabel}
-                      </span>
-                      <span className="text-lg font-black text-simpson-orange flex items-center gap-1">
-                        {card.PV} <FaHeart className="w-4 h-4" />
+                    <div className="flex items-center gap-2.5 bg-simpson-orange/5 dark:bg-simpson-orange/10 border border-simpson-orange/15 pl-1.5 pr-3.5 py-1 rounded-full group transition-colors hover:bg-simpson-orange/10">
+                      <div className="w-8 h-8 rounded-full bg-[#ad3311d7] flex items-center justify-center shadow-md">
+                        <FaHeart className="w-3.5 h-3.5 text-[#ffccc1] drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]" />
+                      </div>
+                      <span className="text-xl font-extrabold text-[#ad3311d7] dark:text-[#ffccc1] tracking-tight">
+                        {card.PV}
                       </span>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Utilisation de l'utilitaire text-medium pour le descriptif */}
-              <p className="text-medium text-text/80 dark:text-text/70 leading-relaxed mt-2">
-                {card.description}
-              </p>
+              {/*  Description  */}
+              <div className="bg-simpson-light/60 dark:bg-simpson-dark/30 border border-simpson-white/40 dark:border-simpson-darklight/40 p-4 rounded-2xl mt-2 shadow-inner-xs">
+                <p className="text-medium text-text/85 dark:text-white leading-relaxed antialiased">
+                  {card.description}
+                </p>
+              </div>
             </div>
 
             {/* 🎯 Bouton d'action et Infos de Série */}
@@ -199,7 +208,7 @@ export default function CardDetailModal({
                 Ajouter au deck
               </button>
 
-              <span className="text-body font-semibold text-simpson-gray text-right">
+              <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
                 {card.serie?.name_serie || "Série 1"} <br /> N°
                 {card.serie?.position || 0}/50
               </span>
