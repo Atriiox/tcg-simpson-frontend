@@ -102,7 +102,10 @@ function Header() {
       </header>
 
       <Modal isOpen={isProfileOpen} onClose={handleClose}>
-        <ProfileForm isOpen={isProfileOpen} />
+        <ProfileForm
+          isOpen={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+        />
       </Modal>
     </>
   );

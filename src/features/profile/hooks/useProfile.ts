@@ -59,6 +59,7 @@ export const useProfile = () => {
       setAuth({
         token: token || "",
         pseudo: data.pseudo,
+        email: data.email,
         money: data.money,
         theme:
           typeof data.darkMode === "boolean" ? data.darkMode : profile.theme,
