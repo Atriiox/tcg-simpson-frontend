@@ -29,7 +29,7 @@ export default function FilterPanel() {
 
   return (
     <div className="h-full w-64 bg-simpson-white flex flex-col p-7 border-r border-simpson-gray/20 overflow-y-auto shadow-md">
-      
+
       <h2 className="text-center text-title text-simpson-dark mb-5 tracking-wide uppercase text-[22px] [text-shadow:1px_1px_2px_rgba(0,0,0,0.7)]">
         Filtrer
       </h2>
@@ -56,7 +56,7 @@ export default function FilterPanel() {
                 onClick={() => toggle(item)}
               >
                 <span
-                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 ${checked[item]
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 hover:border-simpson-orange ${checked[item]
                       ? "bg-simpson-orange border-simpson-orange"
                       : "bg-white border-gray-300"
                     }`}
