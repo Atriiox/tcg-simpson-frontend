@@ -14,7 +14,6 @@ export default function Button({
       {...props}
       className={`
         bg-simpson-orange 
-        hover:bg-simpson-orange/90 
         text-white 
         rounded-md 
         h-11 
@@ -23,11 +22,16 @@ export default function Button({
         text-medium 
         cursor-pointer 
         transition-all 
-        duration-200 
-        shadow-md 
+        duration-300 
+        ease-out
+        hover:bg-[#df4923]
+        shadow-md
+        hover:scale-[1.02]         
         active:scale-[0.98]
         disabled:opacity-50 
         disabled:cursor-not-allowed 
+        disabled:hover:scale-100
+        disabled:hover:bg-simpson-orange
         disabled:active:scale-100
         flex 
         items-center 

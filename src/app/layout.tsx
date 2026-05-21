@@ -29,13 +29,13 @@ export default function RootLayout({
       className={`${fredokaVariable.variable} antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-svh flex flex-col">
+      <body className="min-h-svh flex flex-col" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light">
           <StoreProvider>
             <Header />
             {children}
             <Footer />
-            </StoreProvider>
+          </StoreProvider>
         </ThemeProvider>
       </body>
     </html>
