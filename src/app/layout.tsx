@@ -32,8 +32,10 @@ export default function RootLayout({
       <body className="min-h-svh flex flex-col" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light">
           <StoreProvider>
-            <Header />
+            <Header /> 
+            <main className="flex-1 relative overflow-hidden">
             {children}
+            </main>
             <Footer />
           </StoreProvider>
         </ThemeProvider>
