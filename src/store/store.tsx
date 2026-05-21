@@ -2,7 +2,7 @@
 
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { Provider, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   persistStore,
   persistReducer,
@@ -42,20 +42,26 @@ export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// 🎯 Sous-composant pour appliquer la classe globale au HTML sans usine à gaz
 function ThemeApplier({ children }: { children: React.ReactNode }) {
   const isDarkMode = useSelector((state: RootState) => state.user.isDarkMode);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const root = window.document.documentElement;
-    if (isDarkMode) {
-      root.classList.add("dark");
-      root.classList.remove("light");
-    } else {
-      root.classList.add("light");
-      root.classList.remove("dark");
-    }
-  }, [isDarkMode]);
+
+    root.classList.toggle("dark", isDarkMode);
+    root.classList.toggle("light", !isDarkMode);
+  }, [isDarkMode, mounted]);
+
+  if (!mounted) {
+    return <div className="invisible">{children}</div>;
+  }
 
   return <>{children}</>;
 }
