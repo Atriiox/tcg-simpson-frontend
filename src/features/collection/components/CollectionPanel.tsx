@@ -3,19 +3,18 @@
 import { useState } from "react";
 import Card from "../../card/components/card";
 import { useCollection } from "../hooks/useCollection";
-import { FiGrid } from "react-icons/fi";
-
-type CardsPerRow = 4 | 6 | 8;
+import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi"; // On ajoute des icônes de loupe, plus et moins
 
 export default function CollectionPanel() {
   const { collection, isLoading, error } = useCollection();
-  const [cardsPerRow, setCardsPerRow] = useState<CardsPerRow>(6);
+  
+  // 🎯 State pour gérer la taille en pixels de la carte (135px par défaut)
+  const [cardSize, setCardSize] = useState<number>(135);
 
-  const gridColsConfig = {
-    4: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
-    6: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6",
-    8: "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8",
-  };
+  // Bornes minimales et maximales du zoom
+  const MIN_SIZE = 90;
+  const MAX_SIZE = 200;
+  const STEP = 15; // De combien de pixels on zoome/dézoome par clic
 
   if (isLoading) {
     return (
@@ -50,54 +49,72 @@ export default function CollectionPanel() {
     (card, index, self) => self.findIndex((c) => c.id === card.id) === index
   );
 
+  // Fonctions pour les boutons + et -
+  const handleZoomOut = () => setCardSize((prev) => Math.max(MIN_SIZE, prev - STEP));
+  const handleZoomIn = () => setCardSize((prev) => Math.min(MAX_SIZE, prev + STEP));
+
   return (
-    /* 🎯 LE CONTENEUR GLOBAL DE LA ZONE CENTRALE :
-       - h-full fige la hauteur totale.
-       - overflow-hidden empêche le bloc entier (y compris le titre) de scroller.
-    */
     <div className="flex-1 h-full overflow-hidden p-6 bg-transparent flex flex-col">
       
-      {/* 📌 HEADER DE LA COLLECTION (Désormais 100% fixe en haut) */}
-      {/* shrink-0 est crucial pour empêcher Flexbox de le compresser au profit de la grille */}
+      {/* 📌 HEADER DE LA COLLECTION (FIXE) */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-gray/5 pb-4 shrink-0">
         <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
           Ma Collection <span className="text-body font-bold text-simpson-gray ml-2">({collection.length})</span>
         </h1>
 
-        {/* CONTRÔLES D'AFFICHAGE */}
-        <div className="flex items-center gap-2 bg-white dark:bg-simpson-darklight p-1 rounded-xl border border-simpson-gray/10 dark:border-transparent select-none">
-          <div className="flex items-center gap-1 px-2 text-xs font-bold uppercase tracking-wider text-simpson-gray hidden md:flex">
-            <FiGrid size={14} className="mr-1" />Affichage
+        {/* 🎛️ NOUVEAU SYSTÈME DE ZOOM (SLIDER + ET -) */}
+        <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent select-none shadow-sm">
+          <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-simpson-gray hidden md:flex">
+            <FiZoomIn size={14} className="mr-1" /> Taille
           </div>
-          {([4, 6, 8] as CardsPerRow[]).map((num) => (
-            <button
-              key={num}
-              onClick={() => setCardsPerRow(num)}
-              className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-black transition-all cursor-pointer
-                ${cardsPerRow === num
-                  ? "bg-simpson-orange dark:bg-simpson-yellow text-white dark:text-simpson-dark shadow-sm scale-105"
-                  : "text-simpson-gray hover:text-simpson-dark dark:hover:text-simpson-white"
-                }`}
-            >
-              {num}
-            </button>
-          ))}
+          
+          {/* Bouton Moins */}
+          <button
+            onClick={handleZoomOut}
+            disabled={cardSize <= MIN_SIZE}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 hover:text-simpson-dark dark:hover:text-simpson-white disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-all"
+          >
+            <FiMinus size={12} />
+          </button>
+
+          {/* Slider (Input Range) */}
+          <input
+            type="range"
+            min={MIN_SIZE}
+            max={MAX_SIZE}
+            value={cardSize}
+            onChange={(e) => setCardSize(Number(e.target.value))}
+            className="w-24 sm:w-32 h-1.5 bg-simpson-gray/20 rounded-lg appearance-none cursor-pointer accent-simpson-orange dark:accent-simpson-yellow"
+          />
+
+          {/* Bouton Plus */}
+          <button
+            onClick={handleZoomIn}
+            disabled={cardSize >= MAX_SIZE}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 hover:text-simpson-dark dark:hover:text-simpson-white disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer transition-all"
+          >
+            <FiPlus size={12} />
+          </button>
         </div>
       </div>
       
-      {/* 🔮 UNIQUE ZONE DE SCROLL DU MILIEU :
-         - flex-1 prend tout l'espace disponible restant sous le header.
-         - overflow-y-auto et overflow-x-hidden confinent le scroll vertical uniquement ici.
-         - custom-scrollbar applique tes styles si tu en as dans globals.css.
-      */}
+      {/* 🔮 ZONE DE SCROLL UNIQUE DU MILIEU */}
       <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden custom-scrollbar w-full">
-        <div className={`grid ${gridColsConfig[cardsPerRow]} gap-6 w-full justify-items-center content-start pb-10`}>
+        {/* La grille réagit EN DIRECT au pixel près à la valeur de l'input range */}
+        <div 
+          className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
+          style={{
+            gridTemplateColumns: `repeat(auto-fill, ${cardSize}px)`
+          }}
+        >
           {uniqueCollection.map((card) => (
             <div
               key={card.id}
-              className="w-full min-w-[120px] max-w-[150px] transition-all duration-300 hover:-translate-y-1.5 hover:drop-shadow-[0_10px_15px_rgba(0,0,0,0.15)] dark:hover:drop-shadow-[0_10px_15px_rgba(255,255,255,0.1)]"
+              className="transition-all duration-300 hover:-translate-y-1.5 hover:drop-shadow-[0_10px_15px_rgba(0,0,0,0.15)] dark:hover:drop-shadow-[0_10px_15px_rgba(255,255,255,0.1)]"
+              style={{ width: `${cardSize}px` }}
             >
               <Card
+                size={cardSize} // 🎯 La prop 'size' change dynamiquement à chaque mouvement du slider !
                 name={card.name}
                 slug={card.slug}
                 type={card.type as "Personnage" | "Terrain" | "Objet"}
