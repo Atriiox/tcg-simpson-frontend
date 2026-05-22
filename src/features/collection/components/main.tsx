@@ -12,10 +12,13 @@ export default function Main() {
 
   return (
     <div className="flex items-stretch w-full h-full overflow-hidden relative">
-
       {/* Filter Panel + Toggle */}
-      <div className={`relative flex-shrink-0 flex ${!showFilter ? "w-3" : ""}`}>
-        <div className={`overflow-hidden [transition:max-width_700ms_ease-in] ${showFilter ? "max-w-[192px]" : "max-w-0"}`}>
+      <div
+        className={`relative flex-shrink-0 flex ${!showFilter ? "w-3" : ""}`}
+      >
+        <div
+          className={`overflow-hidden [transition:max-width_700ms_ease-in] ${showFilter ? "max-w-[192px]" : "max-w-0"}`}
+        >
           <FilterPanel />
         </div>
         <button
@@ -39,11 +42,12 @@ export default function Main() {
         >
           {showRight ? <FaAngleRight size={14} /> : <FaAngleLeft size={14} />}
         </button>
-        <div className={`overflow-hidden [transition:max-width_700ms_ease-in] ${showRight ? "max-w-[192px]" : "max-w-0"}`}>
+        <div
+          className={`overflow-hidden [transition:max-width_700ms_ease-in] ${showRight ? "max-w-[192px]" : "max-w-0"}`}
+        >
           <RightPanel />
         </div>
       </div>
-
     </div>
   );
 }
