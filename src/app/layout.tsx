@@ -28,10 +28,10 @@ export default function RootLayout({
       className={`${fredokaVariable.variable} antialiased`}
       suppressHydrationWarning // On le garde au cas où une extension chrome touche au DOM
     >
-      <body className="min-h-svh flex flex-col" suppressHydrationWarning>
+<body className="min-h-svh flex flex-col w-full" suppressHydrationWarning>
         <StoreProvider>
           <Header />
-          <main className="flex-1 relative overflow-hidden">{children}</main>
+       <main className="flex-1 overflow-hidden flex w-full">{children}</main>
           <Footer />
         </StoreProvider>
       </body>

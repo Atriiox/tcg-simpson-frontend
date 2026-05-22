@@ -4,7 +4,6 @@ import { useState } from "react";
 import Button from "@/components/ui/Button";
 import { FaSearch } from "react-icons/fa";
 
-
 type FilterData = {
   [group: string]: string[];
 };
@@ -28,15 +27,16 @@ export default function FilterPanel() {
   };
 
   return (
-    <div className="h-full w-64 bg-simpson-white flex flex-col p-7 border-r border-simpson-gray/20 overflow-y-auto shadow-md">
+    <div className="min-h-full w-48 bg-simpson-white dark:bg-simpson-dark flex flex-col p-7 border-r border-simpson-gray/20 dark:border-simpson-dark overflow-y-auto shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.3)]">
 
-      <h2 className="text-center text-title text-simpson-dark mb-5 tracking-wide uppercase text-[22px] [text-shadow:1px_1px_2px_rgba(0,0,0,0.7)]">
-        Filtrer
-      </h2>
+    <h2 className="text-center text-title mb-5 tracking-wide uppercase text-[22px] text-simpson-dark dark:text-simpson-light [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)]">
+  Filtrer
+</h2>
+
       <div className="relative mb-5">
         <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-simpson-gray" />
         <input
-          className="w-full pl-9 pr-3 py-2 rounded-xl bg-white text-simpson-dark text-body placeholder-simpson-gray outline-none shadow-sm"
+          className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-simpson-darklight text-simpson-dark dark:text-text text-body placeholder-simpson-gray outline-none shadow-sm"
           placeholder="Nom, famille, aff..."
           value={search}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -56,10 +56,11 @@ export default function FilterPanel() {
                 onClick={() => toggle(item)}
               >
                 <span
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 hover:border-simpson-orange ${checked[item]
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 hover:border-simpson-orange ${
+                    checked[item]
                       ? "bg-simpson-orange border-simpson-orange"
-                      : "bg-white border-gray-300"
-                    }`}
+                      : "bg-white dark:bg-simpson-darklight border-gray-300 dark:border-simpson-dark"
+                  }`}
                 >
                   {checked[item] && (
                     <svg viewBox="0 0 12 10" fill="none" className="w-3 h-2.5">
@@ -73,17 +74,17 @@ export default function FilterPanel() {
                     </svg>
                   )}
                 </span>
-                <span className="text-sm text-simpson-dark">{item}</span>
+                <span className="text-sm text-simpson-dark dark:text-text">{item}</span>
               </label>
             ))}
           </div>
         ))}
       </div>
 
-      <div className="flex gap-3 pt-4 border-t border-simpson-gray/20">
-        <Button className="w-24 flex-1">Valider</Button>
-        <Button className="flex-1 w-24 bg-white !text-simpson-dark hover:bg-gray-100">Annuler</Button>
-      </div>
+      <div className="flex gap-2 pt-4 border-t border-simpson-gray/20 dark:border-simpson-dark justify-center">
+  <Button className="w-20 text-sm">Valider</Button>
+  <Button className="w-20 text-sm !bg-white !text-simpson-dark hover:!bg-gray-100">Annuler</Button>
+</div>
 
     </div>
   );

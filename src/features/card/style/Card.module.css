@@ -6,7 +6,6 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 4px;
-  width: 200px;
   transition: background-position 0.5s;
   display: flex;
   position: relative;

@@ -1,9 +1,7 @@
-import Main from "@/features/collection/components/main";
+import Main from "@/features/collection/components/Main";
 
 export default function collection() {
   return (
-     <div className="h-full">
       <Main />
-    </div>
   );
 }

@@ -31,6 +31,7 @@ interface CardProps {
     };
   };
   onClick?: () => void;
+  size?: number; 
 }
 
 function Card(props: CardProps) {
@@ -67,6 +68,9 @@ function Card(props: CardProps) {
       className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass}`}
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
+         width: `${props.size ?? 200}px`,
+           maxWidth: props.size ?? 200,
+  minWidth: props.size ?? 200,
       }}
       onClick={props.onClick}
     >
