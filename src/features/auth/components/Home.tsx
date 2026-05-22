@@ -15,7 +15,7 @@ function Home() {
   return (
     <>
       {/* 1. Remplacement de flex-col par justify-center pour centrer verticalement le contenu principal */}
-      <div className="min-h-(--size-screen-content) h-full relative overflow-hidden flex items-center justify-center">
+      <div className="min-h-(--size-screen-content) h-full w-full relative overflow-hidden flex items-center justify-center">
         <div className="absolute right-16 top-0 flex items-center justify-center">
           <Image
             className="w-auto h-auto"
