@@ -35,13 +35,13 @@ function Header() {
     const isActive = pathname === path;
     return {
       link: `relative py-2 transition-colors duration-200 group ${
-        isActive 
-          ? "text-simpson-orange dark:text-simpson-yellow font-bold" 
+        isActive
+          ? "text-simpson-orange dark:text-simpson-yellow font-bold"
           : "hover:text-simpson-orange hover:dark:text-simpson-yellow text-text/80"
       }`,
       underline: `absolute bottom-0 left-1/2 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 ${
         isActive ? "w-full" : "w-0 group-hover:w-full"
-      }`
+      }`,
     };
   };
 
@@ -75,7 +75,10 @@ function Header() {
             </Link>
           )}
 
-          <Link href="/collection" className={getLinkStyles("/collection").link}>
+          <Link
+            href="/collection"
+            className={getLinkStyles("/collection").link}
+          >
             Collection
             <span className={getLinkStyles("/collection").underline} />
           </Link>
@@ -87,7 +90,10 @@ function Header() {
             </Link>
           )}
 
-          <Link href="/regles-du-jeu" className={getLinkStyles("/regles-du-jeu").link}>
+          <Link
+            href="/regles-du-jeu"
+            className={getLinkStyles("/regles-du-jeu").link}
+          >
             Règles du jeu
             <span className={getLinkStyles("/regles-du-jeu").underline} />
           </Link>
@@ -100,7 +106,7 @@ function Header() {
               <div className="flex flex-col items-end justify-center">
                 <span className="font-semibold">{pseudo || "Pseudo"}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
+                  <span className="text-medium font-semibold text-simpson-orange dark:text-simpson-yellow">
                     {money?.toLocaleString() || 0}
                   </span>
                   <Image
@@ -131,7 +137,6 @@ function Header() {
             </>
           )}
         </div>
-        
       </header>
 
       {/* MODAL PROFIL */}

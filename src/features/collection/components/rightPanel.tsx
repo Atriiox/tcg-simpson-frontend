@@ -41,7 +41,7 @@ function DecksTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-center text-subtitle font-bold mb-2 tracking-wide text-simpson-dark dark:text-simpson-white uppercase text-sm">
+      <h2 className="text-center text-subtitle font-bold mb-2 tracking-wide text-simpson-dark dark:text-simpson-white text-sm">
         Mes Decks
       </h2>
 
@@ -80,7 +80,7 @@ function DecksTab() {
 function BoostersTab() {
   return (
     <div className="flex flex-col items-center justify-center pt-4">
-      <h2 className="text-center text-subtitle font-bold mb-6 tracking-wide text-simpson-dark dark:text-simpson-white uppercase text-sm w-full">
+      <h2 className="text-center text-subtitle font-bold mb-6 tracking-wide text-simpson-dark dark:text-simpson-white text-sm w-full">
         Mes Boosters
       </h2>
       <p className="text-body text-simpson-gray text-center mt-4 font-medium">

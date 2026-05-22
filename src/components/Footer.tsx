@@ -16,12 +16,6 @@ function Footer() {
       >
         Données personnelles
       </Link>
-      <Link
-        className="flex items-center justify-center text-white/70 hover:text-white hover:underline transition-colors duration-200"
-        href="/a-propos"
-      >
-        A propos
-      </Link>
     </footer>
   );
 }
