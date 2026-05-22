@@ -31,7 +31,7 @@ interface CardProps {
     };
   };
   onClick?: () => void;
-  size?: number; 
+  size?: number;
 }
 
 function Card(props: CardProps) {
@@ -68,9 +68,13 @@ function Card(props: CardProps) {
       className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass}`}
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
-         width: `${props.size ?? 200}px`,
-           maxWidth: props.size ?? 200,
-  minWidth: props.size ?? 200,
+        width: `${props.size ?? 200}px`,
+        maxWidth: props.size ?? 200,
+        minWidth: props.size ?? 200,
+        /* 🎯 LA LIGNE MAGIQUE : Calcule le repère pour toutes les unités em du CSS.
+     Si la carte fait 200px, font-size = 20px (ton rendu de base).
+     Si la carte fait 100px, font-size = 10px (tout diminue de moitié au pixel près !) */
+        fontSize: `${(props.size ?? 200) / 10}px`,
       }}
       onClick={props.onClick}
     >

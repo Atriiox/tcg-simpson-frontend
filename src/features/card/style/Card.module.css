@@ -1,16 +1,16 @@
 .card {
   aspect-ratio: 2.5 / 3.5;
   cursor: pointer;
-  border: 1px solid #000;
-  border-radius: 8px;
+  border: 0.05em solid #000; /* 1px / 20 */
+  border-radius: 0.4em; /* 8px / 20 */
   flex-direction: column;
   justify-content: space-between;
-  gap: 4px;
+  gap: 0.2em; /* 4px / 20 */
   transition: background-position 0.5s;
   display: flex;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 8px #0003;
+  box-shadow: 0 0.2em 0.4em #0003;
   background-color: #7bbfe9;
   background-size: 70%;
   background-repeat: no-repeat;
@@ -61,13 +61,13 @@
 .headerCard {
   color: #fff;
   width: fit-content;
-  padding: 2px 16px 4px 8px;
-  margin-top: 2px;
-  border-radius: 0px 4px 18px 0px;
+  padding: 0.1em 0.8em 0.2em 0.4em; /* Proportionnel */
+  margin-top: 0.1em;
+  border-radius: 0px 0.2em 0.9em 0px;
 }
 .headerCard .name {
-  text-shadow: 1px 1px #000000;
-  font-size: 16px;
+  text-shadow: 0.05em 0.05em #000000;
+  font-size: 0.8em; /* 16px / 20 */
   font-weight: 600;
 }
 
@@ -77,28 +77,28 @@
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  margin-top: 4px;
-  gap: 4px;
+  margin-top: 0.2em;
+  gap: 0.2em;
   position: relative;
-  padding: 0 0 4px;
+  padding: 0 0 0.2em;
 }
 .stats {
   justify-content: flex-end;
   align-items: center;
-  gap: 3px;
+  gap: 0.15em;
   width: 100%;
-  font-size: 14px;
+  font-size: 0.7em; /* 14px / 20 */
   display: flex;
   position: absolute;
-  bottom: -30px;
-  right: 6px;
+  bottom: -1.5em; /* Reste proportionnel au bas de la carte */
+  right: 0.3em;
 }
 .stats .pv,
 .stats .atk {
-  border-radius: 8px;
+  border-radius: 0.4em;
   align-items: center;
-  gap: 3px;
-  padding: 2px 6px 10px 6px;
+  gap: 0.15em;
+  padding: 0.1em 0.3em 0.5em 0.3em;
   font-weight: 600;
   display: flex;
   color: #fff;
@@ -111,19 +111,23 @@
 }
 .stats .pv svg {
   color: #ffccc1;
+  width: 1em;  /* Force les icônes react-icons à suivre le texte */
+  height: 1em;
 }
 .stats .atk svg {
   color: #fdd903;
+  width: 1em;
+  height: 1em;
 }
 
 .desc {
   width: 100%;
-  font-size: 10px;
+  font-size: 0.5em; /* 10px / 20 */
   display: flex;
   flex-direction: column;
-  padding: 4px 0;
+  padding: 0.2em 0;
   color: white;
-  gap: 1px;
+  gap: 0.05em;
 }
 
 .famille,
@@ -131,12 +135,12 @@
 .terrain,
 .objet {
   text-align: center;
-  border-radius: 0 4px 4px 0;
-  gap: 2px;
+  border-radius: 0 0.2em 0.2em 0;
+  gap: 0.1em;
   width: fit-content;
-  font-size: 12px;
+  font-size: 0.6em; /* 12px / 20 */
   display: flex;
-  padding: 2px;
+  padding: 0.1em;
   font-weight: 500;
 }
 .famille {
@@ -157,17 +161,19 @@
   display: flex;
   align-items: center;
   justify-content: start;
-  font-size: 8px;
+  font-size: 0.4em; /* 8px / 20 */
   color: white;
   font-weight: 500;
-  padding: 2px 4px;
-  text-shadow: 0px 0px 2px #000000;
-  gap: 4px;
+  padding: 0.1em 0.2em;
+  text-shadow: 0px 0px 0.1em #000000;
+  gap: 0.2em;
 }
 .footerCard span {
   display: flex;
   align-items: center;
 }
 .footerCard span svg {
-  filter: drop-shadow(0.9px 0.9px 0px #000000);
+  width: 1.1em;
+  height: 1.1em;
+  filter: drop-shadow(0.05em 0.05em 0px #000000);
 }
