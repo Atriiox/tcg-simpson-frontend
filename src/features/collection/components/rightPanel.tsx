@@ -9,26 +9,25 @@ export default function RightPanel() {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
 
   return (
-    <div className="flex flex-col min-h-full w-48 bg-simpson-white dark:bg-simpson-dark border-l border-simpson-gray/20 dark:border-simpson-dark shadow-md dark:shadow-[0_4px_12px_rgba(255,255,255,0.3)]">
-
-      {/* Tabs */}
-      <div className="flex border-b border-simpson-gray/20 dark:border-simpson-dark">
+    <div className="h-full flex flex-col bg-transparent">
+      {/* 🎯 Onglets Modernes Fluides adaptés au blanc cassé */}
+      <div className="flex p-1.5 bg-white dark:bg-simpson-darklight rounded-xl mx-4 mt-4 gap-1">
         {(["boosters", "decks"] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-medium font-semibold capitalize transition-all duration-200 cursor-pointer
+            className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer
               ${activeTab === tab
-                ? "text-simpson-orange border-b-2 border-simpson-orange bg-white dark:bg-simpson-darklight"
-                : "text-simpson-gray hover:text-simpson-dark dark:hover:text-text"
+                ? "bg-simpson-white dark:bg-simpson-dark text-simpson-orange dark:text-simpson-yellow shadow-xs"
+                : "text-simpson-gray hover:text-simpson-dark dark:hover:text-simpson-white"
               }`}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab}
           </button>
         ))}
       </div>
 
-      {/* Content */}
+      {/* Zone de Contenu */}
       <div className="flex-1 overflow-y-auto p-4">
         {activeTab === "decks" && <DecksTab />}
         {activeTab === "boosters" && <BoostersTab />}
@@ -40,37 +39,38 @@ export default function RightPanel() {
 function DecksTab() {
   const [decks, setDecks] = useState<string[]>([]);
 
-  const createDeck = () => {
-    setDecks((prev) => [...prev, `Deck ${prev.length + 1}`]);
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-center text-title mb-5 tracking-wide uppercase text-[22px] text-simpson-dark dark:text-simpson-light [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)]">
-  Decks
-</h2>
+      <h2 className="text-center text-subtitle font-bold mb-2 tracking-wide text-simpson-dark dark:text-simpson-white uppercase text-sm">
+        Mes Decks
+      </h2>
 
-      <Button onClick={createDeck} className="w-full">
+      <Button 
+        onClick={() => setDecks((p) => [...p, `Deck ${p.length + 1}`])} 
+        className="w-full py-2.5 text-sm font-bold cursor-pointer"
+      >
         Créer un deck
       </Button>
 
-      {decks.length > 0 && (
-        <div className="flex flex-col gap-2 mt-2">
+      {decks.length > 0 ? (
+        <div className="flex flex-col gap-2">
           {decks.map((deck, i) => (
             <div
               key={i}
-              className="flex items-center justify-between bg-white dark:bg-simpson-darklight rounded-xl px-4 py-3 shadow-sm"
+              className="flex items-center justify-between bg-white dark:bg-simpson-darklight border border-simpson-gray/5 dark:border-transparent rounded-xl px-4 py-3 shadow-xs hover:border-simpson-orange/30 transition-colors cursor-pointer group"
             >
-              <span className="text-medium text-simpson-dark dark:text-text font-medium">{deck}</span>
-              <span className="text-body text-simpson-gray">0 cartes</span>
+              <span className="text-body font-semibold text-simpson-dark dark:text-simpson-white group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow transition-colors">
+                {deck}
+              </span>
+              <span className="text-xs font-bold text-simpson-gray bg-simpson-light dark:bg-simpson-dark px-2 py-0.5 rounded-md">
+                0 / 50
+              </span>
             </div>
           ))}
         </div>
-      )}
-
-      {decks.length === 0 && (
-        <p className="text-body text-simpson-gray text-center mt-8">
-          Aucun deck créé pour l'instant
+      ) : (
+        <p className="text-body text-simpson-gray text-center mt-8 font-medium">
+          Aucun deck pour l'instant
         </p>
       )}
     </div>
@@ -79,12 +79,11 @@ function DecksTab() {
 
 function BoostersTab() {
   return (
-    <div className="flex flex-col gap-4">
-       <h2 className="text-center text-title mb-5 tracking-wide uppercase text-[22px] text-simpson-dark dark:text-simpson-light [text-shadow:2px_2px_4px_rgba(0,0,0,0.3)]">
-  Boosters
-</h2>
-
-      <p className="text-body text-simpson-gray text-center mt-8">
+    <div className="flex flex-col items-center justify-center pt-4">
+      <h2 className="text-center text-subtitle font-bold mb-6 tracking-wide text-simpson-dark dark:text-simpson-white uppercase text-sm w-full">
+        Mes Boosters
+      </h2>
+      <p className="text-body text-simpson-gray text-center mt-4 font-medium">
         Aucun booster disponible
       </p>
     </div>

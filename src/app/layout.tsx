@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import { StoreProvider } from "../store/store"; // Ton StoreProvider qui va gérer le thème
+import { StoreProvider } from "../store/store"; 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -25,13 +25,17 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${fredokaVariable.variable} antialiased`}
-      suppressHydrationWarning // On le garde au cas où une extension chrome touche au DOM
+      className={`${fredokaVariable.variable} antialiased h-full w-full overflow-hidden`}
+      suppressHydrationWarning
     >
-<body className="min-h-svh flex flex-col w-full" suppressHydrationWarning>
+      {/* 🎯 h-svh + overflow-hidden ici verrouille l'écran. Le Header et le Footer deviennent fixes. */}
+      <body className="h-svh w-full flex flex-col overflow-hidden bg-white dark:bg-simpson-dark" suppressHydrationWarning>
         <StoreProvider>
           <Header />
-       <main className="flex-1 overflow-hidden flex w-full">{children}</main>
+          {/* 🎯 Le main prend tout l'espace restant entre le header et le footer et bloque tout scroll externe */}
+          <main className="flex-1 overflow-hidden flex w-full relative">
+            {children}
+          </main>
           <Footer />
         </StoreProvider>
       </body>

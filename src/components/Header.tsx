@@ -30,10 +30,13 @@ function Header() {
 
   return (
     <>
-      <header className="flex bg-white dark:bg-simpson-darklight shadow-md h-17.5 items-center px-6">
+      <header className="relative z-40 flex bg-white dark:bg-simpson-darklight shadow-md h-17.5 items-center px-6">
         {/* LOGO */}
         <div className="w-2/12 flex items-center">
-          <Link href={logoHref} className="cursor-pointer inline-block transition-transform duration-200 active:scale-95">
+          <Link
+            href={logoHref}
+            className="cursor-pointer inline-block transition-transform duration-200 active:scale-95"
+          >
             <Image
               className="w-auto h-auto max-h-12.5 object-contain"
               loading="eager"
@@ -45,7 +48,6 @@ function Header() {
             />
           </Link>
         </div>
-
         {/* NAVIGATION */}
         <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
           {mounted && !token && (
@@ -74,7 +76,6 @@ function Header() {
             <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
           </Link>
         </nav>
-
         {/* ESPACE UTILISATEUR / ACTIONS */}
         <div className="w-2/12 flex justify-end items-center gap-4 min-h-16">
           {mounted && token && (
