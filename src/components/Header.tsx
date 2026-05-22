@@ -25,25 +25,29 @@ function Header() {
 
   const handleClose = () => setIsProfileOpen(false);
 
+  // 🎯 Détermination dynamique du lien du logo (Fallback sur "/" pendant le SSR)
+  const logoHref = mounted && token ? "/collection" : "/";
+
   return (
     <>
       <header className="flex bg-white dark:bg-simpson-darklight shadow-md h-17.5 items-center px-6">
         {/* LOGO */}
         <div className="w-2/12 flex items-center">
-          <Image
-            className="w-auto h-auto max-h-12.5 object-contain"
-            loading="eager"
-            src={logo}
-            alt="logo"
-            width={110}
-            height={60}
-            priority
-          />
+          <Link href={logoHref} className="cursor-pointer inline-block transition-transform duration-200 active:scale-95">
+            <Image
+              className="w-auto h-auto max-h-12.5 object-contain"
+              loading="eager"
+              src={logo}
+              alt="logo"
+              width={110}
+              height={60}
+              priority
+            />
+          </Link>
         </div>
 
         {/* NAVIGATION */}
         <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
-          {/* 🎯 Condition sécurisée par le flag mounted */}
           {mounted && !token && (
             <Link
               href="/"
@@ -73,7 +77,6 @@ function Header() {
 
         {/* ESPACE UTILISATEUR / ACTIONS */}
         <div className="w-2/12 flex justify-end items-center gap-4 min-h-16">
-          {/* 🎯 On attend d'être monté sur le client pour évaluer le token persistant */}
           {mounted && token && (
             <>
               <div className="flex flex-col items-end justify-center">
