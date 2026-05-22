@@ -8,7 +8,7 @@ export default function ReglesDuJeu() {
     <div className="flex-1 w-full h-full overflow-y-auto p-6 sm:p-12 font-main select-none">
       
       {/* Container principal style Glassmorphism */}
-      <div className="max-w-3xl mx-auto bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-8 sm:p-10 rounded-[2rem] border border-white/40 dark:border-white/10 shadow-xl mb-6">
+      <div className="max-w-3xl mx-auto bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-8 sm:p-10 rounded-xl border border-white/40 dark:border-white/10 shadow-xl mb-6">
         
         {/* Titre principal */}
         <div className="text-center mb-10">
