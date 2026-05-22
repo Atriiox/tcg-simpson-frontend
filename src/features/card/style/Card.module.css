@@ -151,7 +151,7 @@
   width: fit-content;
   font-size: 0.6em; /* 12px / 20 */
   display: flex;
-  padding: 0.1em;
+  padding: 0.1em 0.3em;
   font-weight: 500;
 }
 .famille {

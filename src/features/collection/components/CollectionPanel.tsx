@@ -104,7 +104,7 @@ export default function CollectionPanel() {
   return (
     <div className="flex-1 h-full overflow-hidden px-6 pt-6 bg-transparent flex flex-col">
       {/* 📌 HEADER DE LA COLLECTION (FIXE) */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-gray/5 pb-4 shrink-0">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-dark/20 pb-4 shrink-0">
         <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
           Ma Collection{" "}
           <span className="text-body font-bold text-simpson-gray ml-2">
@@ -146,7 +146,7 @@ export default function CollectionPanel() {
       </div>
 
       {/* 🔮 ZONE DE SCROLL DE LA GRILLE */}
-      <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden custom-scrollbar w-full">
+      <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden w-full">
         <div
           className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
           style={{

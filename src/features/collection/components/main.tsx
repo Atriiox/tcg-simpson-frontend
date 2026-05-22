@@ -24,7 +24,7 @@ export default function Main() {
       {/* h-full et overflow-hidden empêchent ce bloc de grandir ou de scroller la page entière */}
       <div className="relative z-10 border-r border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-xl dark:shadow-[4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
         {/* Si le contenu des filtres est plus grand que l'écran, il scrolle UNIQUEMENT sur lui-même */}
-        <div className="w-[240px] h-full overflow-y-auto custom-scrollbar">
+        <div className="w-60 h-full overflow-y-auto custom-scrollbar">
           <FilterPanel />
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function Main() {
       {/* Même logique d'étanchéité que le panneau gauche */}
       <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
         {/* Si les decks dépassent, le scroll reste confiné à cette colonne de 220px */}
-        <div className="w-[220px] h-full overflow-y-auto custom-scrollbar">
+        <div className="w-55 h-full overflow-y-auto custom-scrollbar">
           <RightPanel />
         </div>
       </div>
