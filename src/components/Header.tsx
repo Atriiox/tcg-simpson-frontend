@@ -48,6 +48,7 @@ function Header() {
             />
           </Link>
         </div>
+
         {/* NAVIGATION */}
         <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
           {mounted && !token && (
@@ -68,6 +69,16 @@ function Header() {
             <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
           </Link>
 
+          {mounted && token && (
+            <Link
+              href="/boutique" // 🎯 Ajuste le chemin du dossier de ta page Next.js si besoin
+              className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
+            >
+              Boutique
+              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+            </Link>
+          )}
+
           <Link
             href="/regles-du-jeu"
             className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
@@ -76,6 +87,7 @@ function Header() {
             <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
           </Link>
         </nav>
+
         {/* ESPACE UTILISATEUR / ACTIONS */}
         <div className="w-2/12 flex justify-end items-center gap-4 min-h-16">
           {mounted && token && (
@@ -87,11 +99,11 @@ function Header() {
                     {money?.toLocaleString() || 0}
                   </span>
                   <Image
-                    src="/donuts.webp"
+                    src="/donuts1.webp"
                     alt="Donut Icon"
-                    width={18}
-                    height={18}
-                    className="object-contain"
+                    width={50}
+                    height={50}
+                    className="object-contain h-5 w-5"
                   />
                 </div>
               </div>

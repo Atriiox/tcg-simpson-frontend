@@ -37,33 +37,57 @@ import * as THREE from "three";
 // Données Pokémon (pool et helpers)
 // ============================================================
 
-const SIMPSON_CARDS = [
-  
-]
+const SIMPSON_CARDS = [];
 
 const POKEMON_IDS = [
-  1, 3, 4, 6, 7, 9, 12, 18, 25, 26, 39, 52, 59, 65, 68, 76, 78, 82, 89,
-  94, 113, 130, 131, 134, 135, 136, 143, 144, 145, 146, 149, 150, 151,
-  196, 197, 248, 282, 359, 376, 384, 445, 448, 658, 700,
+  1, 3, 4, 6, 7, 9, 12, 18, 25, 26, 39, 52, 59, 65, 68, 76, 78, 82, 89, 94, 113,
+  130, 131, 134, 135, 136, 143, 144, 145, 146, 149, 150, 151, 196, 197, 248,
+  282, 359, 376, 384, 445, 448, 658, 700,
 ];
 const ULTRA_RARE_IDS = new Set([144, 145, 146, 150, 151, 248, 384, 448]);
 const RARE_IDS = new Set([
-  3, 6, 9, 65, 94, 130, 134, 135, 136, 143, 149, 196, 197, 282, 359, 376,
-  445, 658,
+  3, 6, 9, 65, 94, 130, 134, 135, 136, 143, 149, 196, 197, 282, 359, 376, 445,
+  658,
 ]);
 const TYPE_FR = {
-  normal: "Normal", fire: "Feu", water: "Eau", electric: "Électrique",
-  grass: "Plante", ice: "Glace", fighting: "Combat", poison: "Poison",
-  ground: "Sol", flying: "Vol", psychic: "Psy", bug: "Insecte",
-  rock: "Roche", ghost: "Spectre", dragon: "Dragon", dark: "Ténèbres",
-  steel: "Acier", fairy: "Fée",
+  normal: "Normal",
+  fire: "Feu",
+  water: "Eau",
+  electric: "Électrique",
+  grass: "Plante",
+  ice: "Glace",
+  fighting: "Combat",
+  poison: "Poison",
+  ground: "Sol",
+  flying: "Vol",
+  psychic: "Psy",
+  bug: "Insecte",
+  rock: "Roche",
+  ghost: "Spectre",
+  dragon: "Dragon",
+  dark: "Ténèbres",
+  steel: "Acier",
+  fairy: "Fée",
 };
 const TYPE_COLORS = {
-  normal: "#A8A77A", fire: "#EE8130", water: "#6390F0", electric: "#F7D02C",
-  grass: "#7AC74C", ice: "#96D9D6", fighting: "#C22E28", poison: "#A33EA1",
-  ground: "#E2BF65", flying: "#A98FF3", psychic: "#F95587", bug: "#A6B91A",
-  rock: "#B6A136", ghost: "#735797", dragon: "#6F35FC", dark: "#705746",
-  steel: "#B7B7CE", fairy: "#D685AD",
+  normal: "#A8A77A",
+  fire: "#EE8130",
+  water: "#6390F0",
+  electric: "#F7D02C",
+  grass: "#7AC74C",
+  ice: "#96D9D6",
+  fighting: "#C22E28",
+  poison: "#A33EA1",
+  ground: "#E2BF65",
+  flying: "#A98FF3",
+  psychic: "#F95587",
+  bug: "#A6B91A",
+  rock: "#B6A136",
+  ghost: "#735797",
+  dragon: "#6F35FC",
+  dark: "#705746",
+  steel: "#B7B7CE",
+  fairy: "#D685AD",
 };
 
 const pokemonCache = new Map();
@@ -90,8 +114,8 @@ async function fetchPokemonCard(id) {
   const rarity = ULTRA_RARE_IDS.has(id)
     ? "ultra"
     : RARE_IDS.has(id)
-    ? "rare"
-    : "common";
+      ? "rare"
+      : "common";
   const card = {
     id,
     name: frenchName,
@@ -109,7 +133,7 @@ async function pickRandomCards(count = 5) {
   const shuffled = [...POKEMON_IDS].sort(() => Math.random() - 0.5);
   const picked = shuffled.slice(0, count);
   const hasRare = picked.some(
-    (id) => RARE_IDS.has(id) || ULTRA_RARE_IDS.has(id)
+    (id) => RARE_IDS.has(id) || ULTRA_RARE_IDS.has(id),
   );
   if (!hasRare) {
     const rares = [...RARE_IDS, ...ULTRA_RARE_IDS];
@@ -133,10 +157,10 @@ function generateNormalMap(canvas) {
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       const h =
-        Math.sin(x * 0.025 + y * 0.040) * 0.50 +
-        Math.sin(x * 0.060 - y * 0.020) * 0.30 +
-        Math.sin(x * 0.130 + y * 0.110) * 0.15 +
-        Math.cos(x * 0.018 + y * 0.080) * 0.20;
+        Math.sin(x * 0.025 + y * 0.04) * 0.5 +
+        Math.sin(x * 0.06 - y * 0.02) * 0.3 +
+        Math.sin(x * 0.13 + y * 0.11) * 0.15 +
+        Math.cos(x * 0.018 + y * 0.08) * 0.2;
       heights[y * W + x] = h;
     }
   }
@@ -155,7 +179,7 @@ function generateNormalMap(canvas) {
       const len = Math.sqrt(dx * dx + dy * dy + 1);
       const nx = -dx / len;
       const ny = -dy / len;
-      const nz =   1 / len;
+      const nz = 1 / len;
       const i = idx * 4;
       data[i + 0] = (nx * 0.5 + 0.5) * 255;
       data[i + 1] = (ny * 0.5 + 0.5) * 255;
@@ -173,9 +197,9 @@ function generateNormalMap(canvas) {
 // ============================================================
 function detectBoosterBounds(img) {
   const SAMPLE_W = 200;
-  const sampleH  = Math.round((SAMPLE_W * img.naturalHeight) / img.naturalWidth);
+  const sampleH = Math.round((SAMPLE_W * img.naturalHeight) / img.naturalWidth);
   const canvas = document.createElement("canvas");
-  canvas.width  = SAMPLE_W;
+  canvas.width = SAMPLE_W;
   canvas.height = sampleH;
   const ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0, SAMPLE_W, sampleH);
@@ -222,7 +246,7 @@ function detectBoosterBounds(img) {
   // Normalisation en UV [0..1] (top-left origin)
   const u0 = minX / SAMPLE_W;
   const u1 = (maxX + 1) / SAMPLE_W;
-  const yTop    = minY / sampleH;
+  const yTop = minY / sampleH;
   const yBottom = (maxY + 1) / sampleH;
 
   // Ratio largeur/hauteur de la zone détectée (proportions du
@@ -236,7 +260,7 @@ function detectBoosterBounds(img) {
     u0,
     u1,
     v0: 1 - yBottom, // bas du booster (texture v faible)
-    v1: 1 - yTop,    // haut du booster (texture v fort)
+    v1: 1 - yTop, // haut du booster (texture v fort)
     aspect,
   };
 }
@@ -270,7 +294,7 @@ function useBoosterTextures(imageUrl) {
 
       // Normal map procédurale (plis plastique)
       const cNormal = document.createElement("canvas");
-      cNormal.width  = 512;
+      cNormal.width = 512;
       cNormal.height = 800;
       generateNormalMap(cNormal);
       const normalTex = new THREE.CanvasTexture(cNormal);
@@ -289,7 +313,7 @@ function useBoosterTextures(imageUrl) {
     img.onerror = () => {
       console.error(
         `[PokemonBoosterPack3D] Impossible de charger l'image "${imageUrl}". ` +
-        `Place une image PNG/JPG dans /public/ et passe son chemin en prop.`
+          `Place une image PNG/JPG dans /public/ et passe son chemin en prop.`,
       );
     };
     img.src = imageUrl;
@@ -332,26 +356,28 @@ function buildPartialUVPlane(width, height, vStart, vEnd, bounds) {
 // Mesh 3D du booster (top + bottom)
 // ============================================================
 const PACK_W = 2.0;
-const TEAR_V = 0.12;            // ligne de déchirure (12% depuis le haut)
+const TEAR_V = 0.12; // ligne de déchirure (12% depuis le haut)
 
 function BoosterMesh({ tearProgress, isOpening, textures }) {
   const bounds = textures?.bounds;
   // Aspect ratio DU BOOSTER (pas de l'image entière)
-  const aspect = textures?.aspect ?? (1949 / 2600);
-  const packH  = PACK_W / aspect;
-  const topH   = packH * TEAR_V;
-  const botH   = packH * (1 - TEAR_V);
+  const aspect = textures?.aspect ?? 1949 / 2600;
+  const packH = PACK_W / aspect;
+  const topH = packH * TEAR_V;
+  const botH = packH * (1 - TEAR_V);
 
-  const topPivotRef   = useRef();
+  const topPivotRef = useRef();
   const bottomMeshRef = useRef();
 
   const topGeo = useMemo(
-    () => bounds ? buildPartialUVPlane(PACK_W, topH, 1 - TEAR_V, 1, bounds) : null,
-    [topH, bounds]
+    () =>
+      bounds ? buildPartialUVPlane(PACK_W, topH, 1 - TEAR_V, 1, bounds) : null,
+    [topH, bounds],
   );
   const botGeo = useMemo(
-    () => bounds ? buildPartialUVPlane(PACK_W, botH, 0, 1 - TEAR_V, bounds) : null,
-    [botH, bounds]
+    () =>
+      bounds ? buildPartialUVPlane(PACK_W, botH, 0, 1 - TEAR_V, bounds) : null,
+    [botH, bounds],
   );
 
   useFrame((state) => {
@@ -367,14 +393,13 @@ function BoosterMesh({ tearProgress, isOpening, textures }) {
     // Animation de déchirure : 0 → 90° (et arrachage vers la caméra)
     if (topPivotRef.current) {
       const p = Math.min(1, Math.max(0, tearProgress / 100));
-      const angle = p * (Math.PI / 2);       // jusqu'à 90° (edge-on)
-      const liftZ = p * 0.6;                 // vers la caméra
-      const liftY = p * 0.25;                // remonte un peu
+      const angle = p * (Math.PI / 2); // jusqu'à 90° (edge-on)
+      const liftZ = p * 0.6; // vers la caméra
+      const liftY = p * 0.25; // remonte un peu
       topPivotRef.current.rotation.x = -angle;
-      topPivotRef.current.position.z =  liftZ;
+      topPivotRef.current.position.z = liftZ;
       topPivotRef.current.position.y =
-        botH - packH / 2 + liftY +
-        (isOpening ? 0 : Math.sin(t * 1.2) * 0.025);
+        botH - packH / 2 + liftY + (isOpening ? 0 : Math.sin(t * 1.2) * 0.025);
     }
   });
 
@@ -442,17 +467,23 @@ function BoosterScene({ tearProgress, isOpening, tilt, textures }) {
       dpr={[1, 2]}
       camera={{ position: [0, 0, 6.5], fov: 30 }}
       style={{ width: "100%", height: "100%" }}
-      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
-      // important : laisse les pointer events passer au overlay
+      // Ajout de alpha: true pour autoriser la transparence du WebGL
+      gl={{
+        antialias: true,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        alpha: true,
+      }}
       onCreated={({ gl }) => {
         gl.domElement.style.touchAction = "none";
+        // Optionnel : force le clearColor à transparent
+        gl.setClearColor(0x000000, 0);
       }}
     >
       <Environment preset="city" />
       <ambientLight intensity={0.45} />
       <directionalLight position={[4, 6, 5]} intensity={0.9} />
       <pointLight position={[-4, -2, 3]} intensity={0.4} color="#9b6bff" />
-      <pointLight position={[ 4, -1, 2]} intensity={0.35} color="#ff7a3d" />
+      <pointLight position={[4, -1, 2]} intensity={0.35} color="#ff7a3d" />
 
       <ParallaxGroup tilt={tilt} isOpening={isOpening}>
         <BoosterMesh
@@ -474,11 +505,7 @@ function CardReveal({ cards, onReset }) {
       <h2 style={styles.revealTitle}>✨ Tes cartes ! ✨</h2>
       <div style={styles.cardsGrid}>
         {cards.map((card, idx) => (
-          <PokemonCard
-            key={`${card.id}-${idx}`}
-            card={card}
-            index={idx}
-          />
+          <PokemonCard key={`${card.id}-${idx}`} card={card} index={idx} />
         ))}
       </div>
       <button style={styles.resetBtn} onClick={onReset}>
@@ -515,9 +542,7 @@ function PokemonCard({ card, index }) {
             draggable={false}
           />
         ) : (
-          <div style={{ color: "#666", fontSize: 12 }}>
-            Image indisponible
-          </div>
+          <div style={{ color: "#666", fontSize: 12 }}>Image indisponible</div>
         )}
       </div>
       <div style={styles.cardFooter}>
@@ -531,8 +556,8 @@ function PokemonCard({ card, index }) {
           {card.rarity === "ultra"
             ? "★ ULTRA ★"
             : card.rarity === "rare"
-            ? "◆ RARE"
-            : "● COMMUNE"}
+              ? "◆ RARE"
+              : "● COMMUNE"}
         </span>
       </div>
     </div>
@@ -574,16 +599,16 @@ function hexToRgb(hex) {
 // ============================================================
 export default function PokemonBoosterPack3D({ imageUrl = "/booster1.webp" }) {
   const [tearProgress, setTearProgress] = useState(0);
-  const [isDragging, setIsDragging]     = useState(false);
-  const [isOpened, setIsOpened]         = useState(false);
-  const [cards, setCards]               = useState([]);
-  const [loading, setLoading]           = useState(false);
-  const [error, setError]               = useState(null);
-  const [tilt, setTilt]                 = useState({ rx: 0, ry: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isOpened, setIsOpened] = useState(false);
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
 
-  const containerRef  = useRef(null);
+  const containerRef = useRef(null);
   const dragStartXRef = useRef(0);
-  const openedRef     = useRef(false);
+  const openedRef = useRef(false);
 
   const textures = useBoosterTextures(imageUrl);
 
@@ -661,10 +686,10 @@ export default function PokemonBoosterPack3D({ imageUrl = "/booster1.webp" }) {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
-    const cy = rect.top  + rect.height / 2;
-    const nx = (e.clientX - cx) / (rect.width  / 2);
+    const cy = rect.top + rect.height / 2;
+    const nx = (e.clientX - cx) / (rect.width / 2);
     const ny = (e.clientY - cy) / (rect.height / 2);
-    setTilt({ rx: -ny * 0.25, ry: nx * 0.30 });
+    setTilt({ rx: -ny * 0.25, ry: nx * 0.3 });
   };
 
   const handleHoverLeave = () => {
@@ -718,10 +743,13 @@ export default function PokemonBoosterPack3D({ imageUrl = "/booster1.webp" }) {
                   📦 Aucune image trouvée à <code>{imageUrl}</code>
                 </p>
                 <p style={{ margin: "8px 0 0", fontSize: 13 }}>
-                  Place une image PNG/JPG du booster dans
-                  &nbsp;<code>/public/booster1.webp</code>&nbsp;
-                  ou passe son chemin en prop&nbsp;:<br />
-                  <code>&lt;PokemonBoosterPack3D imageUrl="/ton-image.png" /&gt;</code>
+                  Place une image PNG/JPG du booster dans &nbsp;
+                  <code>/public/booster1.webp</code>&nbsp; ou passe son chemin
+                  en prop&nbsp;:
+                  <br />
+                  <code>
+                    &lt;PokemonBoosterPack3D imageUrl="/ton-image.png" /&gt;
+                  </code>
                 </p>
               </div>
             </div>
@@ -740,10 +768,10 @@ export default function PokemonBoosterPack3D({ imageUrl = "/booster1.webp" }) {
               {error
                 ? error
                 : tearProgress < 3
-                ? "💡 Clique sur le booster et glisse de gauche à droite"
-                : tearProgress < 90
-                ? "Continue à tirer..."
-                : ""}
+                  ? "💡 Clique sur le booster et glisse de gauche à droite"
+                  : tearProgress < 90
+                    ? "Continue à tirer..."
+                    : ""}
             </p>
           )}
         </div>
@@ -777,8 +805,8 @@ const styles = {
   scene: {
     minHeight: "100vh",
     width: "100%",
-    background:
-      "radial-gradient(ellipse at top, #1e3a8a 0%, #0f172a 60%, #020617 100%)",
+    // Remplacement du radial-gradient par un fond transparent
+    background: "transparent",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -788,8 +816,8 @@ const styles = {
     userSelect: "none",
   },
   canvasWrapper: {
-    width: 520,
-    height: 720,
+    width: 360,
+    height: 500,
     position: "relative",
   },
   canvasLayer: {
@@ -830,7 +858,8 @@ const styles = {
   hint: {
     position: "absolute",
     bottom: -36,
-    left: 0, right: 0,
+    left: 0,
+    right: 0,
     textAlign: "center",
     color: "#cbd5e1",
     fontSize: 14,
@@ -847,7 +876,8 @@ const styles = {
     gap: 18,
   },
   spinnerBall: {
-    width: 80, height: 80,
+    width: 80,
+    height: 80,
     borderRadius: "50%",
     background: "white",
     position: "relative",
@@ -858,22 +888,27 @@ const styles = {
   },
   spinnerTop: {
     position: "absolute",
-    top: 0, left: 0, right: 0,
+    top: 0,
+    left: 0,
+    right: 0,
     height: "50%",
     background: "#dc2626",
   },
   spinnerBand: {
     position: "absolute",
     top: "calc(50% - 4px)",
-    left: 0, right: 0,
+    left: 0,
+    right: 0,
     height: 8,
     background: "#111",
   },
   spinnerButton: {
     position: "absolute",
-    top: "50%", left: "50%",
+    top: "50%",
+    left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 22, height: 22,
+    width: 22,
+    height: 22,
     borderRadius: "50%",
     background: "white",
     border: "4px solid #111",
@@ -909,7 +944,8 @@ const styles = {
     marginTop: 16,
   },
   cardOuter: {
-    width: 180, height: 250,
+    width: 180,
+    height: 250,
     position: "relative",
     border: "6px solid #fde68a",
     borderRadius: 12,

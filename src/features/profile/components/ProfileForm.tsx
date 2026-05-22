@@ -133,11 +133,11 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
                 : profile?.money?.toLocaleString() || 0}
             </span>
             <Image
-              src="/donuts.webp"
+              src="/donuts1.webp"
               alt="Donut Icon"
-              width={18}
-              height={18}
-              className="object-contain"
+              width={50}
+              height={50}
+              className="object-contain W-6 h-6"
             />
           </div>
         </div>
