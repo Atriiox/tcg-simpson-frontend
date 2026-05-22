@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import logo from "../../public/logo.webp";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // 🎯 Import du hook pour détecter la page active
 import Modal from "@/components/ui/Modal";
 import ProfileForm from "../features/profile/components/ProfileForm";
 import { IoMdSettings } from "react-icons/io";
@@ -14,6 +15,7 @@ import { RootState } from "@/store/store";
 function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [mounted, setMounted] = useState(false); // 🎯 Évite les bugs d'hydratation Redux / SSR
+  const pathname = usePathname(); // 🎯 Récupère l'URL courante (ex: "/boutique")
 
   const { token, pseudo, money } = useSelector(
     (state: RootState) => state.user,
@@ -27,6 +29,21 @@ function Header() {
 
   // 🎯 Détermination dynamique du lien du logo (Fallback sur "/" pendant le SSR)
   const logoHref = mounted && token ? "/collection" : "/";
+
+  // 🎯 Fonction utilitaire pour appliquer les classes actives/inactives
+  const getLinkStyles = (path: string) => {
+    const isActive = pathname === path;
+    return {
+      link: `relative py-2 transition-colors duration-200 group ${
+        isActive 
+          ? "text-simpson-orange dark:text-simpson-yellow font-bold" 
+          : "hover:text-simpson-orange hover:dark:text-simpson-yellow text-text/80"
+      }`,
+      underline: `absolute bottom-0 left-1/2 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 ${
+        isActive ? "w-full" : "w-0 group-hover:w-full"
+      }`
+    };
+  };
 
   return (
     <>
@@ -50,41 +67,29 @@ function Header() {
         </div>
 
         {/* NAVIGATION */}
-        <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold text-text/80">
+        <nav className="w-8/12 flex items-center justify-center gap-10 text-medium font-semibold">
           {mounted && !token && (
-            <Link
-              href="/"
-              className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
-            >
+            <Link href="/" className={getLinkStyles("/").link}>
               Accueil
-              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+              <span className={getLinkStyles("/").underline} />
             </Link>
           )}
 
-          <Link
-            href="/collection"
-            className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
-          >
+          <Link href="/collection" className={getLinkStyles("/collection").link}>
             Collection
-            <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+            <span className={getLinkStyles("/collection").underline} />
           </Link>
 
           {mounted && token && (
-            <Link
-              href="/boutique" // 🎯 Ajuste le chemin du dossier de ta page Next.js si besoin
-              className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
-            >
+            <Link href="/boutique" className={getLinkStyles("/boutique").link}>
               Boutique
-              <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+              <span className={getLinkStyles("/boutique").underline} />
             </Link>
           )}
 
-          <Link
-            href="/regles-du-jeu"
-            className="relative py-2 transition-colors duration-200 hover:text-simpson-orange hover:dark:text-simpson-yellow group"
-          >
+          <Link href="/regles-du-jeu" className={getLinkStyles("/regles-du-jeu").link}>
             Règles du jeu
-            <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300 ease-out -translate-x-1/2 group-hover:w-full" />
+            <span className={getLinkStyles("/regles-du-jeu").underline} />
           </Link>
         </nav>
 
@@ -101,9 +106,10 @@ function Header() {
                   <Image
                     src="/donuts1.webp"
                     alt="Donut Icon"
-                    width={50}
-                    height={50}
-                    className="object-contain h-5 w-5"
+                    width={128}
+                    height={128}
+                    className="w-5 h-5 object-contain image-render-auto select-none"
+                    priority
                   />
                 </div>
               </div>
@@ -125,6 +131,7 @@ function Header() {
             </>
           )}
         </div>
+        
       </header>
 
       {/* MODAL PROFIL */}
