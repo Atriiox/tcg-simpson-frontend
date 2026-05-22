@@ -1,5 +1,5 @@
 "use client";
-import Card from "@/features/card/components/card";
+import Card from "@/features/card/components/Card";
 import { useState } from "react";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Card from "../../card/components/card";
+import Card from "../../card/components/Card";
 import { useCollection } from "../hooks/useCollection";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "../../card/components/CardDetailModal";
@@ -102,7 +102,7 @@ export default function CollectionPanel() {
   };
 
   return (
-    <div className="flex-1 h-full overflow-hidden p-6 bg-transparent flex flex-col">
+    <div className="flex-1 h-full overflow-hidden px-6 pt-6 bg-transparent flex flex-col">
       {/* 📌 HEADER DE LA COLLECTION (FIXE) */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-gray/5 pb-4 shrink-0">
         <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
@@ -114,8 +114,8 @@ export default function CollectionPanel() {
 
         {/* 🎛️ BARRE DE ZOOM (SLIDER + ET -) */}
         <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent select-none shadow-sm">
-          <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-simpson-gray hidden md:flex">
-            <FiZoomIn size={14} className="mr-1" /> Taille
+          <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-simpson-gray md:flex">
+            <FiZoomIn size={14} className="mr-1" />
           </div>
 
           <button
