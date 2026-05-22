@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/features/booster/components/PokemonBoosterPack3D.js"  ],
   "exclude": ["node_modules"]
 }
