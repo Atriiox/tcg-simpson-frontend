@@ -1,0 +1,21 @@
+/**
+ * Keyframes utilisees par CardGrid pour faire apparaitre les cartes
+ * en cascade quand le booster s'ouvre.
+ *
+ * Importe ce fichier une seule fois (CardGrid.tsx le fait deja).
+ */
+
+@keyframes booster-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.6) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-10px) scale(1.05) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
