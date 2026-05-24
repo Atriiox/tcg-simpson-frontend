@@ -84,10 +84,21 @@ function Header() {
           </Link>
 
           {mounted && token && (
-            <Link href="/boutique" className={getLinkStyles("/boutique").link}>
-              Boutique
-              <span className={getLinkStyles("/boutique").underline} />
-            </Link>
+            <>
+              <Link
+                href="/boutique"
+                className={getLinkStyles("/boutique").link}
+              >
+                Boutique
+                <span className={getLinkStyles("/boutique").underline} />
+              </Link>
+
+              {/* 🎯 AJOUT : Onglet Amis placé juste après Boutique et sécurisé par le token */}
+              <Link href="/amis" className={getLinkStyles("/amis").link}>
+                Amis
+                <span className={getLinkStyles("/amis").underline} />
+              </Link>
+            </>
           )}
 
           <Link
