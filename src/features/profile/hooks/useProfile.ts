@@ -32,7 +32,10 @@ export const useProfile = () => {
 
     const token = localStorage.getItem("token") || profile.token;
     let res: Response;
-
+    console.log(
+      "URL finale appelée :",
+      `${env.NEXT_PUBLIC_API_URL}/users/me/profile`,
+    );
     try {
       res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/profile`, {
         method: "PUT",

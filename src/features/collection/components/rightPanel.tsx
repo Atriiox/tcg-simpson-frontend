@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
-import { BiSave, BiX, BiCheckCircle } from "react-icons/bi";
+import { BiPencil, BiTrash } from "react-icons/bi";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -29,6 +29,9 @@ interface RightPanelProps {
   decks: DeckData[];
   isLoadingDecks: boolean;
   maxDecks: number;
+  startEditDeck: (deck: DeckData) => void;
+  handleDeleteDeck: (deckId: string) => void;
+  handleSetActiveDeck: (deckId: string) => void;
 }
 
 export default function RightPanel({
@@ -41,6 +44,10 @@ export default function RightPanel({
   decks,
   isLoadingDecks,
   maxDecks,
+  startEditDeck,
+  deckName,
+  handleDeleteDeck,
+  handleSetActiveDeck,
 }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
   const [boostersOwned, setBoostersOwned] = useState<BoosterInventory>({
@@ -48,150 +55,94 @@ export default function RightPanel({
     booster2: 3,
   });
 
-  // 🎯 Contrat Zod aligné avec ta méthode d'authentification
-  const deckSchema = z
-    .object({
-      deckName: z
-        .string()
-        .min(1, "Le nom du deck est obligatoire") // Remplace efficacement required_error
-        .min(3, "Le nom doit contenir au moins 3 caractères")
-        .max(25, "Le nom est trop long"),
-    })
-    .refine(() => decks.length < maxDecks, {
-      message: "Limite de 3 decks atteinte !",
-      path: ["deckName"],
-    });
+  const deckSchema = z.object({
+    deckName: z
+      .string()
+      .min(1, "Obligatoire")
+      .min(3, "Trop court")
+      .max(25, "Trop long"),
+  });
+
   type DeckFormValues = z.infer<typeof deckSchema>;
 
-  // 🎯 Configuration Formik locale
   const formik = useFormik<DeckFormValues>({
     initialValues: { deckName: "" },
     validationSchema: toFormikValidationSchema(deckSchema),
-    enableReinitialize: true, // Permet de reset les valeurs si isCreatingDeck change
-    onSubmit: async (values, { setFieldError, setSubmitting, resetForm }) => {
+    enableReinitialize: true,
+    onSubmit: async (values, { setSubmitting }) => {
       try {
         await handleSaveDeck(values.deckName);
-        resetForm();
-      } catch (err: any) {
-        setFieldError("deckName", err.message || "Erreur de sauvegarde");
       } finally {
         setSubmitting(false);
       }
     },
   });
 
+  useEffect(() => {
+    if (isCreatingDeck && deckName) formik.setFieldValue("deckName", deckName);
+  }, [isCreatingDeck, deckName]);
+
   const handleOpenBooster = (type: keyof BoosterInventory) => {
     if (boostersOwned[type] <= 0) return;
     setBoostersOwned((prev) => ({ ...prev, [type]: prev[type] - 1 }));
-    alert(
-      `Ouverture du ${type === "booster1" ? "Booster Classique" : "Booster Spécial"} ! 🍩`,
-    );
-  };
-
-  const handleCancel = () => {
-    formik.resetForm();
-    cancelDeckCreation();
   };
 
   return (
     <div className="h-full flex flex-col bg-transparent relative select-none">
       {isCreatingDeck ? (
-        <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/5 dark:border-transparent flex flex-col gap-4 shrink-0 animate-fadeIn">
-          <div>
-            <h2 className="text-center text-[10px] font-bold tracking-widest text-simpson-orange dark:text-simpson-yellow uppercase">
-              Création en cours
-            </h2>
-          </div>
-
-          {/* Saisie Nom du Deck */}
+        <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/10 dark:border-white/5 flex flex-col gap-4">
+          <h2 className="text-center text-[10px] font-bold tracking-widest text-simpson-orange dark:text-simpson-yellow uppercase">
+            Création en cours
+          </h2>
           <div className="flex flex-col gap-1 w-full">
-            <label
-              htmlFor="deckName"
-              className="text-[11px] font-medium text-simpson-gray pl-1"
-            >
+            <label className="text-[11px] font-medium text-simpson-gray pl-1">
               Nom du deck
             </label>
             <div
-              className={`flex items-center border rounded-xl px-3 bg-white dark:bg-black/20 ${
-                formik.touched.deckName && formik.errors.deckName
-                  ? "border-red-500"
-                  : "border-simpson-gray/15 dark:border-white/5 focus-within:border-simpson-orange dark:focus-within:border-simpson-yellow"
-              }`}
+              className={`flex items-center border rounded-xl px-3 bg-white dark:bg-black/20 ${formik.errors.deckName ? "border-red-500" : "border-simpson-gray/20 dark:border-white/10"}`}
             >
               <input
                 id="deckName"
                 type="text"
                 maxLength={25}
-                placeholder="Ex: Mon deck principal"
-                className="flex-1 border-none bg-transparent outline-none py-2 text-xs font-semibold text-simpson-dark dark:text-simpson-white placeholder-simpson-gray/40"
+                className="flex-1 bg-transparent outline-none py-2 text-xs font-semibold text-simpson-dark dark:text-simpson-white"
                 {...formik.getFieldProps("deckName")}
               />
             </div>
-            {/* 🎯 h-5 fixe pour bloquer l'espace et éviter les sursauts visuels de l'UI */}
-            <div className="h-5 mt-0.5 flex items-center">
-              {formik.touched.deckName && formik.errors.deckName && (
-                <p className="text-red-500 text-[10px] font-bold pl-1">
-                  {formik.errors.deckName}
-                </p>
-              )}
-            </div>
           </div>
-
-          {/* Jauge de progression des cartes */}
-          <div className="w-full bg-simpson-gray/10 dark:bg-black/20 rounded-full h-1.5 overflow-hidden relative border border-simpson-gray/5">
+          <div className="w-full bg-simpson-gray/10 dark:bg-black/30 rounded-full h-1.5 overflow-hidden">
             <div
-              className={`h-full transition-all duration-300 ${
-                cardCount === maxCards
-                  ? "bg-emerald-500"
-                  : "bg-simpson-orange dark:bg-simpson-yellow"
-              }`}
+              className="h-full bg-simpson-orange dark:bg-simpson-yellow transition-all duration-300"
               style={{ width: `${(cardCount / maxCards) * 100}%` }}
             />
           </div>
-
-          {/* Actions de Soumission */}
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2">
             <Button
               onClick={() => formik.handleSubmit()}
-              disabled={
-                !formik.isValid || cardCount !== maxCards || formik.isSubmitting
-              }
-              className={`w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 h-10 ${
-                cardCount !== maxCards || !formik.isValid
-                  ? "opacity-30 cursor-not-allowed bg-simpson-gray text-white border-none"
-                  : ""
-              }`}
+              disabled={!formik.isValid || cardCount !== maxCards}
+              className="w-full py-2.5 rounded-xl text-xs font-bold uppercase"
             >
-              <BiSave size={16} />{" "}
-              {formik.isSubmitting ? "SAUVEGARDE..." : "SAUVEGARDER"}
+              Sauvegarder
             </Button>
-
             <Button
-              type="button"
-              onClick={handleCancel}
-              className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 h-10 bg-transparent border border-simpson-gray/20 !text-simpson-gray hover:bg-simpson-gray/5 dark:hover:bg-white/5 transition-all cursor-pointer shadow-none"
+              onClick={cancelDeckCreation}
+              className="w-full py-2.5 rounded-xl text-xs font-bold uppercase bg-transparent border border-simpson-gray/20 dark:border-white/10 !text-simpson-gray shadow-none"
             >
-              <BiX size={16} /> ANNULER
+              Annuler
             </Button>
           </div>
         </div>
       ) : (
-        <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/5 dark:border-transparent flex flex-col items-center gap-3 shrink-0">
-          <h2 className="text-center font-bold tracking-wide text-simpson-dark dark:text-simpson-white text-sm">
+        <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/10 dark:border-white/5 flex flex-col items-center gap-3">
+          <h2 className="text-center font-bold text-sm text-simpson-dark dark:text-simpson-white">
             {activeTab === "decks" ? "Mes decks" : "Mes boosters"}
           </h2>
-
-          <div className="flex bg-simpson-gray/10 dark:bg-white/5 p-1 rounded-xl border border-simpson-gray/5 dark:border-white/5 w-full">
+          <div className="flex bg-simpson-gray/10 dark:bg-black/20 p-1 rounded-xl w-full">
             {(["boosters", "decks"] as Tab[]).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 py-1.5 rounded-lg transition-all duration-200 font-bold cursor-pointer text-xs
-                  ${
-                    activeTab === tab
-                      ? "bg-white dark:bg-simpson-darklight text-simpson-orange dark:text-simpson-yellow shadow-sm"
-                      : "text-simpson-gray hover:text-simpson-dark dark:hover:text-simpson-white"
-                  }`}
+                className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === tab ? "bg-white dark:bg-simpson-darklight text-simpson-orange dark:text-simpson-yellow shadow-sm" : "text-simpson-gray"}`}
               >
                 {tab === "decks" ? "Decks" : "Boosters"}
               </button>
@@ -207,53 +158,11 @@ export default function RightPanel({
             decks={decks}
             isLoading={isLoadingDecks}
             maxDecks={maxDecks}
+            onEdit={startEditDeck}
+            onDelete={handleDeleteDeck}
+            onSetActive={handleSetActiveDeck}
           />
         )}
-
-        {activeTab === "decks" && isCreatingDeck && (
-          <div className="py-6 px-2 text-center space-y-4 animate-fadeIn">
-            {cardCount < maxCards ? (
-              <>
-                <div className="space-y-1">
-                  <p className="text-xs font-bold text-simpson-orange dark:text-simpson-yellow">
-                    Sélection en cours
-                  </p>
-                  <p className="text-[11px] text-simpson-gray leading-relaxed font-medium">
-                    Ajoute encore {maxCards - cardCount} carte
-                    {maxCards - cardCount > 1 ? "s" : ""} depuis ta collection.
-                  </p>
-                </div>
-
-                <div className="bg-simpson-gray/5 border border-simpson-gray/10 dark:border-white/5 rounded-2xl py-2.5 px-4 inline-block mx-auto">
-                  <span className="text-xs font-bold tracking-wider text-simpson-dark dark:text-simpson-white">
-                    {cardCount} / {maxCards} CARTES
-                  </span>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="flex justify-center text-emerald-500 animate-bounce">
-                  <BiCheckCircle size={22} />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-xs font-bold text-emerald-500">
-                    Deck complet !
-                  </p>
-                  <p className="text-[11px] text-simpson-gray font-medium">
-                    Ton équipe est prête à être enregistrée.
-                  </p>
-                </div>
-
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl py-2.5 px-4 inline-block mx-auto">
-                  <span className="text-xs font-bold tracking-wider text-emerald-600 dark:text-emerald-400">
-                    {cardCount} / {maxCards} CARTES
-                  </span>
-                </div>
-              </>
-            )}
-          </div>
-        )}
-
         {activeTab === "boosters" && (
           <BoostersTab inventory={boostersOwned} onOpen={handleOpenBooster} />
         )}
@@ -262,80 +171,76 @@ export default function RightPanel({
   );
 }
 
-/* ==========================================
-   SUB-COMPOSANT : LISTE DES DECKS DYNAMIQUE
-   ========================================== */
-interface DecksTabProps {
-  onStart: () => void;
-  decks: DeckData[];
-  isLoading: boolean;
-  maxDecks: number;
-}
-
-function DecksTab({ onStart, decks, isLoading, maxDecks }: DecksTabProps) {
-  if (isLoading) {
+function DecksTab({
+  onStart,
+  decks,
+  isLoading,
+  maxDecks,
+  onEdit,
+  onDelete,
+  onSetActive,
+}: any) {
+  if (isLoading)
     return (
-      <div className="flex justify-center items-center py-8">
+      <div className="flex justify-center py-8">
         <div className="w-6 h-6 border-2 border-simpson-orange border-t-transparent rounded-full animate-spin" />
       </div>
     );
-  }
-
   const isLimitReached = decks.length >= maxDecks;
-
   return (
-    <div className="flex flex-col gap-4">
-      <div className="w-full relative group">
-        <Button
-          onClick={onStart}
-          disabled={isLimitReached}
-          className={`w-full py-2.5 text-xs font-bold tracking-wider cursor-pointer ${
-            isLimitReached
-              ? "opacity-40 cursor-not-allowed bg-simpson-gray"
-              : ""
-          }`}
-        >
-          CRÉER UN DECK
-        </Button>
-        {isLimitReached && (
-          <p className="text-[10px] text-red-500 text-center font-bold mt-1">
-            Maximum de {maxDecks} decks atteint.
-          </p>
+    <div className="flex flex-col h-full">
+      <div className="flex-1 flex flex-col gap-3">
+        {decks.map((deck: DeckData) => (
+          <div
+            key={deck._id}
+            className={`flex flex-col bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 transition-all ${deck.isActive ? "border-emerald-500/50 bg-emerald-500/3" : "border-simpson-gray/10 dark:border-white/5"}`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white">
+                {deck.name}
+              </span>
+              <button
+                onClick={() => onDelete(deck._id)}
+                className="p-1.5 text-simpson-gray hover:text-red-500 cursor-pointer"
+              >
+                <BiTrash size={16} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-simpson-gray/10 dark:border-white/5">
+              <button
+                onClick={() => !deck.isActive && onSetActive(deck._id)}
+                disabled={deck.isActive}
+                className={`flex items-center px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${deck.isActive ? "text-emerald-600 bg-emerald-500/10" : "text-simpson-orange dark:text-simpson-yellow bg-white dark:bg-black/20 border border-simpson-orange dark:border-simpson-yellow hover:bg-simpson-orange/10 cursor-pointer"}`}
+              >
+                {deck.isActive ? "Deck actif" : "Activer ce deck"}
+              </button>
+              <button
+                onClick={() => onEdit(deck)}
+                className="p-1.5 text-simpson-gray hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer"
+              >
+                <BiPencil size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-col gap-3 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
+        <div className="flex justify-center items-center px-1">
+          <div
+            className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${isLimitReached ? "text-red-500 bg-red-500/10" : "text-simpson-orange dark:text-simpson-yellow bg-simpson-orange/10 dark:bg-simpson-yellow/10"}`}
+          >
+            {decks.length} / {maxDecks} decks
+          </div>
+        </div>
+        {!isLimitReached && (
+          <Button
+            onClick={onStart}
+            className="w-full py-2.5 text-xs font-bold cursor-pointer"
+          >
+            Créer un deck
+          </Button>
         )}
       </div>
-
-      {decks.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          {decks.map((deck) => (
-            <div
-              key={deck._id}
-              className={`flex items-center justify-between bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 shadow-xs transition-colors cursor-pointer group ${
-                deck.isActive
-                  ? "border-emerald-500/40 bg-emerald-500/[0.02]"
-                  : "border-simpson-gray/5 hover:border-simpson-orange/30"
-              }`}
-            >
-              <div className="flex flex-col">
-                <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow transition-colors">
-                  {deck.name}
-                </span>
-                {deck.isActive && (
-                  <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-wider">
-                    Actif
-                  </span>
-                )}
-              </div>
-              <span className="text-[11px] font-bold text-simpson-gray bg-simpson-light dark:bg-simpson-dark px-2 py-0.5 rounded-md">
-                {deck.cards?.length || 0} / 10
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-xs text-simpson-gray text-center mt-8 font-medium">
-          Aucun deck pour le moment
-        </p>
-      )}
     </div>
   );
 }

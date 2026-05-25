@@ -32,6 +32,9 @@ export default function Main() {
     maxCards,
     isValid,
     startNewDeck,
+    startEditDeck,
+    handleDeleteDeck,
+    handleSetActiveDeck,
     toggleCardSelection,
     handleSaveDeck,
     cancelCreation,
@@ -86,25 +89,28 @@ export default function Main() {
           maxCardsReached={cardCount >= maxCards}
         />
 
-        {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
-        <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
-          <div className="w-55 h-full overflow-y-auto custom-scrollbar">
-            <RightPanel
-              isCreatingDeck={isCreating}
-              deckName={deckName}
-              setDeckName={setDeckName}
-              cardCount={cardCount}
-              maxCards={maxCards}
-              isDeckValid={isValid}
-              startNewDeck={startNewDeck}
-              cancelDeckCreation={cancelCreation}
-              handleSaveDeck={handleSaveDeck}
-              decks={decks}
-              isLoadingDecks={isLoadingDecks}
-              maxDecks={3}
-            />
-          </div>
+      {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
+      <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
+        <div className="w-55 h-full overflow-y-auto custom-scrollbar">
+          <RightPanel
+            isCreatingDeck={isCreating}
+            deckName={deckName}
+            setDeckName={setDeckName}
+            cardCount={cardCount}
+            maxCards={maxCards}
+            isDeckValid={isValid}
+            startNewDeck={startNewDeck}
+            cancelDeckCreation={cancelCreation}
+            handleSaveDeck={handleSaveDeck}
+            decks={decks}
+            isLoadingDecks={isLoadingDecks}
+            maxDecks={3}
+            startEditDeck={startEditDeck}
+            handleDeleteDeck={handleDeleteDeck}
+            handleSetActiveDeck={handleSetActiveDeck}
+          />
         </div>
+      </div>
 
         {/* 🔘 TOGGLE DROITE */}
         <button
