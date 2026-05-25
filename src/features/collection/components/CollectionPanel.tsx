@@ -168,16 +168,22 @@ export default function CollectionPanel({
                 onClick={() => handleCardAction(card)}
                 className={`relative transition-all duration-300 rounded-2xl ${
                   isCreatingDeck ? "cursor-pointer" : ""
-                } ${
-                  isSelected
-                    ? "ring-4 ring-simpson-orange dark:ring-simpson-yellow scale-[0.96] drop-shadow-lg"
-                    : "hover:-translate-y-1.5 hover:drop-shadow-[0_10px_15px_rgba(0,0,0,0.15)]"
-                } ${isDimmed ? "opacity-30 filter grayscale-[20%]" : ""}`}
+                } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
+      ${isDimmed ? "opacity-30 filter grayscale-[20%]" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
+                {/* STYLE CLEAN PERSONNALISÉ (BLEU) */}
                 {isSelected && (
-                  <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-emerald-500 text-white text-xs font-black flex items-center justify-center shadow-md z-30 animate-scaleIn">
-                    ✓
+                  <div className="absolute inset-0 z-20 pointer-events-none">
+
+                    <div className="absolute -inset-0.5 border-4 border-[#e95029] rounded-[0.4em]" />
+
+          
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#e95029] rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
+                      <span className="text-[12px] text-white font-black leading-none">
+                        ✓
+                      </span>
+                    </div>
                   </div>
                 )}
 

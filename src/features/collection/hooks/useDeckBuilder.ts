@@ -71,7 +71,6 @@ export function useDeckBuilder() {
     setIsCreating(true);
     setEditingDeckId(deck._id || (deck as any).id);
     setDeckName(deck.name);
-    // Extraire les IDs des cartes, qu'elles soient populées ou non
     setSelectedCardIds(deck.cards.map((c: any) => c._id || c.id || c));
   };
 
