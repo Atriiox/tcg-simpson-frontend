@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import { useFilter, Filters } from "@/features/collection/hooks/useFilter"
 import { FaSearch } from "react-icons/fa";
+
 
 type FilterData = {
   [group: string]: string[];
@@ -14,11 +16,17 @@ const filterData: FilterData = {
   Séries: ["Série 1", "Série 2"],
 };
 
-export default function FilterPanel() {
+interface FilterPanelProps {
+  onFilter: (filters: Filters) => void;
+  onClose: () => void;
+}
+
+export default function FilterPanel({ onFilter, onClose }: FilterPanelProps) {
   const [search, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<Record<string, boolean>>({
     Normal: true,
   });
+  const { filters, handleSelect, resetFilters } = useFilter();
 
   const toggle = (item: string): void =>
     setChecked((prev) => ({ ...prev, [item]: !prev[item] }));
@@ -52,7 +60,7 @@ export default function FilterPanel() {
                 <label
                   key={item}
                   className="flex items-center gap-3 cursor-pointer group select-none"
-                  onClick={() => toggle(item)}
+                  onClick={() => {toggle(item) ; handleSelect(group, item)} }
                 >
                   <span
                     className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
