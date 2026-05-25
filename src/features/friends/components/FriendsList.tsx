@@ -90,7 +90,7 @@ export default function FriendsList() {
 
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-12">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-simpson-gray/10 dark:border-white/10 pb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">
@@ -151,21 +151,22 @@ export default function FriendsList() {
           </div>
         </div>
 
-        {friends.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {friends.map((friend, i) => (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+          {friends.length > 0 ? (
+            friends.map((friend, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-simpson-darklight border border-simpson-gray/5 rounded-2xl p-5 shadow-xs relative"
+                className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group relative"
               >
                 <button
                   onClick={() => setFriendToRemove(friend.pseudo)}
-                  className="absolute top-4 right-4 text-simpson-gray hover:text-red-500 transition-colors cursor-pointer"
+                  className="absolute top-4 right-4 text-simpson-gray hover:text-red-500 transition-colors cursor-pointer p-1"
                 >
                   <BiTrash size={18} />
                 </button>
-                <div className="flex items-center gap-4 mb-5 mt-2">
-                  <div className="w-14 h-14 rounded-full bg-simpson-gray/10 relative overflow-hidden">
+
+                <div className="flex justify-center shrink-0">
+                  <div className="w-24 h-24 rounded-full bg-simpson-gray/10 dark:bg-white/5 border border-simpson-gray/10 dark:border-white/5 relative overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300">
                     <Image
                       src={friend.avatar || "/defaultAvatar.webp"}
                       alt={friend.pseudo}
@@ -173,69 +174,74 @@ export default function FriendsList() {
                       className="object-cover"
                     />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-sm">{friend.pseudo}</h3>
-                    <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-500">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{" "}
+                </div>
+
+                <div className="flex flex-col justify-between flex-1 w-full min-h-[120px]">
+                  <div className="space-y-1 text-left">
+                    <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
+                      {friend.pseudo}
+                    </h3>
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-500">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{" "}
                       En ligne
                     </span>
                   </div>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <ActionButton
-                    icon={<GiSwordsEmblem size={16} />}
-                    label="Duel"
-                    onClick={() => {}}
-                  />
-                  <ActionButton
-                    icon={<BiTransfer size={16} />}
-                    label="Échange"
-                    onClick={() => {}}
-                  />
-                  <ActionButton
-                    icon={<BiUserCircle size={16} />}
-                    label="Profil"
-                    onClick={() => {}}
-                  />
+
+                  <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
+                    <ActionButton
+                      icon={<GiSwordsEmblem size={15} />}
+                      label="Duel"
+                      onClick={() => {}}
+                    />
+                    <ActionButton
+                      icon={<BiTransfer size={15} />}
+                      label="Échange"
+                      onClick={() => {}}
+                    />
+                    <ActionButton
+                      icon={<BiUserCircle size={15} />}
+                      label="Profil"
+                      onClick={() => {}}
+                    />
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 bg-white dark:bg-simpson-darklight rounded-3xl">
-            <p className="text-sm font-medium text-simpson-gray">
-              Ta liste d'amis est bien vide
-            </p>
-          </div>
-        )}
+            ))
+          ) : (
+            <div className="col-span-1 lg:col-span-2 text-center py-16 bg-white dark:bg-simpson-darklight rounded-3xl border border-simpson-gray/5 w-full max-w-5xl">
+              <p className="text-sm font-medium text-simpson-gray">
+                Ta liste d'amis est bien vide
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <Modal isOpen={!!friendToRemove} onClose={() => setFriendToRemove(null)}>
-        <div className="flex flex-col gap-8 p-6">
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
+        <div className="flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main">
+          <div className="space-y-1">
+            <h3 className="text-xl font-bold text-simpson-dark dark:text-simpson-white">
               Supprimer un ami
             </h3>
-            <p className="text-base text-simpson-gray leading-relaxed">
+            <p className="text-sm text-simpson-gray leading-relaxed">
               Tu es sur le point de retirer{" "}
-              <span className="font-semibold text-simpson-orange dark:text-simpson-yellow">
+              <span className="font-bold text-simpson-orange dark:text-simpson-yellow">
                 {friendToRemove}
               </span>{" "}
-              de ta liste. Cette action supprimera tous les accès aux duels et
-              échanges directs avec ce joueur.
+              de ta liste. Cette action supprimera tous les accès aux duels et échanges directs avec ce joueur.
             </p>
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row gap-4 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
             <Button
               onClick={() => setFriendToRemove(null)}
-              className="flex-1 py-4 text-sm bg-transparent border border-simpson-gray/20 dark:border-white/10 !text-simpson-gray hover:bg-simpson-gray/5 shadow-none"
+              className="flex-1 py-2 text-xs bg-transparent border border-simpson-gray/20 dark:border-white/10 !text-simpson-gray hover:bg-simpson-gray/5 shadow-none"
             >
               Annuler
             </Button>
             <Button
               onClick={confirmRemove}
-              className="flex-1 py-4 text-sm bg-red-500 hover:bg-red-600 text-white font-bold"
+              className="flex-1 py-2 text-xs bg-red-500 hover:bg-red-600 text-white font-bold"
             >
               Confirmer la suppression
             </Button>
