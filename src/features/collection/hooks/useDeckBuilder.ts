@@ -13,6 +13,7 @@ export type DeckData = {
 
 export function useDeckBuilder() {
   const [isCreating, setIsCreating] = useState(false);
+  const [editingDeckId, setEditingDeckId] = useState<string | null>(null);
   const [deckName, setDeckName] = useState("");
   const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
 
@@ -61,8 +62,17 @@ export function useDeckBuilder() {
 
   const startNewDeck = () => {
     setIsCreating(true);
+    setEditingDeckId(null);
     setSelectedCardIds([]);
     setDeckName("");
+  };
+
+  const startEditDeck = (deck: DeckData) => {
+    setIsCreating(true);
+    setEditingDeckId(deck._id || (deck as any).id);
+    setDeckName(deck.name);
+    // Extraire les IDs des cartes, qu'elles soient populées ou non
+    setSelectedCardIds(deck.cards.map((c: any) => c._id || c.id || c));
   };
 
   const toggleCardSelection = (cardId: string) => {
@@ -79,24 +89,27 @@ export function useDeckBuilder() {
     });
   };
 
-  // 💾 POST : Sauvegarder le deck en BDD
+  // 💾 POST/PUT : Sauvegarder le deck en BDD
   const handleSaveDeck = async (nameToSave: string) => {
     if (cardCount !== MAX_CARDS || !token) return;
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/me/decks`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: nameToSave,
-          cards: selectedCardIds,
-        }),
+    const url = editingDeckId
+      ? `${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${editingDeckId}`
+      : `${process.env.NEXT_PUBLIC_API_URL}/users/me/decks`;
+
+    const method = editingDeckId ? "PUT" : "POST";
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify({
+        name: nameToSave,
+        cards: selectedCardIds,
+      }),
+    });
 
     // Sécurité au cas où le serveur renvoie du HTML (Erreur 404/500)
     const contentType = response.headers.get("content-type");
@@ -111,8 +124,35 @@ export function useDeckBuilder() {
     }
 
     setIsCreating(false);
+    setEditingDeckId(null);
     // Recharger la liste locale des decks immédiatement après l'ajout
     fetchDecks();
+  };
+
+  const handleDeleteDeck = async (deckId: string) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) fetchDecks();
+    } catch (e) {
+      console.error("Erreur suppression deck", e);
+    }
+  };
+
+  const handleSetActiveDeck = async (deckId: string) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}/active`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) fetchDecks();
+    } catch (e) {
+      console.error("Erreur activation deck", e);
+    }
   };
 
   return {
@@ -125,10 +165,17 @@ export function useDeckBuilder() {
     maxCards: MAX_CARDS,
     maxDecks: MAX_DECKS,
     isValid,
+    editingDeckId,
     startNewDeck,
+    startEditDeck,
     toggleCardSelection,
     handleSaveDeck,
-    cancelCreation: () => setIsCreating(false),
+    handleDeleteDeck,
+    handleSetActiveDeck,
+    cancelCreation: () => {
+      setIsCreating(false);
+      setEditingDeckId(null);
+    },
     decks,
     isLoadingDecks,
     deckError,

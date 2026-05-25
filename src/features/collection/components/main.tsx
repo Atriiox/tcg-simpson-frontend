@@ -21,6 +21,9 @@ export default function Main() {
     maxCards,
     isValid,
     startNewDeck,
+    startEditDeck,
+    handleDeleteDeck,
+    handleSetActiveDeck,
     toggleCardSelection,
     handleSaveDeck,
     cancelCreation,
@@ -79,6 +82,9 @@ export default function Main() {
             decks={decks}
             isLoadingDecks={isLoadingDecks}
             maxDecks={3}
+            startEditDeck={startEditDeck}
+            handleDeleteDeck={handleDeleteDeck}
+            handleSetActiveDeck={handleSetActiveDeck}
           />
         </div>
       </div>

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
-import { BiSave, BiX, BiCheckCircle } from "react-icons/bi";
+import Modal from "@/components/ui/Modal";
+import { BiSave, BiX, BiCheckCircle, BiPencil, BiTrash, BiStar, BiSolidStar } from "react-icons/bi";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -29,6 +30,9 @@ interface RightPanelProps {
   decks: DeckData[];
   isLoadingDecks: boolean;
   maxDecks: number;
+  startEditDeck: (deck: DeckData) => void;
+  handleDeleteDeck: (deckId: string) => void;
+  handleSetActiveDeck: (deckId: string) => void;
 }
 
 export default function RightPanel({
@@ -41,12 +45,23 @@ export default function RightPanel({
   decks,
   isLoadingDecks,
   maxDecks,
+  startEditDeck,
+  handleDeleteDeck,
+  handleSetActiveDeck,
 }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
   const [boostersOwned, setBoostersOwned] = useState<BoosterInventory>({
     booster1: 1,
     booster2: 3,
   });
+  const [deckToDelete, setDeckToDelete] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (deckToDelete) {
+      await handleDeleteDeck(deckToDelete);
+      setDeckToDelete(null);
+    }
+  };
 
   // 🎯 Contrat Zod aligné avec ta méthode d'authentification
   const deckSchema = z
@@ -207,6 +222,9 @@ export default function RightPanel({
             decks={decks}
             isLoading={isLoadingDecks}
             maxDecks={maxDecks}
+            onEdit={startEditDeck}
+            onDelete={(id) => setDeckToDelete(id)}
+            onSetActive={handleSetActiveDeck}
           />
         )}
 
@@ -258,6 +276,34 @@ export default function RightPanel({
           <BoostersTab inventory={boostersOwned} onOpen={handleOpenBooster} />
         )}
       </div>
+
+      <Modal isOpen={!!deckToDelete} onClose={() => setDeckToDelete(null)}>
+        <div className="flex flex-col items-center p-6 gap-6 w-80">
+          <div className="bg-red-500/10 p-4 rounded-full text-red-500">
+            <BiTrash size={32} />
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="font-black text-xl text-simpson-dark dark:text-white uppercase">Supprimer ce deck ?</h3>
+            <p className="text-sm font-medium text-simpson-gray">
+              Cette action est irréversible. Le deck sera perdu à tout jamais !
+            </p>
+          </div>
+          <div className="flex gap-3 w-full">
+            <Button
+              onClick={() => setDeckToDelete(null)}
+              className="flex-1 bg-transparent border border-simpson-gray/20 text-simpson-gray hover:bg-simpson-gray/5 !shadow-none"
+            >
+              ANNULER
+            </Button>
+            <Button
+              onClick={confirmDelete}
+              className="flex-1 bg-red-500 border-none hover:bg-red-600 text-white !shadow-none"
+            >
+              SUPPRIMER
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -270,9 +316,12 @@ interface DecksTabProps {
   decks: DeckData[];
   isLoading: boolean;
   maxDecks: number;
+  onEdit: (deck: DeckData) => void;
+  onDelete: (deckId: string) => void;
+  onSetActive: (deckId: string) => void;
 }
 
-function DecksTab({ onStart, decks, isLoading, maxDecks }: DecksTabProps) {
+function DecksTab({ onStart, decks, isLoading, maxDecks, onEdit, onDelete, onSetActive }: DecksTabProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-8">
@@ -285,23 +334,28 @@ function DecksTab({ onStart, decks, isLoading, maxDecks }: DecksTabProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="w-full relative group">
-        <Button
-          onClick={onStart}
-          disabled={isLimitReached}
-          className={`w-full py-2.5 text-xs font-bold tracking-wider cursor-pointer ${
-            isLimitReached
-              ? "opacity-40 cursor-not-allowed bg-simpson-gray"
-              : ""
-          }`}
-        >
-          CRÉER UN DECK
-        </Button>
-        {isLimitReached && (
-          <p className="text-[10px] text-red-500 text-center font-bold mt-1">
-            Maximum de {maxDecks} decks atteint.
-          </p>
-        )}
+      {!isLimitReached && (
+        <div className="w-full relative group">
+          <Button
+            onClick={onStart}
+            className="w-full py-2.5 text-xs font-bold tracking-wider cursor-pointer"
+          >
+            CRÉER UN DECK
+          </Button>
+        </div>
+      )}
+
+      <div className="flex items-center justify-between mt-1 px-1">
+        <span className="text-[11px] font-bold text-simpson-gray uppercase tracking-wider">
+          Vos decks
+        </span>
+        <div className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+          isLimitReached 
+            ? "text-red-500 bg-red-500/10" 
+            : "text-simpson-orange bg-simpson-orange/10 dark:text-simpson-yellow dark:bg-simpson-yellow/10"
+        }`}>
+          {decks.length} / {maxDecks} DECKS
+        </div>
       </div>
 
       {decks.length > 0 ? (
@@ -309,25 +363,66 @@ function DecksTab({ onStart, decks, isLoading, maxDecks }: DecksTabProps) {
           {decks.map((deck) => (
             <div
               key={deck._id}
-              className={`flex items-center justify-between bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 shadow-xs transition-colors cursor-pointer group ${
+              className={`flex flex-col bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 shadow-xs transition-colors group ${
                 deck.isActive
                   ? "border-emerald-500/40 bg-emerald-500/[0.02]"
                   : "border-simpson-gray/5 hover:border-simpson-orange/30"
               }`}
             >
-              <div className="flex flex-col">
-                <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow transition-colors">
-                  {deck.name}
-                </span>
-                {deck.isActive && (
-                  <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-wider">
-                    Actif
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white transition-colors">
+                    {deck.name}
                   </span>
-                )}
+                  {deck.isActive && (
+                    <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-wider">
+                      Actif
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onDelete(deck._id || (deck as any).id)}
+                  className="p-1.5 rounded-md text-simpson-gray hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                  title="Supprimer"
+                >
+                  <BiTrash size={16} />
+                </button>
               </div>
-              <span className="text-[11px] font-bold text-simpson-gray bg-simpson-light dark:bg-simpson-dark px-2 py-0.5 rounded-md">
-                {deck.cards?.length || 0} / 10
-              </span>
+              
+              {/* Actions */}
+              <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-simpson-gray/10 dark:border-white/5">
+                <button
+                  type="button"
+                  onClick={() => !deck.isActive && onSetActive(deck._id || (deck as any).id)}
+                  disabled={deck.isActive}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-colors ${
+                    deck.isActive 
+                      ? "text-emerald-500 bg-emerald-500/10 cursor-default" 
+                      : "text-simpson-gray hover:text-simpson-orange hover:bg-simpson-orange/10 dark:hover:text-simpson-yellow dark:hover:bg-simpson-yellow/10 cursor-pointer"
+                  }`}
+                >
+                  {deck.isActive ? (
+                    <>
+                      Deck actif
+                    </>
+                  ) : (
+                    <>
+                      Activer le deck
+                    </>
+                  )}
+                </button>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => onEdit(deck)}
+                    className="p-1.5 rounded-md text-simpson-gray hover:text-simpson-orange hover:bg-simpson-orange/10 dark:hover:text-simpson-yellow dark:hover:bg-simpson-yellow/10 transition-colors cursor-pointer"
+                    title="Modifier"
+                  >
+                    <BiPencil size={14} />
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
