@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { LuInfo } from "react-icons/lu";
-import { FaPlusCircle } from "react-icons/fa";
+import { FaPlusCircle, FaCheckCircle } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -57,6 +57,10 @@ export default function Shop() {
   const [userDonuts, setUserDonuts] = useState<number>(180);
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
+  
+  // États de l'animation globale de la modal
+  const [purchaseStatus, setPurchaseStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
 
   const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({
     "serie-1": 0,
@@ -82,10 +86,27 @@ export default function Shop() {
     }
   };
 
-  const handlePurchaseDonuts = (amount: number) => {
-    console.log(`Achat de ${amount} donuts lancé`);
-    setUserDonuts((prev) => prev + amount);
-    setIsDonutModalOpen(false);
+  const handlePurchaseDonuts = async (amount: number) => {
+    if (purchaseStatus !== "idle") return;
+
+    setAddedDonutsAmount(amount);
+    setPurchaseStatus("loading");
+
+    try {
+      // 1. Loader plein écran sur la modal pendant 2 secondes
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      
+      setPurchaseStatus("success");
+      setUserDonuts((prev) => prev + amount);
+
+      // 2. Écran succès pendant 2 secondes avant fermeture automatique
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (error) {
+      console.error("Erreur d'achat :", error);
+    } finally {
+      setPurchaseStatus("idle");
+      setIsDonutModalOpen(false);
+    }
   };
 
   const handleOpenDetails = (title: string) => {
@@ -217,9 +238,34 @@ export default function Shop() {
 
       <Modal
         isOpen={isDonutModalOpen}
-        onClose={() => setIsDonutModalOpen(false)}
+        onClose={() => purchaseStatus === "idle" && setIsDonutModalOpen(false)}
       >
-        <div className="flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main">
+        <div className="relative flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main overflow-hidden rounded-2xl">
+          
+          {/* ÉCRAN 1 : LEADER DE CHARGEMENT SUR TOUTE LA MODAL */}
+          {purchaseStatus === "loading" && (
+            <div className="absolute inset-0 bg-white/90 dark:bg-simpson-darklight/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 animate-fade-in">
+              <div className="w-10 h-10 border-4 border-simpson-blue border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm font-bold text-simpson-dark dark:text-simpson-white tracking-wide">
+                Achat en cours...
+              </p>
+            </div>
+          )}
+
+          {/* ÉCRAN 2 : SUCCÈS SUR TOUTE LA MODAL */}
+          {purchaseStatus === "success" && (
+            <div className="absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center gap-3 text-white animate-fade-in">
+              <FaCheckCircle className="text-white scale-110 drop-shadow-md animate-bounce" size={48} />
+              <div className="text-center space-y-1">
+                <h3 className="text-xl font-black tracking-wide">Achat réussi !</h3>
+                <p className="text-base font-bold bg-white/20 px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-xs">
+                  +{addedDonutsAmount} Donuts
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* CONTENU CLASSIQUE DE LA MODAL */}
           <div className="text-center space-y-1">
             <h2 className="text-xl font-bold text-simpson-dark dark:text-simpson-white">
               Réserve de donuts
