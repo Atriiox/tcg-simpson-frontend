@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Card from "../../card/components/Card";
+import Card from "@/features/card/components/card";
 import { useCollection } from "../hooks/useCollection";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
-import CardDetailModal from "../../card/components/CardDetailModal";
+import CardDetailModal from "@/features/card/components/CardDetailModal";
 
 interface CardData {
   name: string;

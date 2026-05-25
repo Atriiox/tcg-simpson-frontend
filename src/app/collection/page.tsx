@@ -1,4 +1,4 @@
-import Main from "@/features/collection/components/Main";
+import Main from "@/features/collection/components/main";
 
 export default function collection() {
   return (

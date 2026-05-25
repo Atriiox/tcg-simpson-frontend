@@ -8,36 +8,38 @@
  * reviennent de l'API : si le backend change un champ, tu auras
  * une erreur lisible plutot qu'un crash silencieux dans le rendu.
  */
+// schemas/booster.schema.ts (front)
 import { z } from "zod";
+import { CardSchema } from "@/features/card/schema/card.schema";
 
-export const CardTypeSchema = z.enum(["Personnage", "Terrain", "Objet"]);
-export type CardType = z.infer<typeof CardTypeSchema>;
-
-export const CardSerieSchema = z.object({
-  name_serie: z.string(),
-  position: z.number().int().positive(),
-});
-export type CardSerie = z.infer<typeof CardSerieSchema>;
-
-export const CardDataSchema = z.object({
+const PublicBoosterSchema = z.object({
+  id: z.string(),
   name: z.string(),
+  price: z.number(),
   slug: z.string(),
-  type: CardTypeSchema,
-  rarity: z.string(), // "1" | "2" | "3" cote backend, string pour matcher ton composant
-  ATK: z.number(),
-  PV: z.number(),
-  family: z.string(),
-  affinity: z.string(),
-  serie: CardSerieSchema,
+  quantity: z.number(),
+  cards: z.array(CardSchema),
+  serie: z.object({ id: z.string(), name: z.string() }),
+  probabilities: z.array(z.object({
+    id: z.string(),
+    rarity: z.enum(["Common", "Rare", "Legendary"]),
+    value: z.number(),
+  })),
 });
-export type CardData = z.infer<typeof CardDataSchema>;
 
+export const UserBoosterSchema = z.object({
+  booster: PublicBoosterSchema,
+  number: z.number(),
+});
+
+export const UserBoosterArraySchema = z.array(UserBoosterSchema);
+export type UserBoosters = z.infer<typeof UserBoosterArraySchema>;
 /**
  * Schema de la reponse de l'API quand on ouvre un booster.
  * Adapte-le a la vraie structure de ton endpoint si elle differe
  * (par exemple si ton backend retourne `{ booster_id, cards: [...] }`).
  */
 export const OpenBoosterResponseSchema = z.object({
-  cards: z.array(CardDataSchema),
+  cards: z.array(CardSchema),
 });
 export type OpenBoosterResponse = z.infer<typeof OpenBoosterResponseSchema>;

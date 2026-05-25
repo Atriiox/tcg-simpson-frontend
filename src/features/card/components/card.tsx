@@ -3,90 +3,87 @@ import { FaHeart } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
 import { LuDonut } from "react-icons/lu";
 
+interface Bonus {
+  ATK: number;
+  PV: number;
+}
+
+interface Family {
+  id: string;
+  name: string;
+  description: string;
+  bonus: Bonus;
+}
+
+interface Affinity {
+  id: string;
+  name: string;
+  description: string;
+  bonus: Bonus;
+}
+
+interface Serie {
+  id_serie: { id: string; name: string };
+  position: number;
+}
+
+interface CardData {
+  name: string;
+  slug: string;
+  type: "Personnage" | "Terrain" | "Objet";
+  rarity: string;
+  ATK: number;
+  PV: number;
+  description: string;
+  family: Family;
+  affinity: Affinity;
+  serie: Serie;
+}
+
 interface CardProps {
-  name?: string;
-  slug?: string;
-  type?: "Personnage" | "Terrain" | "Objet";
-  rarity?: string;
-  ATK?: number;
-  PV?: number;
-  family?: string;
-  affinity?: string;
-  serie?: {
-    name_serie: string;
-    position: number;
-  };
-  card?: {
-    name: string;
-    slug: string;
-    type: "Personnage" | "Terrain" | "Objet";
-    rarity: string;
-    ATK: number;
-    PV: number;
-    family: string;
-    affinity: string;
-    serie: {
-      name_serie: string;
-      position: number;
-    };
-  };
+  card: CardData;
   onClick?: () => void;
   size?: number;
 }
 
-function Card(props: CardProps) {
-  const dataSource = props.card ? props.card : props;
-
-  const { name, slug, type, rarity, ATK, PV, family, affinity, serie } =
-    dataSource;
+function Card({ card, onClick, size = 200 }: CardProps) {
+  const { name, slug, type, rarity, ATK, PV, family, affinity, serie } = card;
 
   if (!slug) {
     return <div className={styles.cardError}>Carte invalide</div>;
   }
 
-  // 1. Mapping pour la classe CSS de rareté
   const rarityStyles: Record<string, string> = {
     "1": styles.commun,
     "2": styles.rare,
     "3": styles.legendaire,
   };
-  const currentRarityClass = rarityStyles[rarity || "1"] || styles.commun;
+  const currentRarityClass = rarityStyles[rarity] || styles.commun;
 
   const rarityDonuts = [];
-  const rarityCount = parseInt(rarity || "1") || 1;
+  const rarityCount = parseInt(rarity) || 1;
   for (let i = 0; i < rarityCount; i++) {
     rarityDonuts.push(<LuDonut key={i} />);
   }
 
-  const currentType = type ? type.toLowerCase() : "";
+  const currentType = type.toLowerCase();
   const bgImageUrl = `/cards/${slug}.webp`;
   const videoUrl = `/cards/${slug}-anime.webm`;
 
   return (
     <div
-      // 🎯 Injection de la classe de rareté (styles.commun, styles.rare ou styles.legendaire)
       className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass} select-none`}
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
-        width: `${props.size ?? 200}px`,
-        maxWidth: props.size ?? 200,
-        minWidth: props.size ?? 200,
-        /* 🎯 LA LIGNE MAGIQUE : Calcule le repère pour toutes les unités em du CSS.
-     Si la carte fait 200px, font-size = 20px (ton rendu de base).
-     Si la carte fait 100px, font-size = 10px (tout diminue de moitié au pixel près !) */
-        fontSize: `${(props.size ?? 200) / 10}px`,
+        width: `${size}px`,
+        maxWidth: size,
+        minWidth: size,
+        fontSize: `${size / 10}px`,
       }}
-      onClick={props.onClick}
+      onClick={onClick}
     >
-      {/* 🎥 Vidéo d'arrière-plan pour les cartes Ultra Rares / Légendaires */}
       {rarity === "3" && (
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={styles.videoBackground}
-        >
+        <video autoPlay loop muted playsInline className={styles.videoBackground}>
           <source src={videoUrl} type="video/webm" />
         </video>
       )}
@@ -99,25 +96,21 @@ function Card(props: CardProps) {
         {currentType === "personnage" && (
           <>
             <div className={styles.desc}>
-              {family && family !== "Sans Famille" && (
+              {family.name && family.name !== "Sans Famille" && (
                 <span className={styles.famille}>
-                  <span className={styles.nameFamille}>{family}</span>
+                  <span className={styles.nameFamille}>{family.name}</span>
                 </span>
               )}
-              {affinity && affinity !== "Sans Affinité" && (
+              {affinity.name && affinity.name !== "Sans Affinité" && (
                 <span className={styles.affinite}>
-                  <span className={styles.nameAffinite}>{affinity}</span>
+                  <span className={styles.nameAffinite}>{affinity.name}</span>
                 </span>
               )}
             </div>
 
             <div className={styles.stats}>
-              <span className={styles.atk}>
-                {ATK} <PiHandFistFill />
-              </span>
-              <span className={styles.pv}>
-                {PV} <FaHeart />
-              </span>
+              <span className={styles.atk}>{ATK} <PiHandFistFill /></span>
+              <span className={styles.pv}>{PV} <FaHeart /></span>
             </div>
           </>
         )}
@@ -140,9 +133,7 @@ function Card(props: CardProps) {
       </div>
 
       <div className={styles.footerCard}>
-        <span>
-          {serie?.name_serie} - {serie?.position}/50
-        </span>
+        <span>{serie.id_serie.name} - {serie.position}/50</span>
         <span className={styles.rarity}>{rarityDonuts}</span>
       </div>
     </div>

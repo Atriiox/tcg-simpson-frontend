@@ -28,4 +28,4 @@ export {
   type CardType,
   type CardSerie,
   type OpenBoosterResponse,
-} from "./schema/card.schema";
+} from "./schema/booster.schema";

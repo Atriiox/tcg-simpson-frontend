@@ -22,6 +22,8 @@ import {
 
 import { useBoosterCards } from "../hooks/useBoosterCards";
 import { CardGrid } from "./CardGrid";
+import type { Card } from "@/features/card/schema/card.schema";
+
 
 export interface BoosterOpenerProps {
   /** URL de l'image du booster. Defaut : /booster.png */
@@ -29,7 +31,7 @@ export interface BoosterOpenerProps {
   /** Taille des cartes affichees (prop `size` de ton composant Card). */
   cardSize?: number;
   /** Callback optionnel quand une carte est cliquee dans la grille. */
-  onCardClick?: (card: import("../schema/card.schema").CardData) => void;
+  onCardClick?: (card: Card) => void;
 }
 
 export function BoosterOpener({

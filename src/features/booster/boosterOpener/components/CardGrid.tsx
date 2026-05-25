@@ -13,16 +13,16 @@ import "../Styles/animations.css";
 // TODO : adapte ce chemin a l'emplacement reel de ton composant Card.
 import Card from "@/features/card/components/card";
 
-import type { CardData } from "../schema/card.schema";
+import type { Card as CardType} from "@/features/card/schema/card.schema";
 
 export interface CardGridProps {
-  cards: CardData[];
+  cards: CardType[];
   /** Taille des cartes en pixels (la prop `size` de ton composant Card). */
   cardSize?: number;
   /** Delai entre chaque carte qui apparait (en secondes). */
   cascadeDelaySeconds?: number;
   /** Callback optionnel sur le clic d'une carte. */
-  onCardClick?: (card: CardData) => void;
+  onCardClick?: (card: CardType) => void;
 }
 
 export function CardGrid({

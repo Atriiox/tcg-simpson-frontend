@@ -24,7 +24,7 @@ export default function RegisterForm({ onSwitch }: Props) {
     onSubmit: async (values, { setFieldError, setSubmitting }) => {
       try {
         await register(values);
-        router.push("/collection");
+        router.push("/collection?newUser=true");
       } catch (err) {
         if (err instanceof Error) {
           switch (err.message) {
