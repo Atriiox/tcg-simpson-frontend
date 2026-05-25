@@ -35,8 +35,8 @@ export default function CollectionPanel({
   toggleCardSelection,
   maxCardsReached,
 }: CollectionPanelProps) {
-  const { collection, isLoading, error } = useCollection();
-  const [cardSize, setCardSize] = useState<number>(135);
+const { collection, isLoading, error, refetch } = useCollection();  
+const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -87,20 +87,17 @@ export default function CollectionPanel({
     setCardSize((prev) => Math.min(MAX_SIZE, prev + STEP));
 
   const handleCardAction = (card: any) => {
-    // 🎯 Si on construit un deck, le clic sélectionne ou désélectionne la carte
     if (isCreatingDeck) {
       toggleCardSelection(card.id);
       return;
     }
 
-    // Sinon, comportement initial (ouverture de la modal)
     const formattedCard: CardData = {
       name: card.name,
       slug: card.slug,
       type: card.type,
       rarity: String(card.rarity),
-      description:
-        card.description || "Aucune description disponible pour cette carte.",
+      description: card.description || "Aucune description disponible pour cette carte.",
       ATK: card.ATK,
       PV: card.PV,
       family: card.family?.name || card.family,
@@ -116,7 +113,6 @@ export default function CollectionPanel({
 
   return (
     <div className="flex-1 h-full overflow-hidden px-6 pt-6 bg-transparent flex flex-col select-none">
-      {/* HEADER */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-dark/20 pb-4 shrink-0">
         <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
           {isCreatingDeck ? "Sélectionne tes cartes" : "Ma Collection"}{" "}
@@ -125,7 +121,6 @@ export default function CollectionPanel({
           </span>
         </h1>
 
-        {/* BARRE DE ZOOM */}
         <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent shadow-sm">
           <FiZoomIn size={14} className="text-simpson-gray" />
           <button
@@ -169,35 +164,31 @@ export default function CollectionPanel({
                 className={`relative transition-all duration-300 rounded-2xl ${
                   isCreatingDeck ? "cursor-pointer" : ""
                 } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
-      ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
+                ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
-                {/* STYLE CLEAN PERSONNALISÉ (BLEU) */}
                 {isSelected && (
                   <div className="absolute inset-0 z-20 pointer-events-none">
                     <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
-
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-simpson-orange rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
-                      <span className="text-[12px] text-white font-black leading-none">
-                        ✓
-                      </span>
+                      <span className="text-[12px] text-white font-black leading-none">✓</span>
                     </div>
                   </div>
                 )}
 
                 <Card
                   size={cardSize}
-                  name={card.name}
-                  slug={card.slug}
-                  type={card.type as "Personnage" | "Terrain" | "Objet"}
-                  rarity={card.rarity}
-                  ATK={card.ATK}
-                  PV={card.PV}
-                  family={card.family.name}
-                  affinity={card.affinity.name}
-                  serie={{
-                    name_serie: card.serie.id_serie.name,
-                    position: card.serie.position,
+                  card={{
+                    name: card.name,
+                    slug: card.slug,
+                    type: card.type as "Personnage" | "Terrain" | "Objet",
+                    rarity: card.rarity,
+                    ATK: card.ATK,
+                    PV: card.PV,
+                    description: card.description,
+                    family: card.family,
+                    affinity: card.affinity,
+                    serie: card.serie,
                   }}
                 />
               </div>

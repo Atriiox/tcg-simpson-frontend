@@ -12,6 +12,7 @@ import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOp
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
   const [showRight, setShowRight] = useState(true);
+  const [collectionKey, setCollectionKey] = useState(0);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function Main() {
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
     router.replace("/collection");
+    setCollectionKey((prev) => prev + 1);
   };
 
   const {
@@ -50,7 +52,7 @@ export default function Main() {
           onClick={handleCloseBooster}
         >
           <div onClick={(e) => e.stopPropagation()}>
-            <BoosterOpener />
+            <BoosterOpener onClose={handleCloseBooster} />
           </div>
         </div>
       )}
@@ -83,34 +85,35 @@ export default function Main() {
 
         {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
         <CollectionPanel
+          key={collectionKey}
           isCreatingDeck={isCreating}
           selectedCardIds={selectedCardIds}
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
         />
 
-      {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
-      <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
-        <div className="w-55 h-full overflow-y-auto custom-scrollbar">
-          <RightPanel
-            isCreatingDeck={isCreating}
-            deckName={deckName}
-            setDeckName={setDeckName}
-            cardCount={cardCount}
-            maxCards={maxCards}
-            isDeckValid={isValid}
-            startNewDeck={startNewDeck}
-            cancelDeckCreation={cancelCreation}
-            handleSaveDeck={handleSaveDeck}
-            decks={decks}
-            isLoadingDecks={isLoadingDecks}
-            maxDecks={3}
-            startEditDeck={startEditDeck}
-            handleDeleteDeck={handleDeleteDeck}
-            handleSetActiveDeck={handleSetActiveDeck}
-          />
+        {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
+        <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
+          <div className="w-55 h-full overflow-y-auto custom-scrollbar">
+            <RightPanel
+              isCreatingDeck={isCreating}
+              deckName={deckName}
+              setDeckName={setDeckName}
+              cardCount={cardCount}
+              maxCards={maxCards}
+              isDeckValid={isValid}
+              startNewDeck={startNewDeck}
+              cancelDeckCreation={cancelCreation}
+              handleSaveDeck={handleSaveDeck}
+              decks={decks}
+              isLoadingDecks={isLoadingDecks}
+              maxDecks={3}
+              startEditDeck={startEditDeck}
+              handleDeleteDeck={handleDeleteDeck}
+              handleSetActiveDeck={handleSetActiveDeck}
+            />
+          </div>
         </div>
-      </div>
 
         {/* 🔘 TOGGLE DROITE */}
         <button

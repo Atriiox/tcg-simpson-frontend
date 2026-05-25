@@ -1,60 +1,35 @@
-/**
- * BoosterOpener
- * ============================================================
- * Composant qui orchestre :
- *  - BoosterPack3D (le booster 3D interactif)
- *  - useBoosterCards (le fetch des cartes au moment de l'ouverture)
- *  - CardGrid (l'affichage des cartes revelees)
- *
- * Flux :
- *  1. Affichage initial : le BoosterPack3D, l'utilisateur peut le tirer
- *  2. Au seuil de dechirure (90 %), BoosterPack3D appelle onOpen
- *  3. On lance le fetch des cartes
- *  4. Quand les cartes arrivent, on cache le booster et on affiche la grille
- *  5. Un bouton "Ouvrir un autre booster" remet le tout a zero
- * ============================================================
- */
 import { useCallback, useRef } from "react";
+import { FaTimes } from "react-icons/fa";
 import {
   BoosterPack3D,
   type BoosterPack3DHandle,
-} from "@/features/booster/boosterPack3D"; // TODO : adapte le chemin si different
-
+} from "@/features/booster/boosterPack3D";
 import { useBoosterCards } from "../hooks/useBoosterCards";
 import { CardGrid } from "./CardGrid";
 import type { Card } from "@/features/card/schema/card.schema";
-
+import Button from "@/components/ui/Button";
 
 export interface BoosterOpenerProps {
-  /** URL de l'image du booster. Defaut : /booster.png */
   imageUrl?: string;
-  /** Taille des cartes affichees (prop `size` de ton composant Card). */
   cardSize?: number;
-  /** Callback optionnel quand une carte est cliquee dans la grille. */
   onCardClick?: (card: Card) => void;
+  onClose?: () => void;
 }
 
 export function BoosterOpener({
   imageUrl = "/booster.png",
-  cardSize = 200,
+  cardSize = 150,
   onCardClick,
+  onClose,
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
-  const { cards, isLoading, error, openBooster, reset } = useBoosterCards();
+  const { cards, isLoading, error, hasMoreBoosters, openBooster, reset } = useBoosterCards();
 
-  // Etape 2 du flux : declenche le fetch quand le booster atteint le seuil.
   const handleBoosterOpen = useCallback(async (): Promise<void> => {
     const fetchedCards = await openBooster();
-    if (!fetchedCards) {
-      // Echec du fetch : on remet le booster en etat ferme pour que
-      // l'utilisateur puisse retenter.
-      boosterRef.current?.reset();
-    }
-    // Si succes : `cards` est mis a jour par le hook, et le rendu
-    // bascule automatiquement sur la grille (voir condition plus bas).
+    if (!fetchedCards) boosterRef.current?.reset();
   }, [openBooster]);
 
-  // Etape 5 du flux : reset complet (cartes + booster).
   const handleReset = useCallback((): void => {
     reset();
     boosterRef.current?.reset();
@@ -63,56 +38,79 @@ export function BoosterOpener({
   const hasCards = cards.length > 0;
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center gap-8 p-10 bg-[radial-gradient(ellipse_at_top,#1e3a8a_0%,#0f172a_60%,#020617_100%)]">
-      {/* Tant qu'on n'a pas les cartes, on montre le booster 3D */}
-      {!hasCards && (
-        <>
-          <BoosterPack3D
-            ref={boosterRef}
-            imageUrl={imageUrl}
-            onOpen={handleBoosterOpen}
-          />
+    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[90vw] max-w-2xl flex flex-col font-main">
 
-          {/* Etat de chargement (pendant le fetch) */}
-          {isLoading && (
-            <p className="text-amber-200 text-base font-semibold tracking-widest">
-              Recuperation des cartes...
-            </p>
-          )}
-
-          {/* Affichage des erreurs de fetch */}
-          {error && (
-            <div
-              role="alert"
-              className="text-rose-100 bg-rose-900/90 px-5 py-3 rounded-lg text-sm max-w-md text-center"
-            >
-              {error}
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Des qu'on a les cartes, on remplace le booster par la grille */}
-      {hasCards && (
-        <div className="flex flex-col items-center gap-6 w-full">
-          <h2 className="text-amber-200 text-3xl m-0 [text-shadow:0_0_20px_#f59e0b]">
-            Tes cartes
-          </h2>
-
-          <CardGrid
-            cards={cards}
-            cardSize={cardSize}
-            onCardClick={onCardClick}
-          />
-
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-simpson-gray/10">
+        <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white">
+          🎁 Nouveau booster !
+        </h2>
+        {onClose && (
           <button
-            onClick={handleReset}
-            className="mt-6 px-7 py-3 text-white border-none rounded-full text-base font-bold tracking-widest cursor-pointer bg-gradient-to-br from-amber-500 to-red-600 shadow-[0_6px_20px_rgba(245,158,11,0.5)] hover:brightness-110 transition"
+            onClick={onClose}
+            className="text-simpson-gray hover:text-simpson-orange transition cursor-pointer"
           >
-            Ouvrir un autre booster
+            <FaTimes size={18} />
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Contenu */}
+      <div className="flex flex-col items-center gap-4 px-6 py-6">
+        {!hasCards && (
+          <>
+            <p className="text-body text-simpson-gray text-center">
+              Tire le booster pour révéler tes cartes !
+            </p>
+        <div className="w-full flex justify-center overflow-hidden" style={{ height: "350px" }}>
+  <div className="scale-50 origin-top">
+    <BoosterPack3D
+      ref={boosterRef}
+      imageUrl={imageUrl}
+      onOpen={handleBoosterOpen}
+    />
+  </div>
+</div>
+
+
+            {isLoading && (
+              <p className="text-body text-simpson-orange font-semibold animate-pulse">
+                Récupération des cartes...
+              </p>
+            )}
+            {error && (
+              <div role="alert" className="text-body text-simpson-orange bg-simpson-orange/10 px-4 py-2 rounded-lg text-center">
+                {error}
+              </div>
+            )}
+          </>
+        )}
+
+        {hasCards && (
+          <>
+            <p className="text-medium text-simpson-orange font-semibold uppercase tracking-widest">
+              ✨ Tes cartes
+            </p>
+            <CardGrid
+              cards={cards}
+              cardSize={cardSize}
+              onCardClick={onCardClick}
+            />
+            <div className="flex gap-3 mt-2">
+              {hasMoreBoosters && (
+                <Button onClick={handleReset}>
+                  Ouvrir un autre booster
+                </Button>
+              )}
+              {onClose && (
+                <Button onClick={onClose}>
+                  Fermer
+                </Button>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

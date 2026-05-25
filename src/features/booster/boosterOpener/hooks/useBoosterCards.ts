@@ -6,24 +6,20 @@ import {
 } from "../schema/booster.schema";
 import { Card, CardSchema } from "@/features/card/schema/card.schema";
 import { env } from "@/config/env";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 async function fetchUserBoosters(token: string): Promise<UserBoosters> {
-
   const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
     method: "GET",
     headers: {
-      "Content-Type": "application/json"
-      , "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
     },
-
   });
 
   if (!response.ok)
-    throw new Error(
-      `Echec de la récupération des boosters (HTTP ${response.status})`
-    );
+    throw new Error(`Echec de la récupération des boosters (HTTP ${response.status})`);
 
   const rawData: unknown = await response.json();
   return UserBoosterArraySchema.parse(rawData);
@@ -34,15 +30,15 @@ async function fetchOpenBooster(boosterId: string, token: string): Promise<Card[
     `${env.NEXT_PUBLIC_API_URL}/users/me/boosters/${boosterId}/open`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}`, },
-
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
     }
   );
 
   if (!response.ok)
-    throw new Error(
-      `Echec de l'ouverture du booster (HTTP ${response.status})`
-    );
+    throw new Error(`Echec de l'ouverture du booster (HTTP ${response.status})`);
 
   const rawData: unknown = await response.json();
   const parsedResponse = OpenBoosterResponseSchema.parse(rawData);
@@ -53,9 +49,8 @@ export interface UseBoosterCardsResult {
   cards: Card[];
   isLoading: boolean;
   error: string | null;
-  /** Declenche l'ouverture du booster. Retourne les cartes ou null si echec. */
+  hasMoreBoosters: boolean;
   openBooster: () => Promise<Card[] | null>;
-  /** Vide le state (a appeler quand on remet le booster a zero). */
   reset: () => void;
 }
 
@@ -63,26 +58,32 @@ export function useBoosterCards(): UseBoosterCardsResult {
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
   const isFetchingRef = useRef(false);
-  const { token } = useSelector((state: RootState) => state.user)
-
+  const { token } = useSelector((state: RootState) => state.user);
 
   const openBooster = useCallback(async (): Promise<Card[] | null> => {
     if (isFetchingRef.current) return null;
-    if (!token) return null
+    if (!token) return null;
 
-    
     isFetchingRef.current = true;
     setIsLoading(true);
     setError(null);
 
     try {
       const userBoosters = await fetchUserBoosters(token);
-      if (userBoosters.length === 0)
-        throw new Error("Aucun booster disponible");
 
-      const firstBoosterId = userBoosters[0].booster.id;
-      const fetchedCards = await fetchOpenBooster(firstBoosterId, token);
+      if (userBoosters.length === 0) {
+        setHasMoreBoosters(false);
+        throw new Error("Aucun booster disponible");
+      }
+
+      const firstBooster = userBoosters[0];
+      const fetchedCards = await fetchOpenBooster(firstBooster.booster.id, token);
+
+      // Vérifie s'il reste des boosters après ouverture
+      const remainingTotal = userBoosters.reduce((acc, b) => acc + b.number, 0);
+      setHasMoreBoosters(remainingTotal > 1);
 
       setCards(fetchedCards);
       return fetchedCards;
@@ -98,14 +99,14 @@ export function useBoosterCards(): UseBoosterCardsResult {
       setIsLoading(false);
       isFetchingRef.current = false;
     }
-  }, []);
+  }, [token]);
 
   const reset = useCallback((): void => {
     setCards([]);
     setError(null);
   }, []);
 
-  return { cards, isLoading, error, openBooster, reset };
+  return { cards, isLoading, error, hasMoreBoosters, openBooster, reset };
 }
 
 export { CardSchema };
