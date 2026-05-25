@@ -47,7 +47,7 @@ export function useFriends() {
       try {
         const res = await fetch(
           `${env.NEXT_PUBLIC_API_URL}/users/search?q=${encodeURIComponent(newFriendPseudo.trim())}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         if (res.ok) {
           const data = await res.json();
@@ -65,7 +65,6 @@ export function useFriends() {
     return () => clearTimeout(delayDebounce);
   }, [newFriendPseudo, token]);
 
-  // 🎯 La fonction prend désormais directement le pseudo et lève une exception en cas d'erreur
   const handleAddFriend = async (pseudoToSubmit: string) => {
     if (!token) return;
 
@@ -89,8 +88,34 @@ export function useFriends() {
     }
   };
 
+  const handleRemoveFriend = async (pseudo: string) => {
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_API_URL}/users/me/friends/${encodeURIComponent(pseudo.trim())}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "UNKNOWN_ERROR");
+      }
+
+
+      await loadFriends();
+    } catch (err) {
+      console.error("Erreur lors de la suppression de l'ami :", err);
+    }
+  };
+
   const filteredFriends = friends.filter((friend) =>
-    friend.pseudo.toLowerCase().includes(searchQuery.toLowerCase())
+    friend.pseudo.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return {
@@ -103,6 +128,7 @@ export function useFriends() {
     searchQuery,
     setSearchQuery,
     handleAddFriend,
-    loadFriends, // 🎯 Exporté pour permettre à Formik de recharger la liste
+    handleRemoveFriend, 
+    loadFriends,
   };
 }
