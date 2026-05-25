@@ -193,7 +193,7 @@ function DecksTab({
         {decks.map((deck: DeckData) => (
           <div
             key={deck._id}
-            className={`flex flex-col bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 transition-all ${deck.isActive ? "border-emerald-500/50 bg-emerald-500/[0.03]" : "border-simpson-gray/10 dark:border-white/5"}`}
+            className={`flex flex-col bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 transition-all ${deck.isActive ? "border-emerald-500/50 bg-emerald-500/3" : "border-simpson-gray/10 dark:border-white/5"}`}
           >
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white">

@@ -169,17 +169,15 @@ export default function CollectionPanel({
                 className={`relative transition-all duration-300 rounded-2xl ${
                   isCreatingDeck ? "cursor-pointer" : ""
                 } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
-      ${isDimmed ? "opacity-30 filter grayscale-[20%]" : ""}`}
+      ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
                 {/* STYLE CLEAN PERSONNALISÉ (BLEU) */}
                 {isSelected && (
                   <div className="absolute inset-0 z-20 pointer-events-none">
+                    <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
 
-                    <div className="absolute -inset-0.5 border-4 border-[#e95029] rounded-[0.4em]" />
-
-          
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#e95029] rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-simpson-orange rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
                       <span className="text-[12px] text-white font-black leading-none">
                         ✓
                       </span>
