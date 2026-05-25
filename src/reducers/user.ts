@@ -1,3 +1,4 @@
+// userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface UserState {
@@ -23,18 +24,24 @@ export const userSlice = createSlice({
     setAuth: (
       state,
       action: PayloadAction<{
-        token: string | null;  
-        pseudo: string | null; 
-        email: string | null;  
-        money: number | null;  
+        token: string | null;
+        pseudo: string | null;
+        email: string | null;
+        money: number | null;
         theme: boolean;
       }>,
     ) => {
       state.token = action.payload.token;
       state.pseudo = action.payload.pseudo;
-      state.email = action.payload.email; 
+      state.email = action.payload.email;
       state.money = action.payload.money;
       state.isDarkMode = action.payload.theme;
+    },
+
+    updateMoney: (state, action: PayloadAction<number>) => {
+      if (state.money !== null) {
+        state.money = action.payload;
+      }
     },
 
     toggleTheme: (state) => {
@@ -54,5 +61,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { setAuth, toggleTheme, setTheme, clearAuth } = userSlice.actions;
+export const { setAuth, updateMoney, toggleTheme, setTheme, clearAuth } =
+  userSlice.actions;
 export default userSlice.reducer;

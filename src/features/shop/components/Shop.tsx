@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // 🎯 Ajout de useEffect
 import Image from "next/image";
+import { useMoney } from "../hooks/useMoney";
 import { LuInfo } from "react-icons/lu";
 import { FaPlusCircle, FaCheckCircle } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
@@ -30,7 +31,8 @@ const BOOSTERS_LIST: BoosterData[] = [
     title: "Booster Série 1",
     imageUrl: "/booster1.webp",
     price: 50,
-    description: "Collectionne les cartes exclusives de tes personnages favoris.",
+    description:
+      "Collectionne les cartes exclusives de tes personnages favoris.",
     contentInfo: "Contient ",
     highlightText: "5 cartes aléatoires",
   },
@@ -39,7 +41,8 @@ const BOOSTERS_LIST: BoosterData[] = [
     title: "Pack Légendaire",
     imageUrl: "/booster2.webp",
     price: 500,
-    description: "La rareté absolue. Idéal pour compléter les chefs-d'œuvre de ta collection.",
+    description:
+      "La rareté absolue. Idéal pour compléter les chefs-d'œuvre de ta collection.",
     contentInfo: "Contient ",
     highlightText: "1 carte Légendaire",
   },
@@ -54,12 +57,16 @@ const donutPacks: DonutPack[] = [
 ];
 
 export default function Shop() {
-  const [userDonuts, setUserDonuts] = useState<number>(180);
+  const { money: userDonuts, updateMoney } = useMoney();
+
+  // 🎯 État pour bloquer l'affichage dynamique asynchrone pendant le SSR
+  const [isMounted, setIsMounted] = useState(false);
+
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
-  
-  // États de l'animation globale de la modal
-  const [purchaseStatus, setPurchaseStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [purchaseStatus, setPurchaseStatus] = useState<
+    "idle" | "loading" | "success"
+  >("idle");
   const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
 
   const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({
@@ -67,18 +74,28 @@ export default function Shop() {
     legendaire: 0,
   });
 
+  // 🎯 Déclenché dès que le composant est monté côté navigateur
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const handleBuyBooster = async (booster: BoosterData) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
 
     setBuyingBoosterId(booster.id);
+    const newBalance = userDonuts - booster.price;
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1200));
-      setUserDonuts((prev) => prev - booster.price);
-      setOwnedBoosters((prev) => ({
-        ...prev,
-        [booster.id]: prev[booster.id] + 1,
-      }));
+
+      const result = await updateMoney(newBalance);
+
+      if (result.ok) {
+        setOwnedBoosters((prev) => ({
+          ...prev,
+          [booster.id]: prev[booster.id] + 1,
+        }));
+      }
     } catch (error) {
       console.error("Erreur lors de l'achat :", error);
     } finally {
@@ -91,18 +108,22 @@ export default function Shop() {
 
     setAddedDonutsAmount(amount);
     setPurchaseStatus("loading");
+    const newBalance = userDonuts + amount;
 
     try {
-      // 1. Loader plein écran sur la modal pendant 2 secondes
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      setPurchaseStatus("success");
-      setUserDonuts((prev) => prev + amount);
 
-      // 2. Écran succès pendant 2 secondes avant fermeture automatique
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const result = await updateMoney(newBalance);
+
+      if (result.ok) {
+        setPurchaseStatus("success");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      } else {
+        setPurchaseStatus("idle");
+      }
     } catch (error) {
       console.error("Erreur d'achat :", error);
+      setPurchaseStatus("idle");
     } finally {
       setPurchaseStatus("idle");
       setIsDonutModalOpen(false);
@@ -122,7 +143,7 @@ export default function Shop() {
               Boutique
             </h1>
             <p className="text-sm font-medium text-simpson-gray mt-1">
-              Échange tes donuts contre des boosters rares et des objets exclusifs
+              Échange tes donuts contre des boosters !
             </p>
           </div>
 
@@ -139,7 +160,8 @@ export default function Shop() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
           {BOOSTERS_LIST.map((booster) => {
-            const canAfford = userDonuts >= booster.price;
+            // 🎯 Sécurité : Si pas encore monté, on s'aligne sur le SSR (false)
+            const canAfford = isMounted ? userDonuts >= booster.price : false;
             const isBuying = buyingBoosterId === booster.id;
 
             return (
@@ -197,7 +219,8 @@ export default function Shop() {
                         Prix
                       </span>
                       <div className="flex items-center gap-1 font-black text-xl text-simpson-dark dark:text-simpson-white">
-                        <span>{booster.price}</span>
+                        {/* 🎯 On n'affiche le prix réel que lorsque le client est monté */}
+                        <span>{isMounted ? booster.price : "--"}</span>
                         <Image
                           src="/donuts1.webp"
                           alt="Donut Icon"
@@ -220,7 +243,10 @@ export default function Shop() {
                         } ${isBuying || (buyingBoosterId && buyingBoosterId !== booster.id) ? "opacity-50 cursor-not-allowed" : ""}
                       `}
                     >
-                      {isBuying ? (
+                      {/* 🎯 Rendu sécurisé pour éviter le désaccord SSR / Client */}
+                      {!isMounted ? (
+                        <div className="w-4 h-4 border-2 border-simpson-gray/40 border-t-transparent rounded-full animate-spin" />
+                      ) : isBuying ? (
                         <div className="w-4 h-4 border-2 border-simpson-white border-t-transparent rounded-full animate-spin" />
                       ) : !canAfford ? (
                         <span>Insuffisant</span>
@@ -241,8 +267,6 @@ export default function Shop() {
         onClose={() => purchaseStatus === "idle" && setIsDonutModalOpen(false)}
       >
         <div className="relative flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main overflow-hidden rounded-2xl">
-          
-          {/* ÉCRAN 1 : LEADER DE CHARGEMENT SUR TOUTE LA MODAL */}
           {purchaseStatus === "loading" && (
             <div className="absolute inset-0 bg-white/90 dark:bg-simpson-darklight/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 animate-fade-in">
               <div className="w-10 h-10 border-4 border-simpson-blue border-t-transparent rounded-full animate-spin" />
@@ -252,12 +276,16 @@ export default function Shop() {
             </div>
           )}
 
-          {/* ÉCRAN 2 : SUCCÈS SUR TOUTE LA MODAL */}
           {purchaseStatus === "success" && (
             <div className="absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center gap-3 text-white animate-fade-in">
-              <FaCheckCircle className="text-white scale-110 drop-shadow-md animate-bounce" size={48} />
+              <FaCheckCircle
+                className="text-white scale-110 drop-shadow-md animate-bounce"
+                size={48}
+              />
               <div className="text-center space-y-1">
-                <h3 className="text-xl font-black tracking-wide">Achat réussi !</h3>
+                <h3 className="text-xl font-black tracking-wide">
+                  Achat réussi !
+                </h3>
                 <p className="text-base font-bold bg-white/20 px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-xs">
                   +{addedDonutsAmount} Donuts
                 </p>
@@ -265,13 +293,13 @@ export default function Shop() {
             </div>
           )}
 
-          {/* CONTENU CLASSIQUE DE LA MODAL */}
           <div className="text-center space-y-1">
             <h2 className="text-xl font-bold text-simpson-dark dark:text-simpson-white">
               Réserve de donuts
             </h2>
             <p className="text-sm text-simpson-gray">
-              Choisis un lot pour obtenir des donuts et débloquer de nouveaux boosters.
+              Choisis un lot pour obtenir des donuts et débloquer de nouveaux
+              boosters.
             </p>
           </div>
 
@@ -305,9 +333,7 @@ export default function Shop() {
                   <h3 className="text-base font-bold text-simpson-dark dark:text-simpson-white">
                     x{pack.amount}
                   </h3>
-                  <p className="text-xs text-simpson-gray">
-                    Donuts
-                  </p>
+                  <p className="text-xs text-simpson-gray">Donuts</p>
                 </div>
 
                 <Button
@@ -334,7 +360,9 @@ export default function Shop() {
           </div>
 
           <p className="text-[11px] text-center text-simpson-gray/70 leading-relaxed px-2">
-            Les donuts sont une monnaie virtuelle utilisable uniquement dans le jeu. En procédant à l'achat, tu acceptes les conditions générales de vente.
+            Les donuts sont une monnaie virtuelle utilisable uniquement dans le
+            jeu. En procédant à l'achat, tu acceptes les conditions générales de
+            vente.
           </p>
         </div>
       </Modal>
