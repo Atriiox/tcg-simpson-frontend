@@ -245,29 +245,73 @@ function DecksTab({
   );
 }
 
-function BoostersTab({ inventory, onOpen }: any) {
+function BoostersTab({
+  inventory,
+  onOpen,
+}: {
+  inventory: BoosterInventory;
+  onOpen: (type: keyof BoosterInventory) => void;
+}) {
+  const hasBoosters = inventory.booster1 > 0 || inventory.booster2 > 0;
   const boosterList = [
-    { id: "booster1" as const, name: "Standard", q: inventory.booster1 },
-    { id: "booster2" as const, name: "Premium", q: inventory.booster2 },
+    {
+      id: "booster1" as const,
+      name: "Booster Standard",
+      src: "/booster1.webp",
+      quantity: inventory.booster1,
+    },
+    {
+      id: "booster2" as const,
+      name: "Booster Premium",
+      src: "/booster2.webp",
+      quantity: inventory.booster2,
+    },
   ];
+
   return (
-    <div className="flex flex-col gap-3">
-      {boosterList.map((b) => (
-        <div
-          key={b.id}
-          className="bg-white dark:bg-simpson-darklight border border-simpson-gray/10 dark:border-white/5 p-4 rounded-xl flex items-center justify-between"
-        >
-          <span className="text-xs font-bold text-simpson-dark dark:text-simpson-white">
-            {b.name} (x{b.q})
-          </span>
-          <button
-            onClick={() => onOpen(b.id)}
-            className="px-3 py-1.5 bg-simpson-orange dark:bg-simpson-yellow text-white dark:text-black text-[10px] font-bold rounded-lg cursor-pointer"
-          >
-            Ouvrir
-          </button>
+    <div className="flex flex-col items-center">
+      {hasBoosters ? (
+        <div className="w-full flex flex-col gap-6">
+          {boosterList.map((booster) => {
+            if (booster.quantity === 0) return null;
+            return (
+              <div
+                key={booster.id}
+                className="bg-white dark:bg-simpson-darklight border border-simpson-gray/10 p-4 rounded-2xl shadow-xs flex flex-col items-center gap-4 w-full group relative"
+              >
+                <span className="absolute top-3 right-3 bg-simpson-orange dark:bg-simpson-yellow text-white dark:text-simpson-dark font-bold text-[11px] px-2 py-0.5 rounded-lg shadow-xs">
+                  x{booster.quantity}
+                </span>
+                <div className="w-28 h-40 relative mt-2 transition-transform duration-300 group-hover:scale-105">
+                  <Image
+                    src={booster.src}
+                    alt={booster.name}
+                    fill
+                    sizes="112px"
+                    priority
+                    className="object-contain filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)]"
+                  />
+                </div>
+                <div className="w-full text-center space-y-3">
+                  <h3 className="font-bold text-simpson-dark dark:text-white text-xs">
+                    {booster.name}
+                  </h3>
+                  <button
+                    onClick={() => onOpen(booster.id)}
+                    className="w-full h-9 bg-simpson-orange hover:bg-simpson-orange/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                  >
+                    OUVRIR
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      ))}
+      ) : (
+        <p className="text-xs text-simpson-gray text-center mt-8 font-medium">
+          Aucun booster disponible
+        </p>
+      )}
     </div>
   );
 }
