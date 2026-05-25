@@ -11,7 +11,7 @@
 import "../Styles/animations.css";
 
 // TODO : adapte ce chemin a l'emplacement reel de ton composant Card.
-import Card from "@/features/card/components/Card";
+import Card from "@/features/card/components/card";
 
 import type { CardData } from "../schema/card.schema";
 
@@ -32,7 +32,7 @@ export function CardGrid({
   onCardClick,
 }: CardGridProps): React.JSX.Element {
   return (
-    <div className="flex flex-wrap gap-[18px] justify-center max-w-[1100px]">
+    <div className="flex flex-wrap gap-18 justify-center max-w-275">
       {cards.map((card, index) => (
         <div
           key={`${card.slug}-${index}`}

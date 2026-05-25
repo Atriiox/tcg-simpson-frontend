@@ -11,6 +11,7 @@ import {
   OpenBoosterResponseSchema,
   type CardData,
 } from "../schema/card.schema";
+import { env } from "@/config/env";
 
 /**
  * Appel API d'ouverture de booster.
@@ -25,23 +26,32 @@ import {
  * donc si le backend renvoie un format inattendu, tu auras une erreur
  * lisible plutot qu'un crash plus loin dans le rendu.
  */
-async function fetchBoosterCards(): Promise<CardData[]> {
-  const response = await fetch("/api/booster/open", {
+
+
+async function fetchUserBoosters(): Promise<UserBoosters> {
+  const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/me/boosters`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `Echec de l'ouverture du booster (HTTP ${response.status})`
-    );
-  }
+  if (!response.ok) throw new Error(`Echec de la récupération des boosters (HTTP ${response.status})`);
+
+  const rawData: unknown = await response.json();
+  return UserBoosterArraySchema.parse(rawData);
+}
+
+async function openBooster(boosterId: string): Promise<CardData[]> {
+  const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/me/boosters/${boosterId}/open`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) throw new Error(`Echec de l'ouverture du booster (HTTP ${response.status})`);
 
   const rawData: unknown = await response.json();
   const parsedResponse = OpenBoosterResponseSchema.parse(rawData);
   return parsedResponse.cards;
 }
-
 export interface UseBoosterCardsResult {
   cards: CardData[];
   isLoading: boolean;
