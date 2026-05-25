@@ -65,7 +65,7 @@ function Card(props: CardProps) {
   return (
     <div
       // 🎯 Injection de la classe de rareté (styles.commun, styles.rare ou styles.legendaire)
-      className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass}`}
+      className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass} select-none`}
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
         width: `${props.size ?? 200}px`,
