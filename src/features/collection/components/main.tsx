@@ -5,41 +5,28 @@ import FilterPanel from "./FilterPanel";
 import RightPanel from "./RightPanel";
 import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import { useDeckBuilder } from "../hooks/useDeckBuilder"; // Ajuste le chemin si nécessaire
 
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
   const [showRight, setShowRight] = useState(true);
 
-  // 🎯 ÉTATS DU DECK BUILDER PARTAGÉS
-  const [isCreatingDeck, setIsCreatingDeck] = useState(false);
-  const [deckName, setDeckName] = useState("");
-  const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
-
-  const MAX_CARDS = 10;
-  const cardCount = selectedCardIds.length;
-  const isDeckValid = cardCount === MAX_CARDS;
-
-  const startNewDeck = () => {
-    setIsCreatingDeck(true);
-    setSelectedCardIds([]);
-    setDeckName("");
-    setShowRight(true);
-  };
-
-  const toggleCardSelection = (cardId: string) => {
-    setSelectedCardIds((prev) => {
-      if (prev.includes(cardId)) {
-        return prev.filter((id) => id !== cardId);
-      }
-      if (prev.length >= MAX_CARDS) return prev;
-      return [...prev, cardId];
-    });
-  };
-
-  const cancelDeckCreation = () => {
-    setIsCreatingDeck(false);
-    setSelectedCardIds([]);
-  };
+  // 🎯 APPEL DU HOOK CONNECTÉ AU BACK-END
+  const {
+    isCreating,
+    deckName,
+    setDeckName,
+    selectedCardIds,
+    cardCount,
+    maxCards,
+    isValid,
+    startNewDeck,
+    toggleCardSelection,
+    handleSaveDeck,
+    cancelCreation,
+    decks,
+    isLoadingDecks,
+  } = useDeckBuilder();
 
   return (
     <div
@@ -68,25 +55,30 @@ export default function Main() {
         {showFilter ? <FaAngleLeft size={14} /> : <FaAngleRight size={14} />}
       </button>
 
+      {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
       <CollectionPanel
-        isCreatingDeck={isCreatingDeck}
+        isCreatingDeck={isCreating}
         selectedCardIds={selectedCardIds}
         toggleCardSelection={toggleCardSelection}
-        maxCardsReached={cardCount >= MAX_CARDS}
+        maxCardsReached={cardCount >= maxCards}
       />
 
+      {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
       <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
         <div className="w-55 h-full overflow-y-auto custom-scrollbar">
           <RightPanel
-            isCreatingDeck={isCreatingDeck}
+            isCreatingDeck={isCreating}
             deckName={deckName}
             setDeckName={setDeckName}
             cardCount={cardCount}
-            maxCards={MAX_CARDS}
-            isDeckValid={isDeckValid}
+            maxCards={maxCards}
+            isDeckValid={isValid}
             startNewDeck={startNewDeck}
-            cancelDeckCreation={cancelDeckCreation}
-            setIsCreatingDeck={setIsCreatingDeck}
+            cancelDeckCreation={cancelCreation}
+            handleSaveDeck={handleSaveDeck}
+            decks={decks}
+            isLoadingDecks={isLoadingDecks}
+            maxDecks={3}
           />
         </div>
       </div>

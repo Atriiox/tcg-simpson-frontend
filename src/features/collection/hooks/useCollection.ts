@@ -21,7 +21,7 @@ export type CollectionCard = {
   family: {
     id: string;
     name: string;
-    desc: string;
+    description: string;
     bonus: {
       ATK: number;
       PV: number;
@@ -30,7 +30,7 @@ export type CollectionCard = {
   affinity: {
     id: string;
     name: string;
-    desc: string;
+    description: string;
     bonus: {
       ATK: number;
       PV: number;
@@ -69,7 +69,7 @@ export function useCollection(): UseCollectionReturn {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {

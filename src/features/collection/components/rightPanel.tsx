@@ -4,6 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 import { BiSave, BiX, BiCheckCircle } from "react-icons/bi";
+import { useFormik } from "formik";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { DeckData } from "../hooks/useDeckBuilder";
 
 type Tab = "boosters" | "decks";
 
@@ -21,24 +25,59 @@ interface RightPanelProps {
   isDeckValid: boolean;
   startNewDeck: () => void;
   cancelDeckCreation: () => void;
-  setIsCreatingDeck: (val: boolean) => void;
+  handleSaveDeck: (name: string) => Promise<void>;
+  decks: DeckData[];
+  isLoadingDecks: boolean;
+  maxDecks: number;
 }
 
 export default function RightPanel({
   isCreatingDeck,
-  deckName,
-  setDeckName,
   cardCount,
   maxCards,
-  isDeckValid,
   startNewDeck,
   cancelDeckCreation,
-  setIsCreatingDeck,
+  handleSaveDeck,
+  decks,
+  isLoadingDecks,
+  maxDecks,
 }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
   const [boostersOwned, setBoostersOwned] = useState<BoosterInventory>({
     booster1: 1,
     booster2: 3,
+  });
+
+  // 🎯 Contrat Zod aligné avec ta méthode d'authentification
+  const deckSchema = z
+    .object({
+      deckName: z
+        .string()
+        .min(1, "Le nom du deck est obligatoire") // Remplace efficacement required_error
+        .min(3, "Le nom doit contenir au moins 3 caractères")
+        .max(25, "Le nom est trop long"),
+    })
+    .refine(() => decks.length < maxDecks, {
+      message: "Limite de 3 decks atteinte !",
+      path: ["deckName"],
+    });
+  type DeckFormValues = z.infer<typeof deckSchema>;
+
+  // 🎯 Configuration Formik locale
+  const formik = useFormik<DeckFormValues>({
+    initialValues: { deckName: "" },
+    validationSchema: toFormikValidationSchema(deckSchema),
+    enableReinitialize: true, // Permet de reset les valeurs si isCreatingDeck change
+    onSubmit: async (values, { setFieldError, setSubmitting, resetForm }) => {
+      try {
+        await handleSaveDeck(values.deckName);
+        resetForm();
+      } catch (err: any) {
+        setFieldError("deckName", err.message || "Erreur de sauvegarde");
+      } finally {
+        setSubmitting(false);
+      }
+    },
   });
 
   const handleOpenBooster = (type: keyof BoosterInventory) => {
@@ -49,10 +88,9 @@ export default function RightPanel({
     );
   };
 
-  const handleSaveDeck = () => {
-    if (!isDeckValid) return;
-    console.log("Enregistrement du deck :", { name: deckName });
-    setIsCreatingDeck(false);
+  const handleCancel = () => {
+    formik.resetForm();
+    cancelDeckCreation();
   };
 
   return (
@@ -65,46 +103,72 @@ export default function RightPanel({
             </h2>
           </div>
 
+          {/* Saisie Nom du Deck */}
           <div className="flex flex-col gap-1 w-full">
             <label
-              htmlFor="deck-name-input"
+              htmlFor="deckName"
               className="text-[11px] font-medium text-simpson-gray pl-1"
             >
               Nom du deck
             </label>
-            <input
-              id="deck-name-input"
-              type="text"
-              value={deckName}
-              onChange={(e) => setDeckName(e.target.value)}
-              className="bg-simpson-gray/10 dark:bg-black/20 border border-simpson-gray/15 dark:border-white/5 px-3 py-2 rounded-xl text-xs font-semibold outline-none text-simpson-dark dark:text-simpson-white focus:border-simpson-orange dark:focus:border-simpson-yellow w-full transition-colors"
-              placeholder="Ex: Mon deck principal"
-            />
+            <div
+              className={`flex items-center border rounded-xl px-3 bg-white dark:bg-black/20 ${
+                formik.touched.deckName && formik.errors.deckName
+                  ? "border-red-500"
+                  : "border-simpson-gray/15 dark:border-white/5 focus-within:border-simpson-orange dark:focus-within:border-simpson-yellow"
+              }`}
+            >
+              <input
+                id="deckName"
+                type="text"
+                maxLength={25}
+                placeholder="Ex: Mon deck principal"
+                className="flex-1 border-none bg-transparent outline-none py-2 text-xs font-semibold text-simpson-dark dark:text-simpson-white placeholder-simpson-gray/40"
+                {...formik.getFieldProps("deckName")}
+              />
+            </div>
+            {/* 🎯 h-5 fixe pour bloquer l'espace et éviter les sursauts visuels de l'UI */}
+            <div className="h-5 mt-0.5 flex items-center">
+              {formik.touched.deckName && formik.errors.deckName && (
+                <p className="text-red-500 text-[10px] font-bold pl-1">
+                  {formik.errors.deckName}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Jauge de progression fine */}
+          {/* Jauge de progression des cartes */}
           <div className="w-full bg-simpson-gray/10 dark:bg-black/20 rounded-full h-1.5 overflow-hidden relative border border-simpson-gray/5">
             <div
-              className={`h-full transition-all duration-300 ${isDeckValid ? "bg-emerald-500" : "bg-simpson-orange dark:bg-simpson-yellow"}`}
+              className={`h-full transition-all duration-300 ${
+                cardCount === maxCards
+                  ? "bg-emerald-500"
+                  : "bg-simpson-orange dark:bg-simpson-yellow"
+              }`}
               style={{ width: `${(cardCount / maxCards) * 100}%` }}
             />
           </div>
 
+          {/* Actions de Soumission */}
           <div className="flex flex-col gap-2 w-full">
             <Button
-              onClick={handleSaveDeck}
-              disabled={!isDeckValid}
+              onClick={() => formik.handleSubmit()}
+              disabled={
+                !formik.isValid || cardCount !== maxCards || formik.isSubmitting
+              }
               className={`w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 h-10 ${
-                !isDeckValid
+                cardCount !== maxCards || !formik.isValid
                   ? "opacity-30 cursor-not-allowed bg-simpson-gray text-white border-none"
                   : ""
               }`}
             >
-              <BiSave size={16} /> SAUVEGARDER
+              <BiSave size={16} />{" "}
+              {formik.isSubmitting ? "SAUVEGARDE..." : "SAUVEGARDER"}
             </Button>
 
             <Button
-              onClick={cancelDeckCreation}
+              type="button"
+              onClick={handleCancel}
               className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 h-10 bg-transparent border border-simpson-gray/20 !text-simpson-gray hover:bg-simpson-gray/5 dark:hover:bg-white/5 transition-all cursor-pointer shadow-none"
             >
               <BiX size={16} /> ANNULER
@@ -138,7 +202,12 @@ export default function RightPanel({
 
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {activeTab === "decks" && !isCreatingDeck && (
-          <DecksTab onStart={startNewDeck} />
+          <DecksTab
+            onStart={startNewDeck}
+            decks={decks}
+            isLoading={isLoadingDecks}
+            maxDecks={maxDecks}
+          />
         )}
 
         {activeTab === "decks" && isCreatingDeck && (
@@ -194,32 +263,70 @@ export default function RightPanel({
 }
 
 /* ==========================================
-   SUB-COMPOSANT : LISTE DES DECKS SAUVEGARDÉS
+   SUB-COMPOSANT : LISTE DES DECKS DYNAMIQUE
    ========================================== */
-function DecksTab({ onStart }: { onStart: () => void }) {
-  const [decks] = useState<string[]>([]);
+interface DecksTabProps {
+  onStart: () => void;
+  decks: DeckData[];
+  isLoading: boolean;
+  maxDecks: number;
+}
+
+function DecksTab({ onStart, decks, isLoading, maxDecks }: DecksTabProps) {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="w-6 h-6 border-2 border-simpson-orange border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const isLimitReached = decks.length >= maxDecks;
 
   return (
     <div className="flex flex-col gap-4">
-      <Button
-        onClick={onStart}
-        className="w-full py-2.5 text-xs font-bold tracking-wider cursor-pointer"
-      >
-        CRÉER UN DECK
-      </Button>
+      <div className="w-full relative group">
+        <Button
+          onClick={onStart}
+          disabled={isLimitReached}
+          className={`w-full py-2.5 text-xs font-bold tracking-wider cursor-pointer ${
+            isLimitReached
+              ? "opacity-40 cursor-not-allowed bg-simpson-gray"
+              : ""
+          }`}
+        >
+          CRÉER UN DECK
+        </Button>
+        {isLimitReached && (
+          <p className="text-[10px] text-red-500 text-center font-bold mt-1">
+            Maximum de {maxDecks} decks atteint.
+          </p>
+        )}
+      </div>
 
       {decks.length > 0 ? (
         <div className="flex flex-col gap-2">
-          {decks.map((deck, i) => (
+          {decks.map((deck) => (
             <div
-              key={i}
-              className="flex items-center justify-between bg-white dark:bg-simpson-darklight border border-simpson-gray/5 rounded-xl px-4 py-3 shadow-xs hover:border-simpson-orange/30 transition-colors cursor-pointer group"
+              key={deck._id}
+              className={`flex items-center justify-between bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 shadow-xs transition-colors cursor-pointer group ${
+                deck.isActive
+                  ? "border-emerald-500/40 bg-emerald-500/[0.02]"
+                  : "border-simpson-gray/5 hover:border-simpson-orange/30"
+              }`}
             >
-              <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow transition-colors">
-                {deck}
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-simpson-dark dark:text-simpson-white group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow transition-colors">
+                  {deck.name}
+                </span>
+                {deck.isActive && (
+                  <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-wider">
+                    Actif
+                  </span>
+                )}
+              </div>
               <span className="text-[11px] font-bold text-simpson-gray bg-simpson-light dark:bg-simpson-dark px-2 py-0.5 rounded-md">
-                0 / 10
+                {deck.cards?.length || 0} / 10
               </span>
             </div>
           ))}
@@ -233,9 +340,6 @@ function DecksTab({ onStart }: { onStart: () => void }) {
   );
 }
 
-/* ==========================================
-   SUB-COMPOSANT : PANNEAU DES BOOSTERS
-   ========================================== */
 function BoostersTab({
   inventory,
   onOpen,
