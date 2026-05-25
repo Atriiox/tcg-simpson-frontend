@@ -60,7 +60,7 @@ export function useDeckBuilder() {
   }, [fetchDecks]);
 
   const startNewDeck = () => {
-   setIsCreating(true);
+    setIsCreating(true);
     setSelectedCardIds([]);
     setDeckName("");
   };
