@@ -57,8 +57,6 @@ export default function RightPanel({
 
   return (
     <div className="h-full flex flex-col bg-transparent relative select-none">
-      
-      {/* 🛠️ EN-TÊTE : CONFIGURATION ACTIVE DU DECK */}
       {isCreatingDeck ? (
         <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/5 dark:border-transparent flex flex-col gap-4 shrink-0 animate-fadeIn">
           <div>
@@ -67,7 +65,6 @@ export default function RightPanel({
             </h2>
           </div>
 
-          {/* Saisie avec label fixe épuré */}
           <div className="flex flex-col gap-1 w-full">
             <label
               htmlFor="deck-name-input"
@@ -93,7 +90,6 @@ export default function RightPanel({
             />
           </div>
 
-          {/* Boutons d'actions empilés */}
           <div className="flex flex-col gap-2 w-full">
             <Button
               onClick={handleSaveDeck}
@@ -116,8 +112,6 @@ export default function RightPanel({
           </div>
         </div>
       ) : (
-        
-        /* 🕹️ HEADER STANDARD (HORS ÉDITION) */
         <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/5 dark:border-transparent flex flex-col items-center gap-3 shrink-0">
           <h2 className="text-center font-bold tracking-wide text-simpson-dark dark:text-simpson-white text-sm">
             {activeTab === "decks" ? "Mes decks" : "Mes boosters"}
@@ -142,7 +136,6 @@ export default function RightPanel({
         </div>
       )}
 
-      {/* 🔮 TEXTE CONTEXTUEL ET COMPTEUR DYNAMIQUE EN BAS */}
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {activeTab === "decks" && !isCreatingDeck && (
           <DecksTab onStart={startNewDeck} />
@@ -157,11 +150,11 @@ export default function RightPanel({
                     Sélection en cours
                   </p>
                   <p className="text-[11px] text-simpson-gray leading-relaxed font-medium">
-                    Ajoute encore {maxCards - cardCount} carte{maxCards - cardCount > 1 ? "s" : ""} depuis ta collection.
+                    Ajoute encore {maxCards - cardCount} carte
+                    {maxCards - cardCount > 1 ? "s" : ""} depuis ta collection.
                   </p>
                 </div>
-                
-                {/* Badge X / 10 sobre et classe */}
+
                 <div className="bg-simpson-gray/5 border border-simpson-gray/10 dark:border-white/5 rounded-2xl py-2.5 px-4 inline-block mx-auto">
                   <span className="text-xs font-bold tracking-wider text-simpson-dark dark:text-simpson-white">
                     {cardCount} / {maxCards} CARTES
@@ -201,7 +194,7 @@ export default function RightPanel({
 }
 
 /* ==========================================
-   📌 SUB-COMPOSANT : LISTE DES DECKS SAUVEGARDÉS
+   SUB-COMPOSANT : LISTE DES DECKS SAUVEGARDÉS
    ========================================== */
 function DecksTab({ onStart }: { onStart: () => void }) {
   const [decks] = useState<string[]>([]);
@@ -241,7 +234,7 @@ function DecksTab({ onStart }: { onStart: () => void }) {
 }
 
 /* ==========================================
-   📌 SUB-COMPOSANT : PANNEAU DES BOOSTERS
+   SUB-COMPOSANT : PANNEAU DES BOOSTERS
    ========================================== */
 function BoostersTab({
   inventory,

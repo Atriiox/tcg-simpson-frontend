@@ -153,7 +153,6 @@ export default function CollectionPanel({
         </div>
       </div>
 
-      {/* GRILLE DE SCROLL */}
       <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
         <div
           className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
@@ -176,8 +175,6 @@ export default function CollectionPanel({
                 } ${isDimmed ? "opacity-30 filter grayscale-[20%]" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
-                {/* 🎯 Bulle numérique indiquant l'ordre d'insertion dans le deck */}
-                {/* 🎯 Indicateur de sélection simple (sans ordre) */}
                 {isSelected && (
                   <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-emerald-500 text-white text-xs font-black flex items-center justify-center shadow-md z-30 animate-scaleIn">
                     ✓
