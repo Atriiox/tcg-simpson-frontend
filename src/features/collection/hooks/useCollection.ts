@@ -97,10 +97,10 @@ export function useCollection(filters: Filters= { rarity: [], type: [], serie: [
         rarityId = "3";
         break;
     }
-        
+
         params.append("rarity", rarityId);
         })}
-      
+
       if (filters.type && filters.type.length > 0) {
   filters.type.forEach((t) => params.append("type", t));
 }

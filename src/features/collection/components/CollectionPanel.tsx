@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Card from "@/features/card/components/card";
+import Card from "@/features/card/components/Card";
+import { useCollection } from "../hooks/useCollection";
 import { CollectionCard } from "../hooks/useCollection";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
@@ -105,7 +106,8 @@ export default function CollectionPanel({
       slug: card.slug,
       type: card.type,
       rarity: String(card.rarity),
-      description: card.description || "Aucune description disponible pour cette carte.",
+      description
+        card.description || "Aucune description disponible pour cette carte.",
       ATK: card.ATK,
       PV: card.PV,
       family: card.family?.name || card.family,
@@ -179,7 +181,9 @@ export default function CollectionPanel({
                   <div className="absolute inset-0 z-20 pointer-events-none">
                     <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
                     <div className="absolute -top-2 -right-2 w-6 h-6 bg-simpson-orange rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
-                      <span className="text-[12px] text-white font-black leading-none">✓</span>
+                      <span className="text-[12px] text-white font-black leading-none">
+                        ✓
+                      </span>
                     </div>
                   </div>
                 )}

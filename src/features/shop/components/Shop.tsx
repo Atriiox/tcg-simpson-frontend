@@ -175,7 +175,7 @@ export default function Shop() {
                   />
                 </div>
 
-                <div className="flex flex-col justify-between flex-1 w-full min-h-[240px]">
+                <div className="flex flex-col justify-between flex-1 w-full min-h-60">
                   <div className="flex items-center justify-between w-full mb-2">
                     <div className="text-xs font-semibold text-simpson-gray dark:text-simpson-white/40 bg-simpson-gray/10 dark:bg-white/5 px-2.5 py-1 rounded-md">
                       Possédé :{" "}
@@ -348,7 +348,7 @@ export default function Shop() {
               </div>
             ))}
 
-            <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-simpson-gray/20 text-center gap-1 min-h-[140px]">
+            <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-simpson-gray/20 text-center gap-1 min-h-35">
               <p className="text-[11px] font-bold text-simpson-gray">
                 Besoin de plus ?
               </p>

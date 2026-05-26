@@ -21,7 +21,6 @@ interface FilterPanelProps {
   resetFilters: () => void;
   searchTerm: string;
   onSearchChange: (val: string) => void;
-  onClose?: () => void;
 }
 
 export default function FilterPanel({
@@ -30,7 +29,6 @@ export default function FilterPanel({
   resetFilters,
   searchTerm,
   onSearchChange,
-  onClose,
 }: FilterPanelProps) {
   const [search, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<Record<string, boolean>>({
@@ -126,16 +124,10 @@ const isChecked = (group: string, item: string): boolean => {
       {/* Actions de pied de page */}
       <div className="flex gap-2 pt-4 border-t border-simpson-gray/10 dark:border-simpson-darklight/40">
         <Button
-          onClick={onClose}
+          onClick={resetFilters}
           className="flex-1 py-2 text-sm font-bold cursor-pointer"
         >
-          Valider
-        </Button>
-        <Button
-          onClick={resetFilters}
-          className="flex-1 py-2 text-sm font-bold !bg-transparent border border-simpson-gray/20 dark:border-simpson-dark !text-simpson-dark dark:text-simpson-white hover:!bg-simpson-light dark:hover:!bg-simpson-darklight cursor-pointer"
-        >
-          Annuler
+          Réinitaliser les filtres
         </Button>
       </div>
     </div>
