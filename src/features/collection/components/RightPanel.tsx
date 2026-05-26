@@ -8,13 +8,12 @@ import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { DeckData } from "../hooks/useDeckBuilder";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { env } from "@/config/env";
+import { UserBoosterArraySchema, UserBoosters } from "../../booster/boosterOpener/schema/booster.schema";
 
 type Tab = "boosters" | "decks";
-
-interface BoosterInventory {
-  booster1: number;
-  booster2: number;
-}
 
 interface RightPanelProps {
   isCreatingDeck: boolean;
@@ -32,6 +31,7 @@ interface RightPanelProps {
   startEditDeck: (deck: DeckData) => void;
   handleDeleteDeck: (deckId: string) => void;
   handleSetActiveDeck: (deckId: string) => void;
+  onTriggerOpenBooster?: (boosterId: string) => void; 
 }
 
 export default function RightPanel({
@@ -48,12 +48,42 @@ export default function RightPanel({
   deckName,
   handleDeleteDeck,
   handleSetActiveDeck,
+  onTriggerOpenBooster,
 }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>("decks");
-  const [boostersOwned, setBoostersOwned] = useState<BoosterInventory>({
-    booster1: 1,
-    booster2: 3,
-  });
+  const [userBoosters, setUserBoosters] = useState<UserBoosters>([]);
+  const [isLoadingBoosters, setIsLoadingBoosters] = useState<boolean>(false);
+  const { token } = useSelector((state: RootState) => state.user);
+
+  // 🌟 Récupération dynamique des boosters depuis l'API
+  const loadBoosters = async () => {
+    if (!token) return;
+    setIsLoadingBoosters(true);
+    try {
+      const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const rawData = await response.json();
+        setUserBoosters(UserBoosterArraySchema.parse(rawData));
+      }
+    } catch (err) {
+      console.error("Erreur chargement boosters panel droit:", err);
+    } finally {
+      setIsLoadingBoosters(false);
+    }
+  };
+
+  // Recharge l'inventaire quand on bascule sur l'onglet boosters
+  useEffect(() => {
+    if (activeTab === "boosters") {
+      loadBoosters();
+    }
+  }, [activeTab, token]);
 
   const deckSchema = z.object({
     deckName: z
@@ -82,9 +112,10 @@ export default function RightPanel({
     if (isCreatingDeck && deckName) formik.setFieldValue("deckName", deckName);
   }, [isCreatingDeck, deckName]);
 
-  const handleOpenBooster = (type: keyof BoosterInventory) => {
-    if (boostersOwned[type] <= 0) return;
-    setBoostersOwned((prev) => ({ ...prev, [type]: prev[type] - 1 }));
+  const handleOpenBoosterClick = (boosterId: string) => {
+    if (onTriggerOpenBooster) {
+      onTriggerOpenBooster(boosterId);
+    }
   };
 
   return (
@@ -164,13 +195,18 @@ export default function RightPanel({
           />
         )}
         {activeTab === "boosters" && (
-          <BoostersTab inventory={boostersOwned} onOpen={handleOpenBooster} />
+          <BoostersTab 
+            boosters={userBoosters} 
+            isLoading={isLoadingBoosters} 
+            onOpen={handleOpenBoosterClick} 
+          />
         )}
       </div>
     </div>
   );
 }
 
+// 🌟 AJOUT : Remise en place du composant DecksTab manquant
 function DecksTab({
   onStart,
   decks,
@@ -246,46 +282,48 @@ function DecksTab({
 }
 
 function BoostersTab({
-  inventory,
+  boosters,
+  isLoading,
   onOpen,
 }: {
-  inventory: BoosterInventory;
-  onOpen: (type: keyof BoosterInventory) => void;
+  boosters: UserBoosters;
+  isLoading: boolean;
+  onOpen: (boosterId: string) => void;
 }) {
-  const hasBoosters = inventory.booster1 > 0 || inventory.booster2 > 0;
-  const boosterList = [
-    {
-      id: "booster1" as const,
-      name: "Booster Standard",
-      src: "/booster1.webp",
-      quantity: inventory.booster1,
-    },
-    {
-      id: "booster2" as const,
-      name: "Booster Premium",
-      src: "/booster2.webp",
-      quantity: inventory.booster2,
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <div className="w-6 h-6 border-2 border-simpson-orange border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  const hasBoosters = boosters.length > 0;
 
   return (
     <div className="flex flex-col items-center">
       {hasBoosters ? (
         <div className="w-full flex flex-col gap-6">
-          {boosterList.map((booster) => {
-            if (booster.quantity === 0) return null;
+          {boosters.map((userBooster) => {
+            if (userBooster.number <= 0) return null;
+            
+            // 🌟 CORRECTION : Utilisation de .slug à la place de .description
+            const imageSrc = userBooster.booster.slug?.toLowerCase().includes("premium") 
+              ? "/booster2.webp" 
+              : "/booster1.webp";
+
             return (
               <div
-                key={booster.id}
+                key={userBooster.booster.id}
                 className="bg-white dark:bg-simpson-darklight border border-simpson-gray/10 p-4 rounded-2xl shadow-xs flex flex-col items-center gap-4 w-full group relative"
               >
                 <span className="absolute top-3 right-3 bg-simpson-orange dark:bg-simpson-yellow text-white dark:text-simpson-dark font-bold text-[11px] px-2 py-0.5 rounded-lg shadow-xs">
-                  x{booster.quantity}
+                  x{userBooster.number}
                 </span>
                 <div className="w-28 h-40 relative mt-2 transition-transform duration-300 group-hover:scale-105">
                   <Image
-                    src={booster.src}
-                    alt={booster.name}
+                    src={imageSrc} 
+                    alt={userBooster.booster.name}
                     fill
                     sizes="112px"
                     priority
@@ -294,10 +332,10 @@ function BoostersTab({
                 </div>
                 <div className="w-full text-center space-y-3">
                   <h3 className="font-bold text-simpson-dark dark:text-white text-xs">
-                    {booster.name}
+                    {userBooster.booster.name}
                   </h3>
                   <button
-                    onClick={() => onOpen(booster.id)}
+                    onClick={() => onOpen(userBooster.booster.id)}
                     className="w-full h-9 bg-simpson-orange hover:bg-simpson-orange/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
                   >
                     OUVRIR
