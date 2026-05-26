@@ -1,7 +1,7 @@
 "use client";
 
 import { useFilter } from "@/features/collection/hooks/useFilter";
-import FilterPanel from "./filterPanel";
+import FilterPanel from "./FilterPanel";
 import CollectionPanel from "./CollectionPanel";
 
 export default function CollectionPage() {
