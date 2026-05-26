@@ -11,9 +11,9 @@
 import "../Styles/animations.css";
 
 // TODO : adapte ce chemin a l'emplacement reel de ton composant Card.
-import Card from "@/features/card/components/card";
+import Card from "@/features/card/components/Card";
 
-import type { Card as CardType} from "@/features/card/schema/card.schema";
+import type { Card as CardType } from "@/features/card/schema/card.schema";
 
 export interface CardGridProps {
   cards: CardType[];
