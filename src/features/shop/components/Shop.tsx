@@ -146,7 +146,6 @@ export default function Shop() {
               Échange tes donuts contre des boosters !
             </p>
           </div>
-
           <div>
             <button
               onClick={() => setIsDonutModalOpen(true)}
