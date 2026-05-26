@@ -63,3 +63,14 @@ body {
   font-size: 14px;
   font-weight: 300;
 }
+
+/* Animation for reward floating to header */
+@keyframes float-to-header {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  60% { opacity: 1; transform: translateY(-30px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
+}
+
+.animate-float-to-header {
+  animation: float-to-header 2.5s ease-in-out forwards;
+}

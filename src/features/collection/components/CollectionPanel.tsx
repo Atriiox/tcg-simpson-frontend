@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Card from "@/features/card/components/Card";
+import Card from "@/features/card/components/card";
 import { CollectionCard } from "../hooks/useCollection";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";

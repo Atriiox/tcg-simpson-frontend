@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
-import { StoreProvider } from "../store/store"; 
+import { StoreProvider } from "../store/store";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { RewardProvider } from "@/components/RewardContext";
+
 
 const fredokaVariable = localFont({
   src: "./fonts/Fredoka-Variable.ttf",
@@ -31,12 +33,14 @@ export default function RootLayout({
       {/* 🎯 h-svh + overflow-hidden ici verrouille l'écran. Le Header et le Footer deviennent fixes. */}
       <body className="h-svh w-full flex flex-col overflow-hidden bg-white dark:bg-simpson-dark" suppressHydrationWarning>
         <StoreProvider>
-          <Header />
-          {/* 🎯 Le main prend tout l'espace restant entre le header et le footer et bloque tout scroll externe */}
-          <main className="flex-1 overflow-hidden flex w-full relative">
-            {children}
-          </main>
-          <Footer />
+          <RewardProvider>
+            <Header />
+            {/* 🎯 Le main prend tout l'espace restant entre le header et le footer et bloque tout scroll externe */}
+            <main className="flex-1 overflow-hidden flex w-full relative">
+              {children}
+            </main>
+            <Footer />
+          </RewardProvider>
         </StoreProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import FilterPanel from "./FilterPanel";
 import RightPanel from "./RightPanel";
@@ -10,6 +10,7 @@ import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
 import { useFilter } from "@/features/collection/hooks/useFilter";
 import { useCollection } from "@/features/collection/hooks/useCollection";
+import { useReward } from "@/components/RewardContext";
 
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
@@ -24,6 +25,14 @@ export default function Main() {
   const router = useRouter();
   const isNewUser = searchParams.get("newUser") === "true";
   const [showBoosterModal, setShowBoosterModal] = useState(isNewUser);
+
+  const { triggerReward } = useReward();
+
+  useEffect(() => {
+    if (isNewUser) {
+      triggerReward(100);
+    }
+  }, [isNewUser]);
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
@@ -55,17 +64,13 @@ export default function Main() {
     isLoadingDecks,
   } = useDeckBuilder();
 
-  // 🎯 INTERCEPTION : Sauvegarde propre du Deck + Nettoyage forcé de la Collection
   const onSaveDeckAndClear = async (name: string) => {
     await handleSaveDeck(name);
-    // On force le re-rendu propre de la collection en vidant visuellement les cartes restées en mémoire cache
     setCollectionKey((prev) => prev + 1);
   };
 
-  // 🎯 INTERCEPTION : Annulation propre + Reset de la Collection
   const onCancelCreationAndClear = () => {
     cancelCreation();
-    // Idem ici, on reset le composant Collection pour vider les encadrés orange
     setCollectionKey((prev) => prev + 1);
   };
 
@@ -116,13 +121,13 @@ export default function Main() {
 
         {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
         <CollectionPanel
-          key={collectionKey} // 🎯 La clé magique va forcer le démontage/remontage avec un tableau de sélection flambant neuf
+          key={collectionKey}
           filters={filters}
           collection={collection}
           isLoading={isLoading}
           error={error}
           isCreatingDeck={isCreating}
-          selectedCardIds={isCreating ? selectedCardIds : []} // 🎯 SÉCURITÉ : Si on ne crée plus de deck, on force un tableau vide pour effacer les bordures orange
+          selectedCardIds={isCreating ? selectedCardIds : []}
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
         />
@@ -138,8 +143,8 @@ export default function Main() {
               maxCards={maxCards}
               isDeckValid={isValid}
               startNewDeck={startNewDeck}
-              cancelDeckCreation={onCancelCreationAndClear} // 🎯 Utilise la fonction interceptée
-              handleSaveDeck={onSaveDeckAndClear} // 🎯 Utilise la fonction interceptée
+              cancelDeckCreation={onCancelCreationAndClear}
+              handleSaveDeck={onSaveDeckAndClear}
               decks={decks}
               isLoadingDecks={isLoadingDecks}
               maxDecks={3}
