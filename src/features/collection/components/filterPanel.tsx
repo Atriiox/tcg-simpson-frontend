@@ -11,7 +11,7 @@ type FilterData = {
 
 const filterData: FilterData = {
   Raretés: ["Normal", "Rare", "Légendaire"],
-  Types: ["Personnage", "Objets", "Terrains"],
+  Types: ["Personnage", "Objet", "Terrain"],
   Séries: ["Série 1", "Série 2"],
 };
 
