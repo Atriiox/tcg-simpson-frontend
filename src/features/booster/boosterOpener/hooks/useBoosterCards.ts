@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import {
   OpenBoosterResponseSchema,
   UserBoosterArraySchema,
@@ -22,7 +22,7 @@ async function fetchUserBoosters(token: string): Promise<UserBoosters> {
 
   if (!response.ok)
     throw new Error(
-      `Echec de la récupération des boosters (HTTP ${response.status})`,
+      `Échec de la récupération des boosters (HTTP ${response.status})`
     );
 
   const rawData: unknown = await response.json();
@@ -46,7 +46,7 @@ async function fetchOpenBooster(
 
   if (!response.ok)
     throw new Error(
-      `Echec de l'ouverture du booster (HTTP ${response.status})`,
+      `Échec de l'ouverture du booster (HTTP ${response.status})`
     );
 
   const rawData: unknown = await response.json();
@@ -59,17 +59,43 @@ export interface UseBoosterCardsResult {
   isLoading: boolean;
   error: string | null;
   hasMoreBoosters: boolean;
-  openBooster: (specificBoosterId?: string) => Promise<Card[] | null>; // 🌟 Changement ici
+  boosterDetails: { name: string; slug: string } | null; // 🌟 NOUVEAU : Détails récupérés
+  openBooster: (specificBoosterId?: string) => Promise<Card[] | null>;
   reset: () => void;
 }
 
-export function useBoosterCards(): UseBoosterCardsResult {
+export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
+  
+  // 🌟 NOUVEAU : État interne pour centraliser les métadonnées manquantes
+  const [boosterDetails, setBoosterDetails] = useState<{ name: string; slug: string } | null>(null);
+  
   const isFetchingRef = useRef(false);
   const { token } = useSelector((state: RootState) => state.user);
+
+  // 🌟 NOUVEAU : Le fetch des détails du booster est désormais encapsulé ici
+  useEffect(() => {
+    async function getBoosterDetails() {
+      if (!boosterId || !token) return;
+      try {
+        const userBoosters = await fetchUserBoosters(token);
+        const current = userBoosters.find((b) => b.booster.id === boosterId);
+        
+        if (current && current.booster) {
+          setBoosterDetails({
+            name: current.booster.name,
+            slug: current.booster.slug,
+          });
+        }
+      } catch (err) {
+        console.error("[useBoosterCards] Impossible de charger les détails du booster:", err);
+      }
+    }
+    getBoosterDetails();
+  }, [boosterId, token]);
 
   const openBooster = useCallback(
     async (specificBoosterId?: string): Promise<Card[] | null> => {
@@ -88,7 +114,6 @@ export function useBoosterCards(): UseBoosterCardsResult {
           throw new Error("Aucun booster disponible");
         }
 
-        // 🌟 Sélectionne le booster demandé via l'ID, sinon prend le premier disponible
         const targetBooster = specificBoosterId
           ? userBoosters.find((b) => b.booster.id === specificBoosterId)
           : userBoosters[0];
@@ -102,7 +127,6 @@ export function useBoosterCards(): UseBoosterCardsResult {
           token,
         );
 
-        // Vérifie s'il reste des boosters après ouverture
         const remainingTotal = userBoosters.reduce(
           (acc, b) => acc + b.number,
           0,
@@ -132,7 +156,7 @@ export function useBoosterCards(): UseBoosterCardsResult {
     setError(null);
   }, []);
 
-  return { cards, isLoading, error, hasMoreBoosters, openBooster, reset };
+  return { cards, isLoading, error, hasMoreBoosters, boosterDetails, openBooster, reset };
 }
 
 export { CardSchema };
