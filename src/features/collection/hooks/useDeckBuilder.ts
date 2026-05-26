@@ -5,9 +5,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 export type DeckData = {
-  _id: string;
+  id: string;
   name: string;
-  cards: string[] | any[]; // Contient les IDs ou les objets cartes populés du back
+  cards: string[] | any[];
   isActive: boolean;
 };
 
@@ -69,7 +69,7 @@ export function useDeckBuilder() {
 
   const startEditDeck = (deck: DeckData) => {
     setIsCreating(true);
-    setEditingDeckId(deck._id || (deck as any).id);
+    setEditingDeckId(deck.id || (deck as any).id);
     setDeckName(deck.name);
     setSelectedCardIds(deck.cards.map((c: any) => c._id || c.id || c));
   };
@@ -131,10 +131,13 @@ export function useDeckBuilder() {
   const handleDeleteDeck = async (deckId: string) => {
     if (!token) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (res.ok) fetchDecks();
     } catch (e) {
       console.error("Erreur suppression deck", e);
@@ -144,10 +147,13 @@ export function useDeckBuilder() {
   const handleSetActiveDeck = async (deckId: string) => {
     if (!token) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}/active`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/me/decks/${deckId}/active`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (res.ok) fetchDecks();
     } catch (e) {
       console.error("Erreur activation deck", e);

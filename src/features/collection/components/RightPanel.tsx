@@ -192,7 +192,7 @@ function DecksTab({
       <div className="flex-1 flex flex-col gap-3">
         {decks.map((deck: DeckData) => (
           <div
-            key={deck._id}
+            key={deck.id}
             className={`flex flex-col bg-white dark:bg-simpson-darklight border rounded-xl px-4 py-3 transition-all ${deck.isActive ? "border-emerald-500/50 bg-emerald-500/3" : "border-simpson-gray/10 dark:border-white/5"}`}
           >
             <div className="flex items-center justify-between mb-2">
@@ -200,7 +200,7 @@ function DecksTab({
                 {deck.name}
               </span>
               <button
-                onClick={() => onDelete(deck._id)}
+                onClick={() => onDelete(deck.id)}
                 className="p-1.5 text-simpson-gray hover:text-red-500 cursor-pointer"
               >
                 <BiTrash size={16} />
@@ -208,7 +208,7 @@ function DecksTab({
             </div>
             <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-simpson-gray/10 dark:border-white/5">
               <button
-                onClick={() => !deck.isActive && onSetActive(deck._id)}
+                onClick={() => !deck.isActive && onSetActive(deck.id)}
                 disabled={deck.isActive}
                 className={`flex items-center px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${deck.isActive ? "text-emerald-600 bg-emerald-500/10" : "text-simpson-orange dark:text-simpson-yellow bg-white dark:bg-black/20 border border-simpson-orange dark:border-simpson-yellow hover:bg-simpson-orange/10 cursor-pointer"}`}
               >
