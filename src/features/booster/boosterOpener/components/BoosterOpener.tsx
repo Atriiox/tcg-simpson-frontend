@@ -133,7 +133,7 @@ export default function BoosterOpener({
         {hasCards && (
           <>
             <p className="pt-2 text-medium text-simpson-orange font-semibold tracking-widest">
-            
+              {cards.length} nouvelles cartes !
             </p>
             <CardGrid
               cards={cards}
