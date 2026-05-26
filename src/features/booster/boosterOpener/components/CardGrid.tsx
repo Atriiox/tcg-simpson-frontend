@@ -32,7 +32,7 @@ export function CardGrid({
   onCardClick,
 }: CardGridProps): React.JSX.Element {
   return (
-    <div className="flex flex-wrap gap-18 justify-center max-w-275">
+    <div className="flex flex-wrap gap-6 justify-center max-w-275">
       {cards.map((card, index) => (
         <div
           key={`${card.slug}-${index}`}

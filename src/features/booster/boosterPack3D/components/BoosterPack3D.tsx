@@ -73,7 +73,7 @@ export const BoosterPack3D = forwardRef<
   BoosterPack3DProps
 >(function BoosterPack3D(
   {
-    imageUrl = "/booster.png",
+    imageUrl = "/booster1.webp",
     containerWidth = 520,
     containerHeight = 720,
     openThresholdPercent = 90,
@@ -178,7 +178,7 @@ export const BoosterPack3D = forwardRef<
 
       {/* Hint en bas du booster (overridable) */}
       {textures && (
-        <p className="absolute -bottom-9 inset-x-0 text-center text-slate-300 text-sm italic m-0 z-4">
+        <p className="absolute -bottom-2 inset-x-0 text-center text-simpson-dark dark:text-white text-sm italic m-0 z-4">
           {hintLabel ?? defaultHint}
         </p>
       )}
