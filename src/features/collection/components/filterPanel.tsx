@@ -35,15 +35,14 @@ export default function FilterPanel({
 
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
 const isChecked = (group: string, item: string): boolean => {
-  const groupLower = group.toLowerCase();
   let key: keyof Filters;
 
   // Mapping strict qui évite les pièges des accents et des pluriels
-  if (groupLower.includes("rare")) {
+  if (group === "Raretés") {
     key = "rarity";
-  } else if (groupLower.includes("type")) {
+  } else if (group === "Types") {
     key = "type";
-  } else if (groupLower.includes("seri")) {
+  } else if (group === "Séries") {
     key = "serie";
   } else {
     return false; // Si le groupe est inconnu, la case n'est pas cochée

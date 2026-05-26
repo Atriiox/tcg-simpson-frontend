@@ -19,11 +19,11 @@ export const useFilter = (initialFilters: Filters = {
     let key: keyof Filters;
 
     // 2. Mapping strict et robuste (évite les bugs de remplacement d'accents/lettres)
-    if (groupLower.includes("rare")) {
+    if (group === "Raretés") {
       key = "rarity";
-    } else if (groupLower.includes("type")) {
+    } else if (group === "Types") {
       key = "type";
-    } else if (groupLower.includes("serie")) {
+    } else if (group === "Séries") {
       key = "serie";
     } else {
       return; // Groupe inconnu, on ne fait rien
