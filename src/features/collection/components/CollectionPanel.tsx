@@ -32,6 +32,7 @@ interface CollectionPanelProps {
   selectedCardIds: string[];
   toggleCardSelection: (id: string) => void;
   maxCardsReached: boolean;
+  title?: string
 }
 
 export default function CollectionPanel({
@@ -43,6 +44,7 @@ export default function CollectionPanel({
   selectedCardIds,
   toggleCardSelection,
   maxCardsReached,
+  title = "Ma Collection",
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
@@ -145,7 +147,7 @@ export default function CollectionPanel({
     <div className="flex-1 h-full overflow-hidden px-6 pt-6 bg-transparent flex flex-col select-none">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-dark/20 pb-4 shrink-0">
         <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
-          {isCreatingDeck ? "Sélectionne tes cartes" : "Ma Collection"}{" "}
+          {isCreatingDeck ? "Sélectionne tes cartes" : title}{" "}
           <span className="text-body font-bold text-simpson-gray ml-2">
             ({collection.length})
           </span>

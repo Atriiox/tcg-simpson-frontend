@@ -21,7 +21,8 @@ interface FilterPanelProps {
   resetFilters: () => void;
   searchTerm: string;
   onSearchChange: (val: string) => void;
-  onToggleShowAll?: (showAll: boolean) => void;
+  showAllCards: boolean;
+  onToggleShowAll: (showAll: boolean) => void;
 }
 
 export default function FilterPanel({
@@ -30,9 +31,9 @@ export default function FilterPanel({
   resetFilters,
   searchTerm,
   onSearchChange,
+  showAllCards,
   onToggleShowAll,
 }: FilterPanelProps) {
-  const [showAllCards, setShowAllCards] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<Record<string, boolean>>({
     Normal: true,
@@ -58,12 +59,8 @@ const isChecked = (group: string, item: string): boolean => {
 };
 
 // Gère le clic sur le switch à slide
-  const handleToggleSlide = () => {
-    const nextState = !showAllCards;
-    setShowAllCards(nextState);
-    if (onToggleShowAll) {
-      onToggleShowAll(nextState);
-    }
+const handleToggleSlide = () => {
+    onToggleShowAll(!showAllCards); // Dit au composant parent (Main) de changer de route
   };
 
   
@@ -86,38 +83,32 @@ const isChecked = (group: string, item: string): boolean => {
         />
       </div>
 
-      {/* 🎯 NOUVEAU : Barre à Slide (Identique au style de ton ProfileForm) */}
+{/*  Barre à Slide */}
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
         <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
-          Voir toutes les cartes:
+          Voir toutes les cartes :
         </span>
-        <button
-          type="button"
-          onClick={handleToggleSlide}
-          className="group relative w-13 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-gray-200 dark:bg-simpson-darklight border border-gray-200 dark:border-simpson-dark shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] shrink-0"
-          aria-label="Afficher toutes les cartes existantes"
-        >
-          <div
-            className={`relative w-full h-full flex items-center justify-between ${
-              showAllCards ? "pl-0 pr-1.5" : "pl-0.5 pr-1"
-            }`}
-          >
-            {/* La bille qui glisse */}
-            <div
-              className={`w-5 h-5 rounded-full bg-linear-to-b from-[#3b3a4e] to-[#272733] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_2px_4px_rgba(0,0,0,0.5)] transition-transform duration-300 z-10 ${
-                showAllCards ? "translate-x-6" : "translate-x-0"
-              }`}
-            />
-            {/* La petite LED témoin (Bleu Simpsons si actif, Orange si inactif) */}
-            <div
-              className={`w-2.5 h-2.5 rounded-full border transition-all duration-300 ${
-                showAllCards
-                  ? "border-simpson-lightblue bg-simpson-lightblue/20 shadow-[0_0_5px] shadow-simpson-lightblue -translate-x-6"
-                  : "border-simpson-orange bg-simpson-orange/20 shadow-[0_0_5px] shadow-simpson-orange translate-x-0"
-              }`}
-            />
-          </div>
-        </button>
+        
+        {/* Conteneur du Switch (Équivalent de .switch) */}
+        <label className="relative inline-block w-[3.5em] h-[2em] text-[12px] shrink-0 select-none">
+          {/* Checkbox invisible */}
+          <input 
+            type="checkbox" 
+            checked={showAllCards}
+            onChange={handleToggleSlide}
+            className="opacity-0 w-0 h-0 peer"
+          />
+          {/* Le Slider d'arrière-plan (Équivalent de .slider) */}
+          <span className={`absolute inset-0 cursor-pointer rounded-[50px] transition-all duration-400 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            showAllCards 
+              ? "bg-[#cd690b] peer-focus:shadow-[0_0_1px_#cd690b]" 
+              : "bg-[#f49d7d]"
+          }`} />
+          {/* La bille blanche (Équivalent de .slider:before) */}
+          <span className={`absolute h-[2em] w-[2em] inset-y-0 left-0 bg-white rounded-[50px] shadow-[0_10px_20px_rgba(0,0,0,0.4)] transition-all duration-400 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] ${
+            showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
+          }`} />
+        </label>
       </div>
 
 

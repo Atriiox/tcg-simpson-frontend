@@ -10,6 +10,7 @@ import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
 import { useFilter } from "@/features/collection/hooks/useFilter";
 import { useCollection } from "@/features/collection/hooks/useCollection";
+import { useAllCards } from "@/features/collection/hooks/useAllCards";
 import { useReward } from "@/components/RewardContext";
 
 // 🌟 Type pour stocker les infos du booster sélectionné
@@ -26,17 +27,21 @@ export default function Main() {
 
   // 🌟 MODIFICATION : L'état contient maintenant l'objet complet du booster
   const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
-
+  const [showAllCards, setShowAllCards] = useState(false);
   const { filters, handleSelect, resetFilters } = useFilter();
   const [search, setSearch] = useState<string>("");
-  const { collection = [], isLoading, error } = useCollection(filters, search);
-
+  const { collection = [], isLoading: loadingColl, error: errorColl } = useCollection(filters, search);
+  const { cards = [], isLoading: loadingAll, error: errorAll } = useAllCards(filters, search);
   const searchParams = useSearchParams();
   const router = useRouter();
   const isNewUser = searchParams.get("newUser") === "true";
   const [showBoosterModal, setShowBoosterModal] = useState(isNewUser);
 
   const { triggerReward } = useReward();
+
+  const displayedCards = showAllCards ? cards : collection;
+  const isLoading = showAllCards ? loadingAll : loadingColl;
+  const error = showAllCards ? errorAll : errorColl;
 
   useEffect(() => {
     if (isNewUser) {
@@ -46,7 +51,7 @@ export default function Main() {
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
-    setActiveBooster(null); // 🌟 Reset complet de l'objet à la fermeture
+    setActiveBooster(null);
     router.replace("/collection");
     setCollectionKey((prev) => prev + 1); 
   };
@@ -120,6 +125,8 @@ export default function Main() {
               resetFilters={handleResetAll}
               searchTerm={search}
               onSearchChange={setSearch}
+              showAllCards={showAllCards}
+              onToggleShowAll={setShowAllCards}
             />
           </div>
         </div>
@@ -140,13 +147,14 @@ export default function Main() {
         <CollectionPanel
           key={collectionKey}
           filters={filters}
-          collection={collection}
+          collection={displayedCards}
           isLoading={isLoading}
           error={error}
           isCreatingDeck={isCreating}
           selectedCardIds={isCreating ? selectedCardIds : []}
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
+          title={showAllCards ? "Toutes les cartes" : "Ma Collection"}
         />
 
         {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
