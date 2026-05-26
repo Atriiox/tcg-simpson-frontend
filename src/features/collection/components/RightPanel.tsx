@@ -50,12 +50,13 @@ export default function RightPanel({
   handleSetActiveDeck,
   onTriggerOpenBooster,
 }: RightPanelProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("decks");
+  // 🌟 MODIFICATION : L'onglet "boosters" est maintenant actif par défaut
+  const [activeTab, setActiveTab] = useState<Tab>("boosters");
   const [userBoosters, setUserBoosters] = useState<UserBoosters>([]);
   const [isLoadingBoosters, setIsLoadingBoosters] = useState<boolean>(false);
   const { token } = useSelector((state: RootState) => state.user);
 
-  // 🌟 Récupération dynamique des boosters depuis l'API
+  // Récupération dynamique des boosters depuis l'API
   const loadBoosters = async () => {
     if (!token) return;
     setIsLoadingBoosters(true);
@@ -206,7 +207,6 @@ export default function RightPanel({
   );
 }
 
-// 🌟 AJOUT : Remise en place du composant DecksTab manquant
 function DecksTab({
   onStart,
   decks,
@@ -307,7 +307,6 @@ function BoostersTab({
           {boosters.map((userBooster) => {
             if (userBooster.number <= 0) return null;
             
-            // 🌟 CORRECTION : Utilisation de .slug à la place de .description
             const imageSrc = userBooster.booster.slug?.toLowerCase().includes("premium") 
               ? "/booster2.webp" 
               : "/booster1.webp";

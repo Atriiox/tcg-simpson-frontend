@@ -9,6 +9,11 @@ import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { useShopBooster, ShopBooster } from "../hooks/useShopBooster";
+// 🌟 AJOUTS DES IMPORTS REQUIS
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { env } from "@/config/env";
+import { UserBoosterArraySchema } from "../../booster/boosterOpener/schema/booster.schema";
 
 interface DonutPack {
   amount: number;
@@ -28,16 +33,63 @@ export default function Shop() {
   const { money: userDonuts, updateMoney } = useMoney();
   const { boosters, isLoading: boostersLoading, buyBooster } = useShopBooster();
 
+  // 🌟 RÉCUPÉRATION DU TOKEN REDUX
+  const { token } = useSelector((state: RootState) => state.user);
+
   const [isMounted, setIsMounted] = useState(false);
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
-  const [purchaseStatus, setPurchaseStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [purchaseStatus, setPurchaseStatus] = useState<
+    "idle" | "loading" | "success"
+  >("idle");
   const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
-  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({});
+  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>(
+    {},
+  );
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // 🌟 FONCTION DE CHARGEMENT DYNAMIQUE DES QUANTITÉS DE BOOSTERS POSSÉDÉS
+  const loadOwnedBoostersCounts = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        `${env.NEXT_PUBLIC_API_URL}/users/me/boosters`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.ok) {
+        const rawData = await response.json();
+        const userBoosters = UserBoosterArraySchema.parse(rawData);
+
+        // Transformation du tableau de l'API en dictionnaire [boosterId]: quantité
+        const counts: Record<string, number> = {};
+        userBoosters.forEach((ub) => {
+          counts[ub.booster.id] = ub.number;
+        });
+        setOwnedBoosters(counts);
+      }
+    } catch (err) {
+      console.error(
+        "Erreur lors de la récupération des quantités de boosters :",
+        err,
+      );
+    }
+  };
+
+  // Charge l'inventaire possédé dès que le token ou les boosters de la boutique sont disponibles
+  useEffect(() => {
+    if (token) {
+      loadOwnedBoostersCounts();
+    }
+  }, [token, boosters]);
 
   const handleBuyBooster = async (booster: ShopBooster) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
@@ -48,6 +100,10 @@ export default function Shop() {
       const success = await buyBooster(booster.id);
 
       if (success) {
+        // 🌟 MISE À JOUR DES DONUTS : Déduction locale et envoi au store/back
+        const newDonutBalance = userDonuts - booster.price;
+        await updateMoney(newDonutBalance);
+
         setOwnedBoosters((prev) => ({
           ...prev,
           [booster.id]: (prev[booster.id] || 0) + 1,
@@ -247,7 +303,8 @@ export default function Shop() {
               Réserve de donuts
             </h2>
             <p className="text-sm text-simpson-gray">
-              Choisis un lot pour obtenir des donuts et débloquer de nouveaux boosters.
+              Choisis un lot pour obtenir des donuts et débloquer de nouveaux
+              boosters.
             </p>
           </div>
 
@@ -308,7 +365,9 @@ export default function Shop() {
           </div>
 
           <p className="text-[11px] text-center text-simpson-gray/70 leading-relaxed px-2">
-            Les donuts sont une monnaie virtuelle utilisable uniquement dans le jeu. En procédant à l'achat, tu acceptes les conditions générales de vente.
+            Les donuts sont une monnaie virtuelle utilisable uniquement dans le
+            jeu. En procédant à l'achat, tu acceptes les conditions générales de
+            vente.
           </p>
         </div>
       </Modal>
