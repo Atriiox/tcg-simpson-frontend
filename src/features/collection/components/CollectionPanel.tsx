@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Card from "@/features/card/components/card";
 import { useCollection } from "../hooks/useCollection";
+import { CollectionCard } from "../hooks/useCollection";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
 import { Filters } from "@/features/collection/hooks/useFilter";
@@ -25,6 +26,9 @@ interface CardData {
 
 interface CollectionPanelProps {
   filters: Filters;
+  collection: CollectionCard[];
+  isLoading: boolean;
+  error: string | null;
   isCreatingDeck: boolean;
   selectedCardIds: string[];
   toggleCardSelection: (id: string) => void;
@@ -33,13 +37,15 @@ interface CollectionPanelProps {
 
 export default function CollectionPanel({
   filters,
+  collection,
+  isLoading,
+  error,
   isCreatingDeck,
   selectedCardIds,
   toggleCardSelection,
   maxCardsReached,
 }: CollectionPanelProps) {
-const { collection, isLoading, error, refetch } = useCollection(filters);  
-const [cardSize, setCardSize] = useState<number>(135);
+  const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 

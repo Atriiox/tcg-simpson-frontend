@@ -9,6 +9,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
 import { useFilter } from "@/features/collection/hooks/useFilter";
+import { useCollection } from "@/features/collection/hooks/useCollection";
 
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
@@ -16,6 +17,10 @@ export default function Main() {
   const [collectionKey, setCollectionKey] = useState(0);
 
   const { filters, handleSelect, resetFilters } = useFilter();
+
+  const [search, setSearch] = useState<string>("");
+
+  const { collection = [], isLoading, error } = useCollection(filters, search);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -26,6 +31,11 @@ export default function Main() {
     setShowBoosterModal(false);
     router.replace("/collection");
     setCollectionKey((prev) => prev + 1);
+  };
+
+  const handleResetAll = () => {
+    resetFilters();
+    setSearch("");
   };
 
   const {
@@ -73,7 +83,9 @@ export default function Main() {
             <FilterPanel
               filters={filters}
               handleSelect={handleSelect}
-              resetFilters={resetFilters}
+              resetFilters={handleResetAll}
+              searchTerm={search}           
+              onSearchChange={setSearch}
             />
           </div>
         </div>
@@ -94,6 +106,9 @@ export default function Main() {
         <CollectionPanel
           key={collectionKey}
           filters={filters} 
+          collection={collection}
+          isLoading={isLoading} 
+          error={error}
           isCreatingDeck={isCreating}
           selectedCardIds={selectedCardIds}
           toggleCardSelection={toggleCardSelection}

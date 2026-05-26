@@ -46,12 +46,21 @@ type UseCollectionReturn = {
   refetch: () => void;
 };
 
-export function useCollection(filters: Filters= { rarity: [], type: [], serie: [] }): UseCollectionReturn {
+export function useCollection(filters: Filters= { rarity: [], type: [], serie: [] }, search: string = ""): UseCollectionReturn {
   const [collection, setCollection] = useState<CollectionCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(search);
   const token = useSelector((state: RootState) => state.user.token);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300); // 300ms de délai de frappe
+
+    return () => clearTimeout(handler);
+  }, [search]);
 
   const fetchCollection = async () => {
     if (!token) {
@@ -65,10 +74,14 @@ export function useCollection(filters: Filters= { rarity: [], type: [], serie: [
 
     try {
       let url = `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection`
+      const params = new URLSearchParams();
+
+      if (debouncedSearch.trim().length > 0) {
+        params.append("q", debouncedSearch.trim());
+      }
 
       if (filters) {
-  const params = new URLSearchParams();
-
+  
       if (filters.rarity && filters.rarity.length > 0) {
   filters.rarity.forEach((rarityText) => {
     let rarityId = "1";
@@ -95,8 +108,10 @@ export function useCollection(filters: Filters= { rarity: [], type: [], serie: [
 if (filters.serie && filters.serie.length > 0) {
   filters.serie.forEach((s) => params.append("serie", s));
 }
-      
-      url += `?${params.toString()}`;
+
+if (params.toString()) {
+    url += `?${params.toString()}`;
+      }
     }
 
       const response = await fetch(
@@ -125,7 +140,7 @@ if (filters.serie && filters.serie.length > 0) {
 
   useEffect(() => {
     fetchCollection();
-  }, [token, filters?.rarity, filters?.type, filters?.serie]);
+  }, [token, filters?.rarity, filters?.type, filters?.serie, debouncedSearch]);
 
   return { collection, isLoading, error, refetch: fetchCollection };
 }

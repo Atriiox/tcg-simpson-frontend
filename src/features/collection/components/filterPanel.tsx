@@ -19,6 +19,8 @@ interface FilterPanelProps {
   filters: Filters;
   handleSelect: (group: string, value: string) => void;
   resetFilters: () => void;
+  searchTerm: string;
+  onSearchChange: (val: string) => void;
   onClose?: () => void;
 }
 
@@ -26,6 +28,8 @@ export default function FilterPanel({
   filters,
   handleSelect,
   resetFilters,
+  searchTerm,
+  onSearchChange,
   onClose,
 }: FilterPanelProps) {
   const [search, setSearch] = useState<string>("");
@@ -65,8 +69,8 @@ const isChecked = (group: string, item: string): boolean => {
         <input
           className="w-full pl-9 pr-3 py-2 text-body rounded-xl bg-white dark:bg-simpson-darklight border border-transparent dark:border-simpson-dark text-simpson-dark dark:text-simpson-white placeholder-simpson-gray/60 outline-none shadow-xs focus:border-simpson-orange dark:focus:border-simpson-yellow transition-colors"
           placeholder="Nom, famille, aff..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
 
