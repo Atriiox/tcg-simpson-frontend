@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; // 🎯 Ajout de useEffect
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useMoney } from "../hooks/useMoney";
 import { LuInfo } from "react-icons/lu";
@@ -8,45 +8,13 @@ import { FaPlusCircle, FaCheckCircle } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
-
-interface BoosterData {
-  id: string;
-  title: string;
-  imageUrl: string;
-  price: number;
-  description: string;
-  contentInfo: string;
-  highlightText: string;
-}
+import { useShopBooster, ShopBooster } from "../hooks/useShopBooster";
 
 interface DonutPack {
   amount: number;
   price: string;
   popular: boolean;
 }
-
-const BOOSTERS_LIST: BoosterData[] = [
-  {
-    id: "serie-1",
-    title: "Booster Série 1",
-    imageUrl: "/booster1.webp",
-    price: 50,
-    description:
-      "Collectionne les cartes exclusives de tes personnages favoris.",
-    contentInfo: "Contient ",
-    highlightText: "5 cartes aléatoires",
-  },
-  {
-    id: "legendaire",
-    title: "Pack Légendaire",
-    imageUrl: "/booster2.webp",
-    price: 500,
-    description:
-      "La rareté absolue. Idéal pour compléter les chefs-d'œuvre de ta collection.",
-    contentInfo: "Contient ",
-    highlightText: "1 carte Légendaire",
-  },
-];
 
 const donutPacks: DonutPack[] = [
   { amount: 50, price: "1,99 €", popular: false },
@@ -58,42 +26,31 @@ const donutPacks: DonutPack[] = [
 
 export default function Shop() {
   const { money: userDonuts, updateMoney } = useMoney();
+  const { boosters, isLoading: boostersLoading, buyBooster } = useShopBooster();
 
-  // 🎯 État pour bloquer l'affichage dynamique asynchrone pendant le SSR
   const [isMounted, setIsMounted] = useState(false);
-
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
-  const [purchaseStatus, setPurchaseStatus] = useState<
-    "idle" | "loading" | "success"
-  >("idle");
+  const [purchaseStatus, setPurchaseStatus] = useState<"idle" | "loading" | "success">("idle");
   const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
+  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({});
 
-  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({
-    "serie-1": 0,
-    legendaire: 0,
-  });
-
-  // 🎯 Déclenché dès que le composant est monté côté navigateur
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const handleBuyBooster = async (booster: BoosterData) => {
+  const handleBuyBooster = async (booster: ShopBooster) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
 
     setBuyingBoosterId(booster.id);
-    const newBalance = userDonuts - booster.price;
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const success = await buyBooster(booster.id);
 
-      const result = await updateMoney(newBalance);
-
-      if (result.ok) {
+      if (success) {
         setOwnedBoosters((prev) => ({
           ...prev,
-          [booster.id]: prev[booster.id] + 1,
+          [booster.id]: (prev[booster.id] || 0) + 1,
         }));
       }
     } catch (error) {
@@ -130,9 +87,17 @@ export default function Shop() {
     }
   };
 
-  const handleOpenDetails = (title: string) => {
-    alert(`Probabilités et détails du : ${title}`);
+  const handleOpenDetails = (name: string) => {
+    alert(`Probabilités et détails du : ${name}`);
   };
+
+  if (boostersLoading) {
+    return (
+      <div className="w-full flex-1 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-simpson-orange border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
@@ -158,8 +123,7 @@ export default function Shop() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
-          {BOOSTERS_LIST.map((booster) => {
-            // 🎯 Sécurité : Si pas encore monté, on s'aligne sur le SSR (false)
+          {boosters.map((booster) => {
             const canAfford = isMounted ? userDonuts >= booster.price : false;
             const isBuying = buyingBoosterId === booster.id;
 
@@ -170,7 +134,7 @@ export default function Shop() {
               >
                 <div className="flex justify-center transform transition-all duration-500 ease-out group-hover:scale-[1.04] group-hover:-rotate-1 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_15px_20px_rgba(0,0,0,0.35)] shrink-0">
                   <Booster
-                    imageUrl={booster.imageUrl}
+                    imageUrl={`/${booster.slug}`}
                     className="w-44 h-62 sm:w-48 sm:h-68"
                   />
                 </div>
@@ -180,12 +144,12 @@ export default function Shop() {
                     <div className="text-xs font-semibold text-simpson-gray dark:text-simpson-white/40 bg-simpson-gray/10 dark:bg-white/5 px-2.5 py-1 rounded-md">
                       Possédé :{" "}
                       <span className="text-simpson-dark dark:text-simpson-white font-bold">
-                        {ownedBoosters[booster.id]}
+                        {ownedBoosters[booster.id] || 0}
                       </span>
                     </div>
 
                     <button
-                      onClick={() => handleOpenDetails(booster.title)}
+                      onClick={() => handleOpenDetails(booster.name)}
                       className="text-simpson-gray/70 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none p-1.5 hover:bg-simpson-gray/10 dark:hover:bg-white/5 rounded-xl"
                     >
                       <LuInfo size={20} />
@@ -195,20 +159,8 @@ export default function Shop() {
                   <div className="space-y-2 text-left flex-1 flex flex-col justify-center">
                     <div>
                       <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
-                        {booster.title}
+                        {booster.name}
                       </h3>
-                      <p className="text-xs text-simpson-gray dark:text-simpson-white/60 tracking-wide leading-relaxed mt-1">
-                        {booster.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-start gap-2 pt-0.5">
-                      <span className="text-xs font-medium text-simpson-dark dark:text-simpson-white">
-                        {booster.contentInfo}
-                        <span className="font-bold text-simpson-orange dark:text-simpson-yellow">
-                          {booster.highlightText}
-                        </span>
-                      </span>
                     </div>
                   </div>
 
@@ -218,7 +170,6 @@ export default function Shop() {
                         Prix
                       </span>
                       <div className="flex items-center gap-1 font-black text-xl text-simpson-dark dark:text-simpson-white">
-                        {/* 🎯 On n'affiche le prix réel que lorsque le client est monté */}
                         <span>{isMounted ? booster.price : "--"}</span>
                         <Image
                           src="/donuts1.webp"
@@ -242,7 +193,6 @@ export default function Shop() {
                         } ${isBuying || (buyingBoosterId && buyingBoosterId !== booster.id) ? "opacity-50 cursor-not-allowed" : ""}
                       `}
                     >
-                      {/* 🎯 Rendu sécurisé pour éviter le désaccord SSR / Client */}
                       {!isMounted ? (
                         <div className="w-4 h-4 border-2 border-simpson-gray/40 border-t-transparent rounded-full animate-spin" />
                       ) : isBuying ? (
@@ -297,8 +247,7 @@ export default function Shop() {
               Réserve de donuts
             </h2>
             <p className="text-sm text-simpson-gray">
-              Choisis un lot pour obtenir des donuts et débloquer de nouveaux
-              boosters.
+              Choisis un lot pour obtenir des donuts et débloquer de nouveaux boosters.
             </p>
           </div>
 
@@ -359,9 +308,7 @@ export default function Shop() {
           </div>
 
           <p className="text-[11px] text-center text-simpson-gray/70 leading-relaxed px-2">
-            Les donuts sont une monnaie virtuelle utilisable uniquement dans le
-            jeu. En procédant à l'achat, tu acceptes les conditions générales de
-            vente.
+            Les donuts sont une monnaie virtuelle utilisable uniquement dans le jeu. En procédant à l'achat, tu acceptes les conditions générales de vente.
           </p>
         </div>
       </Modal>
