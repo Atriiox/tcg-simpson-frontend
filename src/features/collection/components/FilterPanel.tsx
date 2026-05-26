@@ -21,6 +21,7 @@ interface FilterPanelProps {
   resetFilters: () => void;
   searchTerm: string;
   onSearchChange: (val: string) => void;
+  onToggleShowAll?: (showAll: boolean) => void;
 }
 
 export default function FilterPanel({
@@ -29,7 +30,9 @@ export default function FilterPanel({
   resetFilters,
   searchTerm,
   onSearchChange,
+  onToggleShowAll,
 }: FilterPanelProps) {
+  const [showAllCards, setShowAllCards] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<Record<string, boolean>>({
     Normal: true,
@@ -54,6 +57,17 @@ const isChecked = (group: string, item: string): boolean => {
   return filters[key]?.includes(item) ?? false;
 };
 
+// Gère le clic sur le switch à slide
+  const handleToggleSlide = () => {
+    const nextState = !showAllCards;
+    setShowAllCards(nextState);
+    if (onToggleShowAll) {
+      onToggleShowAll(nextState);
+    }
+  };
+
+  
+
 
   return (
     <div className="h-full flex flex-col p-4">
@@ -71,6 +85,41 @@ const isChecked = (group: string, item: string): boolean => {
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
+
+      {/* 🎯 NOUVEAU : Barre à Slide (Identique au style de ton ProfileForm) */}
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
+        <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
+          Voir toutes les cartes:
+        </span>
+        <button
+          type="button"
+          onClick={handleToggleSlide}
+          className="group relative w-13 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-gray-200 dark:bg-simpson-darklight border border-gray-200 dark:border-simpson-dark shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] shrink-0"
+          aria-label="Afficher toutes les cartes existantes"
+        >
+          <div
+            className={`relative w-full h-full flex items-center justify-between ${
+              showAllCards ? "pl-0 pr-1.5" : "pl-0.5 pr-1"
+            }`}
+          >
+            {/* La bille qui glisse */}
+            <div
+              className={`w-5 h-5 rounded-full bg-linear-to-b from-[#3b3a4e] to-[#272733] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2),0_2px_4px_rgba(0,0,0,0.5)] transition-transform duration-300 z-10 ${
+                showAllCards ? "translate-x-6" : "translate-x-0"
+              }`}
+            />
+            {/* La petite LED témoin (Bleu Simpsons si actif, Orange si inactif) */}
+            <div
+              className={`w-2.5 h-2.5 rounded-full border transition-all duration-300 ${
+                showAllCards
+                  ? "border-simpson-lightblue bg-simpson-lightblue/20 shadow-[0_0_5px] shadow-simpson-lightblue -translate-x-6"
+                  : "border-simpson-orange bg-simpson-orange/20 shadow-[0_0_5px] shadow-simpson-orange translate-x-0"
+              }`}
+            />
+          </div>
+        </button>
+      </div>
+
 
       {/* Groupes de filtres */}
       <div className="flex-1 space-y-6">
