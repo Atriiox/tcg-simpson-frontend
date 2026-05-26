@@ -26,6 +26,7 @@ interface CardData {
 interface CollectionPanelProps {
   filters: Filters;
   collection: CollectionCard[];
+  myInventory?: CollectionCard[];
   isLoading: boolean;
   error: string | null;
   isCreatingDeck: boolean;
@@ -38,6 +39,7 @@ interface CollectionPanelProps {
 export default function CollectionPanel({
   filters,
   collection,
+  myInventory = [],
   isLoading,
   error,
   isCreatingDeck,
@@ -99,6 +101,10 @@ export default function CollectionPanel({
     },
     {} as Record<string, number>,
   );
+
+  const ownedCardKeys = new Set(myInventory.map((c) => c.slug || c.id));
+
+  const isAllCardsMode = title === "Toutes les cartes";
 
   // 2. On ne garde qu'une seule carte unique par groupe pour l'affichage
   const uniqueCollection = collection.filter(
@@ -191,6 +197,9 @@ export default function CollectionPanel({
             // On récupère la quantité pour cette carte spécifique
             const quantity = cardQuantities[card.slug || card.id] || 1;
 
+            // On vérification si la carte est possédée
+            const isOwned = ownedCardKeys.has(card.slug || card.id);
+
             return (
               <div
                 key={card.id}
@@ -198,7 +207,8 @@ export default function CollectionPanel({
                 className={`relative transition-all duration-300 rounded-2xl ${
                   isCreatingDeck ? "cursor-pointer" : ""
                 } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
-            ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
+            ${isDimmed ? "opacity-30 filter grayscale-20" : ""}
+            ${isAllCardsMode && !isOwned ? "opacity-30 filter grayscale-20" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
                 {/* Pastille de sélection de Deck */}

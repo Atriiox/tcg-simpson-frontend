@@ -148,6 +148,7 @@ export default function Main() {
           key={collectionKey}
           filters={filters}
           collection={displayedCards}
+          myInventory={collection}
           isLoading={isLoading}
           error={error}
           isCreatingDeck={isCreating}
