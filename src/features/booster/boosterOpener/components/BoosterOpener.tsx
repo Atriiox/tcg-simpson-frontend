@@ -18,7 +18,6 @@ import { UserBoosterArraySchema } from "../schema/booster.schema";
 export interface BoosterOpenerProps {
   boosterId?: string;
   imageUrl?: string;
-  cardSize?: number;
   onCardClick?: (card: Card) => void;
   onClose?: () => void;
 }
@@ -26,17 +25,37 @@ export interface BoosterOpenerProps {
 export default function BoosterOpener({
   boosterId,
   imageUrl = "/booster1.webp",
-  cardSize = 150,
   onCardClick,
   onClose,
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
   const [boosterName, setBoosterName] = useState<string>("Nouveau booster !");
+  
+  // 🌟 État pour gérer la taille de la carte dynamiquement (Défaut mobile : 100px)
+  const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
+  
   const { token } = useSelector((state: RootState) => state.user);
   const { cards, isLoading, error, hasMoreBoosters, openBooster, reset } =
     useBoosterCards();
 
-  // 🌟 Récupération du nom du booster actuel via l'API
+  // 🌟 Écouteur pour adapter la taille des cartes selon l'écran (Responsive)
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 640) {
+        setDynamicCardSize(130); // Taille sur Desktop (sm et plus)
+      } else {
+        setDynamicCardSize(95);  // Taille sur Mobile (plus compact pour éviter le scroll excessif)
+      }
+    }
+
+    // Lancement au montage du composant
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Récupération du nom du booster actuel via l'API
   useEffect(() => {
     async function getBoosterName() {
       if (!boosterId || !token) return;
@@ -79,76 +98,86 @@ export default function BoosterOpener({
   const hasCards = cards.length > 0;
 
   return (
-    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[90vw] max-w-2xl flex flex-col font-main">
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-simpson-gray/10">
-        {/* 🌟 Le titre s'adapte maintenant au nom du booster */}
-        <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2">
+    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-[80vw] h-[85vh] sm:h-[90vh] flex flex-col font-main overflow-hidden">
+      {/* Header (Hauteur fixe) */}
+      <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
+        <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
           Ouverture du {boosterName}
         </h2>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-simpson-gray hover:text-simpson-orange transition cursor-pointer"
+            className="text-simpson-gray hover:text-simpson-orange transition cursor-pointer shrink-0"
           >
             <FaTimes size={18} />
           </button>
         )}
       </div>
 
-      {/* Contenu */}
-      <div className="flex flex-col items-center gap-4 px-6 tp-1 pb-6">
+      {/* ZONE DE CONTENU DYNAMIQUE */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 gap-4">
         {!hasCards && (
-          <>
-            <div
-              className="w-full flex justify-center items-center"
-              style={{ height: "380px" }} // Augmenté légèrement pour donner de l'air au hint texte en bas
-            >
-              {/* On supprime la div scale-50 origin-top */}
+          <div className="w-full flex flex-col items-center justify-center my-auto">
+            <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] flex justify-center items-center relative">
               <BoosterPack3D
                 ref={boosterRef}
                 imageUrl={imageUrl}
-                containerWidth={360} // Moitié de 520 : parfait pour la largeur
-                containerHeight={360} // Moitié de 720 : rentre nickel dans les 380px de haut sans déformer la scène 3D
+                containerWidth="100%"
+                containerHeight="100%"
                 onOpen={handleBoosterOpen}
               />
             </div>
 
             {isLoading && (
-              <p className="text-body text-simpson-orange font-semibold animate-pulse">
+              <p className="text-body text-simpson-orange font-semibold animate-pulse mt-4">
                 Récupération des cartes...
               </p>
             )}
             {error && (
               <div
                 role="alert"
-                className="text-body text-simpson-orange bg-simpson-orange/10 px-4 py-2 rounded-lg text-center"
+                className="text-body text-simpson-orange bg-simpson-orange/10 px-4 py-2 rounded-lg text-center mt-4 text-xs"
               >
                 {error}
               </div>
             )}
-          </>
+          </div>
         )}
 
         {hasCards && (
-          <>
-            <p className="pt-2 text-medium text-simpson-orange font-semibold tracking-widest">
-              {cards.length} nouvelles cartes !
+          <div className="w-full flex flex-col items-center gap-4 my-auto">
+            <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">
+             {cards.length} nouvelles cartes !
             </p>
+
+            {/* Grille de cartes avec la valeur dynamique transmise 🌟 */}
             <CardGrid
               cards={cards}
-              cardSize={cardSize}
+              cardSize={dynamicCardSize}
               onCardClick={onCardClick}
             />
-            <div className="flex gap-3 mt-2">
-              {hasMoreBoosters && (
-                <Button onClick={handleReset}>Ouvrir un autre booster</Button>
-              )}
-              {onClose && <Button onClick={onClose}>Fermer</Button>}
-            </div>
-          </>
+          </div>
         )}
       </div>
+
+      {/* Footer permanent */}
+      {hasCards && (
+        <div className="flex gap-3 justify-center items-center px-6 py-4 border-t border-simpson-gray/10 dark:border-white/5 flex-shrink-0 bg-gray-50/50 dark:bg-black/10">
+          {hasMoreBoosters && (
+            <Button className="text-xs py-2 px-4" onClick={handleReset}>
+              Ouvrir un autre
+            </Button>
+          )}
+          {onClose && (
+            <Button
+              className="bg-simpson-gray! text-xs py-2 px-4"
+              onClick={onClose}
+            >
+              Fermer
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
