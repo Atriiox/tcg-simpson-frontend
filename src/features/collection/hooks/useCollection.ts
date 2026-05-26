@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { Filters } from "@/features/collection/hooks/useFilter"
 
 export type CollectionCard = {
   id: string;
@@ -45,7 +46,7 @@ type UseCollectionReturn = {
   refetch: () => void;
 };
 
-export function useCollection(): UseCollectionReturn {
+export function useCollection(filters: Filters= { rarity: [], type: [], serie: [] }): UseCollectionReturn {
   const [collection, setCollection] = useState<CollectionCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,8 +64,43 @@ export function useCollection(): UseCollectionReturn {
     setError(null);
 
     try {
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection`
+
+      if (filters) {
+  const params = new URLSearchParams();
+
+      if (filters.rarity && filters.rarity.length > 0) {
+  filters.rarity.forEach((rarityText) => {
+    let rarityId = "1";
+
+    switch (rarityText) {
+      case "Normal":
+        rarityId = "1";
+        break;
+      case "Rare":
+        rarityId = "2";
+        break;
+      case "Légendaire":
+        rarityId = "3";
+        break;
+    }
+        
+        params.append("rarity", rarityId);
+        })}
+      
+      if (filters.type && filters.type.length > 0) {
+  filters.type.forEach((t) => params.append("type", t));
+}
+
+if (filters.serie && filters.serie.length > 0) {
+  filters.serie.forEach((s) => params.append("serie", s));
+}
+      
+      url += `?${params.toString()}`;
+    }
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection`,
+        url,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,7 +125,7 @@ export function useCollection(): UseCollectionReturn {
 
   useEffect(() => {
     fetchCollection();
-  }, [token]);
+  }, [token, filters?.rarity, filters?.type, filters?.serie]);
 
   return { collection, isLoading, error, refetch: fetchCollection };
 }

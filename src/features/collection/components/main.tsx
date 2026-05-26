@@ -8,11 +8,14 @@ import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
+import { useFilter } from "@/features/collection/hooks/useFilter";
 
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
   const [showRight, setShowRight] = useState(true);
   const [collectionKey, setCollectionKey] = useState(0);
+
+  const { filters, handleSelect, resetFilters } = useFilter();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -67,7 +70,11 @@ export default function Main() {
         {/* 1. PANNEAU GAUCHE : FILTRES */}
         <div className="relative z-10 border-r border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-xl dark:shadow-[4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
           <div className="w-60 h-full overflow-y-auto custom-scrollbar">
-            <FilterPanel />
+            <FilterPanel
+              filters={filters}
+              handleSelect={handleSelect}
+              resetFilters={resetFilters}
+            />
           </div>
         </div>
 
@@ -86,6 +93,7 @@ export default function Main() {
         {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
         <CollectionPanel
           key={collectionKey}
+          filters={filters} 
           isCreatingDeck={isCreating}
           selectedCardIds={selectedCardIds}
           toggleCardSelection={toggleCardSelection}

@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
-import { useFilter, Filters } from "@/features/collection/hooks/useFilter"
+import { Filters } from "@/features/collection/hooks/useFilter";
 import { FaSearch } from "react-icons/fa";
-
 
 type FilterData = {
   [group: string]: string[];
@@ -17,19 +16,42 @@ const filterData: FilterData = {
 };
 
 interface FilterPanelProps {
-  onFilter: (filters: Filters) => void;
-  onClose: () => void;
+  filters: Filters;
+  handleSelect: (group: string, value: string) => void;
+  resetFilters: () => void;
+  onClose?: () => void;
 }
 
-export default function FilterPanel({ onFilter, onClose }: FilterPanelProps) {
+export default function FilterPanel({
+  filters,
+  handleSelect,
+  resetFilters,
+  onClose,
+}: FilterPanelProps) {
   const [search, setSearch] = useState<string>("");
   const [checked, setChecked] = useState<Record<string, boolean>>({
     Normal: true,
   });
-  const { filters, handleSelect, resetFilters } = useFilter();
 
-  const toggle = (item: string): void =>
-    setChecked((prev) => ({ ...prev, [item]: !prev[item] }));
+  // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
+const isChecked = (group: string, item: string): boolean => {
+  let key: keyof Filters;
+
+  // Mapping strict qui évite les pièges des accents et des pluriels
+  if (group === "Raretés") {
+    key = "rarity";
+  } else if (group === "Types") {
+    key = "type";
+  } else if (group === "Séries") {
+    key = "serie";
+  } else {
+    return false; // Si le groupe est inconnu, la case n'est pas cochée
+  }
+
+  // On compare proprement la valeur dans l'état global avec l'élément courant
+  return filters[key]?.includes(item) ?? false;
+};
+
 
   return (
     <div className="h-full flex flex-col p-4">
@@ -56,37 +78,42 @@ export default function FilterPanel({ onFilter, onClose }: FilterPanelProps) {
               {group}
             </p>
             <div className="space-y-2">
-              {items.map((item) => (
-                <label
-                  key={item}
-                  className="flex items-center gap-3 cursor-pointer group select-none"
-                  onClick={() => {toggle(item) ; handleSelect(group, item)} }
-                >
-                  <span
-                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
-                      checked[item]
-                        ? "bg-simpson-orange border-simpson-orange dark:bg-simpson-yellow dark:border-simpson-yellow"
-                        : "bg-white dark:bg-simpson-darklight border-gray-200 dark:border-simpson-dark group-hover:border-simpson-orange dark:group-hover:border-simpson-yellow"
-                    }`}
+              {items.map((item) => {
+                const active = isChecked(group, item);
+                return (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3 cursor-pointer group select-none"
+                    onClick={() => {
+                      handleSelect(group, item);
+                    }}
                   >
-                    {checked[item] && (
-                      <svg
-                        viewBox="0 0 12 10"
-                        fill="none"
-                        className="w-3 h-2.5 stroke-white dark:stroke-simpson-dark"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M1 5l3.5 3.5L11 1" />
-                      </svg>
-                    )}
-                  </span>
-                  <span className="text-body font-medium text-simpson-dark/90 dark:text-simpson-white/90 transition-colors group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow">
-                    {item}
-                  </span>
-                </label>
-              ))}
+                    <span
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${
+                        active
+                          ? "bg-simpson-orange border-simpson-orange dark:bg-simpson-yellow dark:border-simpson-yellow"
+                          : "bg-white dark:bg-simpson-darklight border-gray-200 dark:border-simpson-dark group-hover:border-simpson-orange dark:group-hover:border-simpson-yellow"
+                      }`}
+                    >
+                      {active && (
+                        <svg
+                          viewBox="0 0 12 10"
+                          fill="none"
+                          className="w-3 h-2.5 stroke-white dark:stroke-simpson-dark"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M1 5l3.5 3.5L11 1" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="text-body font-medium text-simpson-dark/90 dark:text-simpson-white/90 transition-colors group-hover:text-simpson-orange dark:group-hover:text-simpson-yellow">
+                      {item}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -94,10 +121,16 @@ export default function FilterPanel({ onFilter, onClose }: FilterPanelProps) {
 
       {/* Actions de pied de page */}
       <div className="flex gap-2 pt-4 border-t border-simpson-gray/10 dark:border-simpson-darklight/40">
-        <Button className="flex-1 py-2 text-sm font-bold cursor-pointer">
+        <Button
+          onClick={onClose}
+          className="flex-1 py-2 text-sm font-bold cursor-pointer"
+        >
           Valider
         </Button>
-        <Button className="flex-1 py-2 text-sm font-bold !bg-transparent border border-simpson-gray/20 dark:border-simpson-dark !text-simpson-dark dark:text-simpson-white hover:!bg-simpson-light dark:hover:!bg-simpson-darklight cursor-pointer">
+        <Button
+          onClick={resetFilters}
+          className="flex-1 py-2 text-sm font-bold !bg-transparent border border-simpson-gray/20 dark:border-simpson-dark !text-simpson-dark dark:text-simpson-white hover:!bg-simpson-light dark:hover:!bg-simpson-darklight cursor-pointer"
+        >
           Annuler
         </Button>
       </div>
