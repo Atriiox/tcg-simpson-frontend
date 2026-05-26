@@ -17,9 +17,7 @@ export default function Main() {
   const [collectionKey, setCollectionKey] = useState(0);
 
   const { filters, handleSelect, resetFilters } = useFilter();
-
   const [search, setSearch] = useState<string>("");
-
   const { collection = [], isLoading, error } = useCollection(filters, search);
 
   const searchParams = useSearchParams();
@@ -57,6 +55,20 @@ export default function Main() {
     isLoadingDecks,
   } = useDeckBuilder();
 
+  // 🎯 INTERCEPTION : Sauvegarde propre du Deck + Nettoyage forcé de la Collection
+  const onSaveDeckAndClear = async (name: string) => {
+    await handleSaveDeck(name);
+    // On force le re-rendu propre de la collection en vidant visuellement les cartes restées en mémoire cache
+    setCollectionKey((prev) => prev + 1);
+  };
+
+  // 🎯 INTERCEPTION : Annulation propre + Reset de la Collection
+  const onCancelCreationAndClear = () => {
+    cancelCreation();
+    // Idem ici, on reset le composant Collection pour vider les encadrés orange
+    setCollectionKey((prev) => prev + 1);
+  };
+
   return (
     <>
       {showBoosterModal && (
@@ -84,7 +96,7 @@ export default function Main() {
               filters={filters}
               handleSelect={handleSelect}
               resetFilters={handleResetAll}
-              searchTerm={search}           
+              searchTerm={search}
               onSearchChange={setSearch}
             />
           </div>
@@ -104,13 +116,13 @@ export default function Main() {
 
         {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
         <CollectionPanel
-          key={collectionKey}
-          filters={filters} 
+          key={collectionKey} // 🎯 La clé magique va forcer le démontage/remontage avec un tableau de sélection flambant neuf
+          filters={filters}
           collection={collection}
-          isLoading={isLoading} 
+          isLoading={isLoading}
           error={error}
           isCreatingDeck={isCreating}
-          selectedCardIds={selectedCardIds}
+          selectedCardIds={isCreating ? selectedCardIds : []} // 🎯 SÉCURITÉ : Si on ne crée plus de deck, on force un tableau vide pour effacer les bordures orange
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
         />
@@ -126,8 +138,8 @@ export default function Main() {
               maxCards={maxCards}
               isDeckValid={isValid}
               startNewDeck={startNewDeck}
-              cancelDeckCreation={cancelCreation}
-              handleSaveDeck={handleSaveDeck}
+              cancelDeckCreation={onCancelCreationAndClear} // 🎯 Utilise la fonction interceptée
+              handleSaveDeck={onSaveDeckAndClear} // 🎯 Utilise la fonction interceptée
               decks={decks}
               isLoadingDecks={isLoadingDecks}
               maxDecks={3}

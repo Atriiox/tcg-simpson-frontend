@@ -200,14 +200,7 @@ export default function CardDetailModal({
             </div>
 
             {/* 🎯 Bouton d'action et Infos de Série */}
-            <div className="mt-8 flex items-center justify-between gap-4">
-              <button
-                type="button"
-                className="px-6 h-12 bg-simpson-orange hover:bg-simpson-orange/90 text-white font-bold text-lg rounded-2xl transition-all shadow-md active:scale-98 cursor-pointer tracking-wide"
-              >
-                Ajouter au deck
-              </button>
-
+            <div className="mt-8 flex items-center justify-end gap-4">
               <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
                 {card.serie?.name_serie || "Série 1"} <br /> N°
                 {card.serie?.position || 0}/50
