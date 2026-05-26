@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import FilterPanel from "./filterPanel";
+import FilterPanel from "./FilterPanel";
 import RightPanel from "./rightPanel";
 import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";

@@ -20,12 +20,6 @@ export {
 
 // Types et schemas Zod exposes pour le typage cote consommateur
 export {
-  CardDataSchema,
-  CardTypeSchema,
-  CardSerieSchema,
   OpenBoosterResponseSchema,
-  type CardData,
-  type CardType,
-  type CardSerie,
   type OpenBoosterResponse,
 } from "./schema/booster.schema";
