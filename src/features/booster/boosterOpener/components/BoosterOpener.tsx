@@ -30,10 +30,10 @@ export default function BoosterOpener({
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
   const [boosterName, setBoosterName] = useState<string>("Nouveau booster !");
-  
+
   // 🌟 État pour gérer la taille de la carte dynamiquement (Défaut mobile : 100px)
   const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
-  
+
   const { token } = useSelector((state: RootState) => state.user);
   const { cards, isLoading, error, hasMoreBoosters, openBooster, reset } =
     useBoosterCards();
@@ -44,7 +44,7 @@ export default function BoosterOpener({
       if (window.innerWidth >= 640) {
         setDynamicCardSize(130); // Taille sur Desktop (sm et plus)
       } else {
-        setDynamicCardSize(95);  // Taille sur Mobile (plus compact pour éviter le scroll excessif)
+        setDynamicCardSize(95); // Taille sur Mobile (plus compact pour éviter le scroll excessif)
       }
     }
 
@@ -98,7 +98,7 @@ export default function BoosterOpener({
   const hasCards = cards.length > 0;
 
   return (
-    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-[80vw] h-[85vh] sm:h-[90vh] flex flex-col font-main overflow-hidden">
+    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-fit sm:min-w-[80vw] h-[85vh] sm:h-fit sm:min-h-[81vh] flex flex-col font-main overflow-hidden">
       {/* Header (Hauteur fixe) */}
       <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
         <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
@@ -115,7 +115,7 @@ export default function BoosterOpener({
       </div>
 
       {/* ZONE DE CONTENU DYNAMIQUE */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 gap-4">
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 sm:py-10 gap-4">
         {!hasCards && (
           <div className="w-full flex flex-col items-center justify-center my-auto">
             <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] flex justify-center items-center relative">
@@ -147,7 +147,7 @@ export default function BoosterOpener({
         {hasCards && (
           <div className="w-full flex flex-col items-center gap-4 my-auto">
             <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">
-             {cards.length} nouvelles cartes !
+              {cards.length} nouvelles cartes !
             </p>
 
             {/* Grille de cartes avec la valeur dynamique transmise 🌟 */}

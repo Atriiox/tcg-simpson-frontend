@@ -46,6 +46,9 @@ export default function CollectionPanel({
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  
+  // 🌟 AJOUT : Un state pour stocker la quantité de la carte sur laquelle on clique
+  const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const MIN_SIZE = 90;
@@ -85,8 +88,7 @@ export default function CollectionPanel({
     );
   }
 
-  // 1. On calcule d'abord la quantité de chaque carte (basé sur le slug ou l'id de référence de la carte)
-  // Note : Si card.id est unique par ligne de base de données (ex: instance de carte possédée), utilisez plutôt un identifiant unique de carte comme le 'slug' pour grouper.
+  // 1. On calcule la quantité de chaque carte (basé sur le slug ou l'id)
   const cardQuantities = collection.reduce(
     (acc, card) => {
       const key = card.slug || card.id;
@@ -113,6 +115,12 @@ export default function CollectionPanel({
       toggleCardSelection(card.id);
       return;
     }
+
+    // 🌟 AJOUT : Récupération et stockage de la quantité avant d'ouvrir la modale
+    const key = card.slug || card.id;
+    const currentQty = cardQuantities[key] || 1;
+    setSelectedCardQuantity(currentQty);
+
     const formattedCard: CardData = {
       name: card.name,
       slug: card.slug,
@@ -203,7 +211,7 @@ export default function CollectionPanel({
                   </div>
                 )}
 
-                {/* 🎯  Pastille de quantité pour les doubles */}
+                {/* Pastille de quantité pour les doubles sur la grille */}
                 {!isSelected && quantity > 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
@@ -231,12 +239,15 @@ export default function CollectionPanel({
         </div>
       </div>
 
+      {/* Modale de Détails avec envoi de la quantité */}
       <CardDetailModal
         isOpen={isModalOpen}
         card={selectedCard}
+        quantity={selectedCardQuantity} // 🌟 Passage du state ici
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);
+          setSelectedCardQuantity(1);
         }}
       />
     </div>

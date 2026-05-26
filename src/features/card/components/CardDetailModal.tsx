@@ -25,12 +25,14 @@ interface CardData {
 interface CardDetailModalProps {
   isOpen: boolean;
   card: CardData | null;
+  quantity: number; // 🌟 Ajout de la prop pour la quantité possédée
   onClose: () => void;
 }
 
 export default function CardDetailModal({
   isOpen,
   card,
+  quantity, // 🌟 Récupération de la quantité
   onClose,
 }: CardDetailModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -85,11 +87,17 @@ export default function CardDetailModal({
           <FaTimes className="w-6 h-6" />
         </button>
 
-        {/* 🔝 HEADER : Titre centré et Badges horizontaux */}
+        {/* 🔝 HEADER : Titre centré, Quantité et Badges horizontaux */}
         <div className="flex flex-col items-center text-center gap-3">
-          <h2 className="text-4xl font-extrabold text-text tracking-wide">
-            {card.name}
-          </h2>
+          {/* 🌟 Titre et badge xQuantity alignés proprement */}
+          <div className="flex items-center justify-center gap-3 flex-wrap">
+            <h2 className="text-4xl font-extrabold text-text tracking-wide">
+              {card.name}
+            </h2>
+            <span className="bg-simpson-dark dark:bg-white text-white dark:text-simpson-dark font-black text-sm px-3 py-1 rounded-xl shadow-sm select-none">
+              x{quantity}
+            </span>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             {card.family && card.family !== "Sans Famille" && (
@@ -101,7 +109,7 @@ export default function CardDetailModal({
               </span>
             )}
             {card.affinity && card.affinity !== "Sans Affinité" && (
-              <span className="cursor-pointer text-body px-4 py-1.5 bg-[#a855f7]/5 dark:bg-[#a855f7]/10 rounded-full text-text border border-[#a855f7]/20 backdrop-blur-md shadow-xs transition-all hover:bg-[#a855f7]/10">
+              <span className="cursor-pointer text-body px-4 py-1.5 bg-simpson-orange/5 dark:bg-[#a855f7]/10 rounded-full text-text border border-[#a855f7]/20 backdrop-blur-md shadow-xs transition-all hover:bg-[#a855f7]/10">
                 Affinité{" "}
                 <strong className="text-[#a855f7] dark:text-[#c084fc] font-bold ml-1">
                   {card.affinity}
@@ -135,7 +143,6 @@ export default function CardDetailModal({
               {/* 🎯 Ligne Type + Rareté alignée sur le design */}
               <div className="flex items-center justify-between flex-wrap gap-2 border-b border-simpson-light dark:border-simpson-dark pb-3">
                 <div className="flex items-center gap-3">
-                  {/* Utilisation de l'utilitaire de classe text-title */}
                   <h3 className="text-title text-simpson-blue dark:text-simpson-lightblue tracking-wide">
                     {card.type}
                   </h3>
@@ -146,7 +153,7 @@ export default function CardDetailModal({
                   </span>
                 </div>
 
-                {/* 🍩 Donuts de rareté  */}
+                {/* 🍩 Donuts de rareté */}
                 <div className="flex gap-1.5 text-simpson-orange dark:text-simpson-yellow bg-simpson-orange/5 dark:bg-simpson-yellow/5 px-3 py-1.5 rounded-full backdrop-blur-md">
                   {Array.from({ length: rarityCount }).map((_, i) => (
                     <LuDonut
@@ -191,7 +198,7 @@ export default function CardDetailModal({
                 </div>
               )}
 
-              {/*  Description  */}
+              {/* Description */}
               <div className="bg-simpson-light/60 dark:bg-simpson-dark/30 border border-simpson-white/40 dark:border-simpson-darklight/40 p-4 rounded-2xl mt-2 shadow-inner-xs">
                 <p className="text-medium text-text/85 dark:text-white leading-relaxed antialiased">
                   {card.description}
@@ -199,7 +206,7 @@ export default function CardDetailModal({
               </div>
             </div>
 
-            {/* 🎯 Bouton d'action et Infos de Série */}
+            {/* Infos de Série */}
             <div className="mt-8 flex items-center justify-end gap-4">
               <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
                 {card.serie?.name_serie || "Série 1"} <br /> N°
