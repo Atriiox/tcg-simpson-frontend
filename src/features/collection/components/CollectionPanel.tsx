@@ -85,8 +85,22 @@ export default function CollectionPanel({
     );
   }
 
+  // 1. On calcule d'abord la quantité de chaque carte (basé sur le slug ou l'id de référence de la carte)
+  // Note : Si card.id est unique par ligne de base de données (ex: instance de carte possédée), utilisez plutôt un identifiant unique de carte comme le 'slug' pour grouper.
+  const cardQuantities = collection.reduce(
+    (acc, card) => {
+      const key = card.slug || card.id;
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  // 2. On ne garde qu'une seule carte unique par groupe pour l'affichage
   const uniqueCollection = collection.filter(
-    (card, index, self) => self.findIndex((c) => c.id === card.id) === index,
+    (card, index, self) =>
+      self.findIndex((c) => (c.slug || c.id) === (card.slug || card.id)) ===
+      index,
   );
 
   const handleZoomOut = () =>
@@ -99,25 +113,24 @@ export default function CollectionPanel({
       toggleCardSelection(card.id);
       return;
     }
-const formattedCard: CardData = {
-  name: card.name,
-  slug: card.slug,
-  type: card.type,
-  rarity: String(card.rarity),
-  description:
-    card.description || "Aucune description disponible pour cette carte.",
-  ATK: card.ATK,
-  PV: card.PV,
-  family: card.family?.name || card.family,
-  affinity: card.affinity?.name || card.affinity,
-  serie: {
-    name_serie: card.serie?.id_serie?.name || card.serie?.name_serie,
-    position: card.serie?.position,
-  },
-};
-setSelectedCard(formattedCard);
-setIsModalOpen(true);
-
+    const formattedCard: CardData = {
+      name: card.name,
+      slug: card.slug,
+      type: card.type,
+      rarity: String(card.rarity),
+      description:
+        card.description || "Aucune description disponible pour cette carte.",
+      ATK: card.ATK,
+      PV: card.PV,
+      family: card.family?.name || card.family,
+      affinity: card.affinity?.name || card.affinity,
+      serie: {
+        name_serie: card.serie?.id_serie?.name || card.serie?.name_serie,
+        position: card.serie?.position,
+      },
+    };
+    setSelectedCard(formattedCard);
+    setIsModalOpen(true);
   };
 
   return (
@@ -129,93 +142,103 @@ setIsModalOpen(true);
             ({collection.length})
           </span>
         </h1>
-    <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent shadow-sm">
-      <FiZoomIn size={14} className="text-simpson-gray" />
-      <button
-        onClick={handleZoomOut}
-        disabled={cardSize <= MIN_SIZE}
-        className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 disabled:opacity-30 cursor-pointer transition-all"
-      >
-        <FiMinus size={12} />
-      </button>
-      <input
-        type="range"
-        min={MIN_SIZE}
-        max={MAX_SIZE}
-        value={cardSize}
-        onChange={(e) => setCardSize(Number(e.target.value))}
-        className="w-24 sm:w-32 h-1.5 bg-simpson-gray/20 rounded-lg appearance-none cursor-pointer accent-simpson-orange dark:accent-simpson-yellow"
-      />
-      <button
-        onClick={handleZoomIn}
-        disabled={cardSize >= MAX_SIZE}
-        className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 disabled:opacity-30 cursor-pointer transition-all"
-      >
-        <FiPlus size={12} />
-      </button>
-    </div>
-  </div>
-
-  <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
-    <div
-      className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
-      style={{ gridTemplateColumns: `repeat(auto-fill, ${cardSize}px)` }}
-    >
-      {uniqueCollection.map((card) => {
-        const isSelected = selectedCardIds.includes(card.id);
-        const isDimmed = isCreatingDeck && !isSelected && maxCardsReached;
-
-        return (
-          <div
-            key={card.id}
-            onClick={() => handleCardAction(card)}
-            className={`relative transition-all duration-300 rounded-2xl ${
-              isCreatingDeck ? "cursor-pointer" : ""
-            } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
-            ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
-            style={{ width: `${cardSize}px` }}
+        <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent shadow-sm">
+          <FiZoomIn size={14} className="text-simpson-gray" />
+          <button
+            onClick={handleZoomOut}
+            disabled={cardSize <= MIN_SIZE}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 disabled:opacity-30 cursor-pointer transition-all"
           >
-            {isSelected && (
-              <div className="absolute inset-0 z-20 pointer-events-none">
-                <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-simpson-orange rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
-                  <span className="text-[12px] text-white font-black leading-none">
-                    ✓
-                  </span>
-                </div>
+            <FiMinus size={12} />
+          </button>
+          <input
+            type="range"
+            min={MIN_SIZE}
+            max={MAX_SIZE}
+            value={cardSize}
+            onChange={(e) => setCardSize(Number(e.target.value))}
+            className="w-24 sm:w-32 h-1.5 bg-simpson-gray/20 rounded-lg appearance-none cursor-pointer accent-simpson-orange dark:accent-simpson-yellow"
+          />
+          <button
+            onClick={handleZoomIn}
+            disabled={cardSize >= MAX_SIZE}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-simpson-gray hover:bg-simpson-light dark:hover:bg-simpson-dark border border-simpson-gray/10 disabled:opacity-30 cursor-pointer transition-all"
+          >
+            <FiPlus size={12} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
+        <div
+          className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
+          style={{ gridTemplateColumns: `repeat(auto-fill, ${cardSize}px)` }}
+        >
+          {uniqueCollection.map((card) => {
+            const isSelected = selectedCardIds.includes(card.id);
+            const isDimmed = isCreatingDeck && !isSelected && maxCardsReached;
+
+            // On récupère la quantité pour cette carte spécifique
+            const quantity = cardQuantities[card.slug || card.id] || 1;
+
+            return (
+              <div
+                key={card.id}
+                onClick={() => handleCardAction(card)}
+                className={`relative transition-all duration-300 rounded-2xl ${
+                  isCreatingDeck ? "cursor-pointer" : ""
+                } ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} 
+            ${isDimmed ? "opacity-30 filter grayscale-20" : ""}`}
+                style={{ width: `${cardSize}px` }}
+              >
+                {/* Pastille de sélection de Deck */}
+                {isSelected && (
+                  <div className="absolute inset-0 z-20 pointer-events-none">
+                    <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-simpson-orange rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,148,211,0.5)] animate-scaleIn">
+                      <span className="text-[12px] text-white font-black leading-none">
+                        ✓
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* 🎯  Pastille de quantité pour les doubles */}
+                {!isSelected && quantity > 1 && (
+                  <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
+                    x{quantity}
+                  </div>
+                )}
+
+                <Card
+                  size={cardSize}
+                  card={{
+                    name: card.name,
+                    slug: card.slug,
+                    type: card.type as "Personnage" | "Terrain" | "Objet",
+                    rarity: card.rarity,
+                    ATK: card.ATK,
+                    PV: card.PV,
+                    description: card.description,
+                    family: card.family,
+                    affinity: card.affinity,
+                    serie: card.serie,
+                  }}
+                />
               </div>
-            )}
+            );
+          })}
+        </div>
+      </div>
 
-            <Card
-              size={cardSize}
-              card={{
-                name: card.name,
-                slug: card.slug,
-                type: card.type as "Personnage" | "Terrain" | "Objet",
-                rarity: card.rarity,
-                ATK: card.ATK,
-                PV: card.PV,
-                description: card.description,
-                family: card.family,
-                affinity: card.affinity,
-                serie: card.serie,
-              }}
-            />
-          </div>
-        );
-      })}
+      <CardDetailModal
+        isOpen={isModalOpen}
+        card={selectedCard}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedCard(null);
+        }}
+      />
     </div>
-  </div>
-
-  <CardDetailModal
-    isOpen={isModalOpen}
-    card={selectedCard}
-    onClose={() => {
-      setIsModalOpen(false);
-      setSelectedCard(null);
-    }}
-  />
-</div>
-
   );
 }
