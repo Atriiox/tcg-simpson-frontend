@@ -20,11 +20,12 @@ const PublicBoosterSchema = z.object({
   quantity: z.number(),
   cards: z.array(CardSchema),
   serie: z.object({ id: z.string(), name: z.string() }),
-  probabilities: z.array(z.object({
-    id: z.string(),
-    rarity: z.enum(["Common", "Rare", "Legendary"]),
-    value: z.number(),
-  })),
+  probabilities: z.array(
+    z.object({
+      rarity: z.enum(["Common", "Rare", "Legendary"]),
+      value: z.number(),
+    }),
+  ),
 });
 
 export const UserBoosterSchema = z.object({
