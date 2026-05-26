@@ -17,6 +17,7 @@ import { UserBoosterArraySchema } from "../schema/booster.schema";
 
 export interface BoosterOpenerProps {
   boosterId?: string;
+  boosterName?: string; // 🌟 AJOUT : Nom du booster passé par le parent
   imageUrl?: string;
   onCardClick?: (card: Card) => void;
   onClose?: () => void;
@@ -24,41 +25,55 @@ export interface BoosterOpenerProps {
 
 export default function BoosterOpener({
   boosterId,
-  imageUrl = "/booster1.webp",
+  boosterName: initialBoosterName, // 🌟 Alias pour clarté
+  imageUrl,
   onCardClick,
   onClose,
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
-  const [boosterName, setBoosterName] = useState<string>("Nouveau booster !");
+  
+  // 🌟 INITIALISATION SYNCHRONE : Évite le flash textuel du nom par défaut
+  const [boosterName, setBoosterName] = useState<string>(
+    initialBoosterName || "Nouveau booster !"
+  );
+  
+  // 🌟 INITIALISATION SYNCHRONE : Évite le flash visuel de l'image par défaut
+  const [currentImageUrl, setCurrentImageUrl] = useState<string>(() => {
+    if (imageUrl) {
+      return imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+    }
+    return "/booster1.webp";
+  });
 
-  // 🌟 État pour gérer la taille de la carte dynamiquement (Défaut mobile : 100px)
+  // État pour gérer la taille de la carte dynamiquement
   const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
 
   const { token } = useSelector((state: RootState) => state.user);
   const { cards, isLoading, error, hasMoreBoosters, openBooster, reset } =
     useBoosterCards();
 
-  // 🌟 Écouteur pour adapter la taille des cartes selon l'écran (Responsive)
+  // Écouteur pour adapter la taille des cartes selon l'écran (Responsive)
   useEffect(() => {
     function handleResize() {
       if (window.innerWidth >= 640) {
-        setDynamicCardSize(130); // Taille sur Desktop (sm et plus)
+        setDynamicCardSize(130);
       } else {
-        setDynamicCardSize(95); // Taille sur Mobile (plus compact pour éviter le scroll excessif)
+        setDynamicCardSize(95);
       }
     }
-
-    // Lancement au montage du composant
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Récupération du nom du booster actuel via l'API
+  // Récupération du nom ET du slug du booster via l'API (Fallback de sécurité si manquants)
   useEffect(() => {
-    async function getBoosterName() {
+    async function getBoosterDetails() {
       if (!boosterId || !token) return;
+      
+      // 🌟 PERFORMANCE : Si le parent a déjà tout fourni, on esquive le fetch API
+      if (initialBoosterName && imageUrl) return;
+
       try {
         const response = await fetch(
           `${env.NEXT_PUBLIC_API_URL}/users/me/boosters`,
@@ -74,16 +89,30 @@ export default function BoosterOpener({
           const rawData = await response.json();
           const userBoosters = UserBoosterArraySchema.parse(rawData);
           const current = userBoosters.find((b) => b.booster.id === boosterId);
-          if (current) {
-            setBoosterName(current.booster.name);
+          
+          if (current && current.booster) {
+            if (!initialBoosterName) setBoosterName(current.booster.name);
+            
+            // On ne met à jour l'image depuis l'API que si le parent n'a rien envoyé
+            if (!imageUrl && current.booster.slug) {
+              const slug = current.booster.slug;
+              setCurrentImageUrl(slug.startsWith("/") ? slug : `/${slug}`);
+            }
           }
         }
       } catch (err) {
-        console.error("Impossible de récupérer le nom du booster", err);
+        console.error("Impossible de récupérer les détails du booster", err);
       }
     }
-    getBoosterName();
-  }, [boosterId, token]);
+    getBoosterDetails();
+  }, [boosterId, token, imageUrl, initialBoosterName]);
+
+  // Synchronisation si la prop imageUrl change en cours de route
+  useEffect(() => {
+    if (imageUrl) {
+      setCurrentImageUrl(imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`);
+    }
+  }, [imageUrl]);
 
   const handleBoosterOpen = useCallback(async (): Promise<void> => {
     const fetchedCards = await openBooster(boosterId);
@@ -99,7 +128,7 @@ export default function BoosterOpener({
 
   return (
     <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-fit sm:min-w-[80vw] h-[85vh] sm:h-fit sm:min-h-[81vh] flex flex-col font-main overflow-hidden">
-      {/* Header (Hauteur fixe) */}
+      {/* Header */}
       <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
         <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
           Ouverture du {boosterName}
@@ -121,7 +150,7 @@ export default function BoosterOpener({
             <div className="w-full max-w-[280px] sm:max-w-[320px] aspect-[3/4] flex justify-center items-center relative">
               <BoosterPack3D
                 ref={boosterRef}
-                imageUrl={imageUrl}
+                imageUrl={currentImageUrl}
                 containerWidth="100%"
                 containerHeight="100%"
                 onOpen={handleBoosterOpen}
@@ -150,7 +179,6 @@ export default function BoosterOpener({
               {cards.length} nouvelles cartes !
             </p>
 
-            {/* Grille de cartes avec la valeur dynamique transmise 🌟 */}
             <CardGrid
               cards={cards}
               cardSize={dynamicCardSize}

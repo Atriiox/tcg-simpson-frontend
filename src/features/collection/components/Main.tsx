@@ -12,13 +12,20 @@ import { useFilter } from "@/features/collection/hooks/useFilter";
 import { useCollection } from "@/features/collection/hooks/useCollection";
 import { useReward } from "@/components/RewardContext";
 
+// 🌟 Type pour stocker les infos du booster sélectionné
+interface ActiveBoosterState {
+  id: string;
+  name: string;
+  slug: string;
+}
+
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
   const [showRight, setShowRight] = useState(true);
   const [collectionKey, setCollectionKey] = useState(0);
 
-  // 🌟 NOUVEAU : État pour stocker le booster sélectionné dynamiquement
-  const [selectedBoosterId, setSelectedBoosterId] = useState<string | null>(null);
+  // 🌟 MODIFICATION : L'état contient maintenant l'objet complet du booster
+  const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
 
   const { filters, handleSelect, resetFilters } = useFilter();
   const [search, setSearch] = useState<string>("");
@@ -39,9 +46,9 @@ export default function Main() {
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
-    setSelectedBoosterId(null); // 🌟 Reset l'ID à la fermeture
+    setActiveBooster(null); // 🌟 Reset complet de l'objet à la fermeture
     router.replace("/collection");
-    setCollectionKey((prev) => prev + 1); // Force le rafraîchissement de la collection pour voir les nouvelles cartes !
+    setCollectionKey((prev) => prev + 1); 
   };
 
   const handleResetAll = () => {
@@ -80,7 +87,7 @@ export default function Main() {
 
   return (
     <>
-      {/* 🌟 MODAL BOOSTER : On passe désormais le selectedBoosterId au composant */}
+      {/* 🌟 MODAL BOOSTER : On transmet le nom et le slug immédiatement au montage */}
       {showBoosterModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
@@ -88,7 +95,9 @@ export default function Main() {
         >
           <div onClick={(e) => e.stopPropagation()}>
             <BoosterOpener 
-              boosterId={selectedBoosterId || undefined} 
+              boosterId={activeBooster?.id || undefined} 
+              boosterName={activeBooster?.name} 
+              imageUrl={activeBooster?.slug}    
               onClose={handleCloseBooster} 
             />
           </div>
@@ -159,9 +168,9 @@ export default function Main() {
               startEditDeck={startEditDeck}
               handleDeleteDeck={handleDeleteDeck}
               handleSetActiveDeck={handleSetActiveDeck}
-              // 🌟 INTERCEPTION DU CLIC : On stocke l'ID et on ouvre la modal
-              onTriggerOpenBooster={(boosterId) => {
-                setSelectedBoosterId(boosterId);
+              // 🌟 INTERCEPTION DES 3 INFOS : Données poussées directement au clic
+              onTriggerOpenBooster={(boosterId, name, slug) => {
+                setActiveBooster({ id: boosterId, name, slug });
                 setShowBoosterModal(true);
               }}
             />

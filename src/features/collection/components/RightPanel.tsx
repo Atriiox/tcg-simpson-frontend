@@ -11,7 +11,10 @@ import { DeckData } from "../hooks/useDeckBuilder";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { env } from "@/config/env";
-import { UserBoosterArraySchema, UserBoosters } from "../../booster/boosterOpener/schema/booster.schema";
+import {
+  UserBoosterArraySchema,
+  UserBoosters,
+} from "../../booster/boosterOpener/schema/booster.schema";
 
 type Tab = "boosters" | "decks";
 
@@ -31,7 +34,11 @@ interface RightPanelProps {
   startEditDeck: (deck: DeckData) => void;
   handleDeleteDeck: (deckId: string) => void;
   handleSetActiveDeck: (deckId: string) => void;
-  onTriggerOpenBooster?: (boosterId: string) => void; 
+  onTriggerOpenBooster?: (
+    boosterId: string,
+    name: string,
+    slug: string,
+  ) => void;
 }
 
 export default function RightPanel({
@@ -50,7 +57,6 @@ export default function RightPanel({
   handleSetActiveDeck,
   onTriggerOpenBooster,
 }: RightPanelProps) {
-  // 🌟 MODIFICATION : L'onglet "boosters" est maintenant actif par défaut
   const [activeTab, setActiveTab] = useState<Tab>("boosters");
   const [userBoosters, setUserBoosters] = useState<UserBoosters>([]);
   const [isLoadingBoosters, setIsLoadingBoosters] = useState<boolean>(false);
@@ -61,13 +67,16 @@ export default function RightPanel({
     if (!token) return;
     setIsLoadingBoosters(true);
     try {
-      const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `${env.NEXT_PUBLIC_API_URL}/users/me/boosters`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       if (response.ok) {
         const rawData = await response.json();
         setUserBoosters(UserBoosterArraySchema.parse(rawData));
@@ -113,9 +122,10 @@ export default function RightPanel({
     if (isCreatingDeck && deckName) formik.setFieldValue("deckName", deckName);
   }, [isCreatingDeck, deckName]);
 
-  const handleOpenBoosterClick = (boosterId: string) => {
+  // 🌟 CORRECTION : Propagation des 3 arguments au parent (Main.tsx)
+  const handleOpenBoosterClick = (boosterId: string, name: string, slug: string) => {
     if (onTriggerOpenBooster) {
-      onTriggerOpenBooster(boosterId);
+      onTriggerOpenBooster(boosterId, name, slug);
     }
   };
 
@@ -196,10 +206,10 @@ export default function RightPanel({
           />
         )}
         {activeTab === "boosters" && (
-          <BoostersTab 
-            boosters={userBoosters} 
-            isLoading={isLoadingBoosters} 
-            onOpen={handleOpenBoosterClick} 
+          <BoostersTab
+            boosters={userBoosters}
+            isLoading={isLoadingBoosters}
+            onOpen={handleOpenBoosterClick}
           />
         )}
       </div>
@@ -288,7 +298,8 @@ function BoostersTab({
 }: {
   boosters: UserBoosters;
   isLoading: boolean;
-  onOpen: (boosterId: string) => void;
+  // 🌟 CORRECTION : Signature mise à jour pour accepter les 3 arguments
+  onOpen: (boosterId: string, name: string, slug: string) => void;
 }) {
   if (isLoading) {
     return (
@@ -306,10 +317,11 @@ function BoostersTab({
         <div className="w-full flex flex-col gap-6">
           {boosters.map((userBooster) => {
             if (userBooster.number <= 0) return null;
-            
-            const imageSrc = userBooster.booster.slug?.toLowerCase().includes("premium") 
-              ? "/booster2.webp" 
-              : "/booster1.webp";
+
+            const boosterSlug = userBooster.booster.slug;
+            const imageSrc = boosterSlug?.startsWith("/")
+              ? boosterSlug
+              : `/${boosterSlug}`;
 
             return (
               <div
@@ -321,7 +333,7 @@ function BoostersTab({
                 </span>
                 <div className="w-28 h-40 relative mt-2 transition-transform duration-300 group-hover:scale-105">
                   <Image
-                    src={imageSrc} 
+                    src={imageSrc || "/booster1.webp"}
                     alt={userBooster.booster.name}
                     fill
                     sizes="112px"
@@ -333,8 +345,15 @@ function BoostersTab({
                   <h3 className="font-bold text-simpson-dark dark:text-white text-xs">
                     {userBooster.booster.name}
                   </h3>
+                  {/* 🌟 CORRECTION : Envoi des 3 arguments au clic */}
                   <button
-                    onClick={() => onOpen(userBooster.booster.id)}
+                    onClick={() =>
+                      onOpen(
+                        userBooster.booster.id,
+                        userBooster.booster.name,
+                        userBooster.booster.slug,
+                      )
+                    }
                     className="w-full h-9 bg-simpson-orange hover:bg-simpson-orange/90 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
                   >
                     OUVRIR
