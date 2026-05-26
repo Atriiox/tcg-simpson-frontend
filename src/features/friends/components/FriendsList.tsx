@@ -176,7 +176,7 @@ export default function FriendsList() {
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between flex-1 w-full min-h-[120px]">
+                <div className="flex flex-col justify-between flex-1 w-full min-h-30">
                   <div className="space-y-1 text-left">
                     <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
                       {friend.pseudo}
@@ -228,14 +228,15 @@ export default function FriendsList() {
               <span className="font-bold text-simpson-orange dark:text-simpson-yellow">
                 {friendToRemove}
               </span>{" "}
-              de ta liste. Cette action supprimera tous les accès aux duels et échanges directs avec ce joueur.
+              de ta liste. Cette action supprimera tous les accès aux duels et
+              échanges directs avec ce joueur.
             </p>
           </div>
 
           <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
             <Button
               onClick={() => setFriendToRemove(null)}
-              className="flex-1 py-2 text-xs bg-transparent border border-simpson-gray/20 dark:border-white/10 !text-simpson-gray hover:bg-simpson-gray/5 shadow-none"
+              className="flex-1 py-2 text-xs bg-transparent border border-simpson-gray/20 dark:border-white/10 text-simpson-gray! hover:bg-simpson-gray/5 shadow-none"
             >
               Annuler
             </Button>
