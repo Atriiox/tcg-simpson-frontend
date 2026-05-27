@@ -90,7 +90,7 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
                           non possédée
                         </div>
                       )}
-                      <Card card={c} size={160} />
+                      <Card card={c} size={150} />
                     </div>
                   );
                 })}
