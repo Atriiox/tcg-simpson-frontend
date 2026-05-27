@@ -130,7 +130,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
               alt="Avatar"
               width={72}
               height={72}
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
           <div className="flex flex-col min-w-0">

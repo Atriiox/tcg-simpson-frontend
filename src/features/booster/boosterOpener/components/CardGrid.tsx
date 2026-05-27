@@ -131,10 +131,10 @@ export function CardGrid({
               >
                 {/* --- FACE A : LE DOS DE LA CARTE --- */}
                 <div
-                  style={{ 
+                  style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
-                    transformStyle: "preserve-3d" // 🌟 FIX FIREFOX
+                    transformStyle: "preserve-3d", // 🌟 FIX FIREFOX
                   }}
                   className={`absolute inset-0 w-full h-full transition-all duration-700 ${
                     isRevealed ? "z-0" : "z-10" // 🌟 FIX FIREFOX : On baisse le z-index quand c'est retourné
@@ -152,17 +152,17 @@ export function CardGrid({
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                     transform: "rotateY(180deg)",
-                    transformStyle: "preserve-3d" // 🌟 FIX FIREFOX
+                    transformStyle: "preserve-3d",
                   }}
                   className={`absolute inset-0 w-full h-full ${
-                    isRevealed ? "z-10" : "z-0" // 🌟 FIX FIREFOX : On monte le z-index pour forcer l'affichage devant
+                    isRevealed ? "z-10" : "z-0"
                   }`}
                 >
                   {/* Ta carte d'origine */}
                   <Card card={card} size={cardSize} />
 
-                  {/* --- BADGE "NEW" FLOTTANT --- */}
-                  {card.isNew && (
+                  {/* --- BADGE "NEW" : Visible UNIQUEMENT quand la carte est retournée 🌟 --- */}
+                  {card.isNew && isRevealed && (
                     <span className="absolute -top-2 -right-2 z-30 bg-simpson-orange text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md border border-simpson-orange animate-bounce">
                       New
                     </span>
