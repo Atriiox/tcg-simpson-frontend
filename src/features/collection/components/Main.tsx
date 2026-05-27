@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import FilterPanel from "./FilterPanel";
-import RightPanel from "./RightPanel";
+import RightPanel from "./rightPanel/RightPanel";
 import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useDeckBuilder } from "../hooks/useDeckBuilder";

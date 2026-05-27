@@ -40,31 +40,28 @@ export default function FilterPanel({
   });
 
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
-const isChecked = (group: string, item: string): boolean => {
-  let key: keyof Filters;
+  const isChecked = (group: string, item: string): boolean => {
+    let key: keyof Filters;
 
-  // Mapping strict qui évite les pièges des accents et des pluriels
-  if (group === "Raretés") {
-    key = "rarity";
-  } else if (group === "Types") {
-    key = "type";
-  } else if (group === "Séries") {
-    key = "serie";
-  } else {
-    return false; // Si le groupe est inconnu, la case n'est pas cochée
-  }
+    // Mapping strict qui évite les pièges des accents et des pluriels
+    if (group === "Raretés") {
+      key = "rarity";
+    } else if (group === "Types") {
+      key = "type";
+    } else if (group === "Séries") {
+      key = "serie";
+    } else {
+      return false; // Si le groupe est inconnu, la case n'est pas cochée
+    }
 
-  // On compare proprement la valeur dans l'état global avec l'élément courant
-  return filters[key]?.includes(item) ?? false;
-};
-
-// Gère le clic sur le switch à slide
-const handleToggleSlide = () => {
-    onToggleShowAll(!showAllCards); // Dit au composant parent (Main) de changer de route
+    // On compare proprement la valeur dans l'état global avec l'élément courant
+    return filters[key]?.includes(item) ?? false;
   };
 
-  
-
+  // Gère le clic sur le switch à slide
+  const handleToggleSlide = () => {
+    onToggleShowAll(!showAllCards); // Dit au composant parent (Main) de changer de route
+  };
 
   return (
     <div className="h-full flex flex-col p-4">
@@ -83,34 +80,39 @@ const handleToggleSlide = () => {
         />
       </div>
 
-{/*  Barre à Slide */}
+      {/*  Barre à Slide */}
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
         <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
-          Voir toutes les cartes :
+          Voir les cartes non possédées :
         </span>
-        
-        {/* Conteneur du Switch (Équivalent de .switch) */}
-        <label className="relative inline-block w-[3.5em] h-[2em] text-[12px] shrink-0 select-none">
+
+        {/* Conteneur du Switch : Hauteur totale pour la zone de clic */}
+        <label className="relative inline-flex items-center w-[3.2em] h-[2em] text-[12px] shrink-0 select-none cursor-pointer">
           {/* Checkbox invisible */}
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             checked={showAllCards}
             onChange={handleToggleSlide}
             className="opacity-0 w-0 h-0 peer"
           />
-          {/* Le Slider d'arrière-plan (Équivalent de .slider) */}
-          <span className={`absolute inset-0 cursor-pointer rounded-[50px] transition-all duration-400 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] ${
-            showAllCards 
-              ? "bg-[#cd690b] peer-focus:shadow-[0_0_1px_#cd690b]" 
-              : "bg-[#f49d7d]"
-          }`} />
-          {/* La bille blanche (Équivalent de .slider:before) */}
-          <span className={`absolute h-[2em] w-[2em] inset-y-0 left-0 bg-white rounded-[50px] shadow-[0_10px_20px_rgba(0,0,0,0.4)] transition-all duration-400 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] ${
-            showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
-          }`} />
+
+          {/* Le Slider d'arrière-plan : Plus fin (h-[1.2em] au lieu de h-[2em]) */}
+          <span
+            className={`absolute w-full h-[1.2em] rounded-full transition-colors duration-300 ${
+              showAllCards
+                ? "bg-simpson-orange" // Utilisation de ta variable ou #cd690b
+                : "bg-simpson-orange/30 dark:bg-simpson-dark/50"
+            }`}
+          />
+
+          {/* La bille blanche : Plus grande que le fond pour l'effet moderne/surélevé */}
+          <span
+            className={`absolute h-[1.6em] w-[1.6em] bg-white rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 border border-gray-100 dark:border-transparent ${
+              showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
+            }`}
+          />
         </label>
       </div>
-
 
       {/* Groupes de filtres */}
       <div className="flex-1 space-y-6">
