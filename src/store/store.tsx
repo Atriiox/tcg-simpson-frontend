@@ -15,11 +15,10 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReducer from "../reducers/user";
-import filterReducer from "../reducers/filter";
+// import filterReducer from "../reducers/filter";
 
 const rootReducer = combineReducers({
   user: userReducer,
-  filter : filterReducer
 });
 
 const persistConfig = {
