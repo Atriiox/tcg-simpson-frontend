@@ -6,6 +6,9 @@ import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
 import { useFilter, Filters } from "@/features/collection/hooks/useFilter";
 import { useCollection } from "@/features/collection/hooks/useCollection";
+import { useMoney } from "../../shop/hooks/useMoney";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import {
   useAllCards,
   SystemCard,
@@ -39,16 +42,20 @@ export default function CollectionPanel({
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-  const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(0); // Fixé à 0 par défaut
+  const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAllCards, setShowAllCards] = useState(false);
   const [search, setSearch] = useState<string>("");
+
+  const token = useSelector((state: RootState) => state.user.token);
+  const { money, updateMoney } = useMoney();
 
   const { filters, handleSelect, resetFilters } = useFilter();
   const {
     collection = [],
     isLoading: loadingColl,
     error: errorColl,
+    refetch: refetchCollection,
   } = useCollection(filters, search);
   const {
     cards = [],
@@ -77,7 +84,8 @@ export default function CollectionPanel({
     });
   }, [filters, search, showAllCards]);
 
-  if (isLoading) {
+  if (isLoading && !isModalOpen) {
+    // 👈 On évite le flash blanc si la modal est ouverte pendant le refetch
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
         <div className="text-center space-y-2 animate-pulse">
@@ -147,10 +155,51 @@ export default function CollectionPanel({
       return;
     }
     const key = card.slug || card.id;
-    // 🌟 FIX 1 : Si pas dans la collection, la quantité vaut 0 (pas 1 !)
     setSelectedCardQuantity(cardQuantities[key] || 0);
     setSelectedCard(card as unknown as CardData);
     setIsModalOpen(true);
+  };
+
+  // 🌟 REVENTE TOTALEMENT FLUIDE ET SILENCIEUSE
+  const handleSellCard = async (cardId: string, count: number) => {
+    if (!selectedCard) return;
+
+    const rates: Record<string, number> = { "1": 5, "2": 25, "3": 50 };
+    const pricePerCard = rates[selectedCard.rarity] || 5;
+    const totalGains = pricePerCard * count;
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection/sell`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cardId, count }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors du retrait de la carte côté serveur");
+      }
+
+      // Créditer l'argent
+      const newMoneyTotal = money + totalGains;
+      await updateMoney(newMoneyTotal);
+
+      // On synchronise la quantité locale du Panel également
+      setSelectedCardQuantity((prev) => Math.max(0, prev - count));
+
+      // On rafraîchit la grille en arrière-plan sans bloquer l'interface
+      refetchCollection();
+    } catch (err) {
+      console.error("Échec de la vente :", err);
+      alert(
+        "Impossible de finaliser la vente. Problème avec la centrale nucléaire.",
+      );
+    }
   };
 
   return (
@@ -249,13 +298,14 @@ export default function CollectionPanel({
         isOpen={isModalOpen}
         card={selectedCard}
         quantity={selectedCardQuantity}
-        // 🌟 FIX 2 : On envoie la VRAIE collection du joueur pour checker s'il possède la carte
         collectionCards={collection as unknown as CardData[]}
+        allCards={cards as unknown as CardData[]} // 🌟 ICI : On transmet toutes les cartes existantes
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);
           setSelectedCardQuantity(0);
         }}
+        onSell={handleSellCard}
       />
     </div>
   );
