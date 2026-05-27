@@ -136,8 +136,11 @@ export function BoosterMesh({
   // useFrame : execute le callback ~60 fois par seconde. C'est ici qu'on
   // anime tout. ATTENTION : on modifie les refs directement, JAMAIS de
   // setState (qui declencherait un re-render React 60x/sec).
-  useFrame((state) => {
-    const elapsedTime = state.clock.elapsedTime;
+const elapsedRef = useRef(0);
+
+useFrame((state, delta) => {
+  elapsedRef.current += delta;
+  const elapsedTime = elapsedRef.current;
 
     // Leger flottement en idle : on fait osciller la position Y avec
     // un sinus tres lent et tres petit. Sans ca, le booster a l'air "mort".
