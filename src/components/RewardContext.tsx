@@ -20,23 +20,23 @@ export function RewardProvider({ children }: { children: React.ReactNode }) {
   return (
     <RewardContext.Provider value={{ triggerReward }}>
       {children}
- {reward && (
-  <div
-    key={reward.id}
-    className="fixed top-24 left-1/2 -translate-x-1/2 z-999 pointer-events-none animate-float-to-header flex items-center gap-3"
-  >
-    <span className="text-6xl font-black text-simpson-orange drop-shadow-lg">
-      +{reward.amount}
-    </span>
-    <Image
-      src="/donuts1.webp"
-      alt="Donut"
-      width={64}
-      height={64}
-      className="w-16 h-16 object-contain"
-    />
-  </div>
-)}
+      {reward && (
+        <div
+          key={reward.id}
+          className="fixed top-24 left-1/2 -translate-x-1/2 z-999 pointer-events-none animate-float-to-header flex items-center gap-3"
+        >
+          <span className="text-6xl font-black text-simpson-orange drop-shadow-lg">
+            {reward.amount > 0 ? "+" : ""}{reward.amount}
+          </span>
+          <Image
+            src="/donuts1.webp"
+            alt="Donut"
+            width={64}
+            height={64}
+            className="w-16 h-16 object-contain"
+          />
+        </div>
+      )}
     </RewardContext.Provider>
   );
 }
