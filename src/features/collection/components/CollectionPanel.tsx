@@ -39,7 +39,7 @@ export default function CollectionPanel({
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-  const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(1);
+  const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(0); // Fixé à 0 par défaut
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAllCards, setShowAllCards] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -147,7 +147,8 @@ export default function CollectionPanel({
       return;
     }
     const key = card.slug || card.id;
-    setSelectedCardQuantity(cardQuantities[key] || 1);
+    // 🌟 FIX 1 : Si pas dans la collection, la quantité vaut 0 (pas 1 !)
+    setSelectedCardQuantity(cardQuantities[key] || 0);
     setSelectedCard(card as unknown as CardData);
     setIsModalOpen(true);
   };
@@ -248,11 +249,12 @@ export default function CollectionPanel({
         isOpen={isModalOpen}
         card={selectedCard}
         quantity={selectedCardQuantity}
-        collectionCards={cards as unknown as CardData[]}
+        // 🌟 FIX 2 : On envoie la VRAIE collection du joueur pour checker s'il possède la carte
+        collectionCards={collection as unknown as CardData[]}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);
-          setSelectedCardQuantity(1);
+          setSelectedCardQuantity(0);
         }}
       />
     </div>
