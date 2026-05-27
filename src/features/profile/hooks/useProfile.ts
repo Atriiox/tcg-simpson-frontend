@@ -4,24 +4,21 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
-
-// On suppose que ton slice Redux ressemble à ça
-interface RootState {
-  user: {
-    pseudo: string | null;
-    money: number;
-    token: string | null;
-    theme: boolean;
-    email?: string; // Si ton back le renvoie à la connexion
-  };
-}
+import { RootState } from "@/store/store";
 
 export const useProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
 
-  const profile = useSelector((state: RootState) => state.user);
+  const userState = useSelector((state: RootState) => state.user);
+
+  const profile = {
+    pseudo: userState.pseudo,
+    email: userState.email,
+    money: userState.money,
+    isDarkMode: userState.isDarkMode,
+  };
 
   const updateProfile = async (updates: {
     pseudo?: string;
@@ -30,12 +27,9 @@ export const useProfile = () => {
     setIsLoading(true);
     setError(null);
 
-    const token = localStorage.getItem("token") || profile.token;
+    const token = localStorage.getItem("token") || userState.token;
     let res: Response;
-    console.log(
-      "URL finale appelée :",
-      `${env.NEXT_PUBLIC_API_URL}/users/me/profile`,
-    );
+
     try {
       res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/profile`, {
         method: "PUT",
@@ -58,14 +52,20 @@ export const useProfile = () => {
       return { ok: false, error: data.error };
     }
 
+    // 🌟 SÉCURITÉ EMAIL : On verrouille l'email actuel pour ne pas le perdre
+    const currentEmail = userState.email || data.email;
+
+    // 🌟 SYNCHRONISATION PAYLOAD : On envoie "theme" pour satisfaire le PayloadAction de ton slice
     dispatch(
       setAuth({
         token: token || "",
-        pseudo: data.pseudo,
-        email: data.email,
-        money: data.money,
+        pseudo: data.pseudo ?? userState.pseudo,
+        email: currentEmail,
+        money: data.money ?? userState.money,
         theme:
-          typeof data.darkMode === "boolean" ? data.darkMode : profile.theme,
+          typeof data.darkMode === "boolean"
+            ? data.darkMode
+            : userState.isDarkMode,
       }),
     );
 

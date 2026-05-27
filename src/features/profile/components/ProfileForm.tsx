@@ -9,7 +9,7 @@ import { useProfile } from "../hooks/useProfile";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { setAuth, toggleTheme } from "@/reducers/user"; // 🎯 Import de toggleTheme
+import { setAuth, toggleTheme } from "@/reducers/user";
 import { RootState } from "@/store/store";
 
 const PSEUDO_MAX = 20;
@@ -28,7 +28,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
   const dispatch = useDispatch();
   const { profile, isLoading, updateProfile } = useProfile();
 
-  // 🎯 On lit directement l'état dans ton store Redux persistant
+  // On lit l'état du thème global
   const isDark = useSelector((state: RootState) => state.user.isDarkMode);
 
   const formik = useFormik<ProfileFormValues>({
@@ -99,7 +99,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         pseudo: null,
         email: null,
         money: null,
-        theme: false,
+        theme: false, // Clean l'état proprement
       }),
     );
     router.push("/");
@@ -122,13 +122,13 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         </div>
         <div className="flex flex-col">
           <span className="text-title font-bold text-text">
-            {isLoading && !profile
+            {isLoading && !profile?.pseudo
               ? "Chargement..."
               : profile?.pseudo || "Utilisateur"}
           </span>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-medium font-semibold text-simpson-dark dark:text-simpson-yellow">
-              {isLoading && !profile
+              {isLoading && !profile?.money
                 ? "..."
                 : profile?.money?.toLocaleString() || 0}
             </span>
@@ -137,7 +137,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
               alt="Donut Icon"
               width={50}
               height={50}
-              className="object-contain W-6 h-6"
+              className="object-contain w-6 h-6"
             />
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
           <input
             type="text"
             value={
-              isLoading && !profile
+              isLoading && !profile?.email
                 ? "Chargement de l'email..."
                 : profile?.email || ""
             }
@@ -295,7 +295,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         <span className="text-body font-medium text-text">Thème sombre :</span>
         <button
           type="button"
-          onClick={() => dispatch(toggleTheme())} // 🎯 Déclenche l'action Redux directement
+          onClick={() => dispatch(toggleTheme())}
           className="group relative w-13 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-[#252532] border border-[#32303e] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
           aria-label="Changer de thème"
         >
