@@ -1,3 +1,5 @@
+// card.interface.ts
+
 export interface Bonus {
   ATK: number;
   PV: number;
@@ -34,4 +36,5 @@ export interface CardData {
   family: Family;
   affinity: Affinity;
   serie: Serie;
+  isNew?: boolean;
 }

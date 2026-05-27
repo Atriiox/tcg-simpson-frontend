@@ -10,6 +10,7 @@ import { Card, CardSchema } from "@/features/card/schema/card.schema";
 import { env } from "@/config/env";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import type { CardData } from "@/features/card/interfaces/card.interface";
 
 async function fetchUserBoosters(token: string): Promise<UserBoosters> {
   const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
@@ -55,17 +56,20 @@ async function fetchOpenBooster(
 }
 
 export interface UseBoosterCardsResult {
-  cards: Card[];
+  // 🌟 Typé avec CardData pour inclure proprement la propriété optionnelle isNew
+  cards: (Card & { isNew?: boolean })[];
   isLoading: boolean;
   error: string | null;
   hasMoreBoosters: boolean;
   boosterDetails: { name: string; slug: string } | null;
-  openBooster: (specificBoosterId?: string) => Promise<Card[] | null>;
+  openBooster: (
+    specificBoosterId?: string,
+  ) => Promise<(Card & { isNew?: boolean })[] | null>;
   reset: () => void;
 }
 
 export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
-  const [cards, setCards] = useState<Card[]>([]);
+  const [cards, setCards] = useState<(Card & { isNew?: boolean })[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
@@ -101,7 +105,9 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   }, [boosterId, token]);
 
   const openBooster = useCallback(
-    async (specificBoosterId?: string): Promise<Card[] | null> => {
+    async (
+      specificBoosterId?: string,
+    ): Promise<(Card & { isNew?: boolean })[] | null> => {
       if (isFetchingRef.current) return null;
       if (!token) return null;
 
@@ -126,17 +132,44 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           throw new Error("Le booster sélectionné n'est plus disponible");
         }
 
+        // 🌟 1. RÉCUPÉRATION DE TA COLLECTION ACTUELLE (Pour comparer)
+        const collectionResponse = await fetch(
+          `${env.NEXT_PUBLIC_API_URL}/users/me/collection`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        let ownedCardKeys = new Set<string>();
+        if (collectionResponse.ok) {
+          const currentCollection =
+            (await collectionResponse.json()) as CardData[];
+          // On stocke tous les identifiants uniques des cartes possédées
+          ownedCardKeys = new Set(currentCollection.map((c) => c.slug || c.id));
+        }
+
+        // 2. Récupération des cartes du booster ouvert
         const fetchedCards = await fetchOpenBooster(
           targetBooster.booster.id,
           token,
         );
 
-        // 🌟 CORRECTION : Vérification stricte du stock de CE booster précis
+        // 🌟 3. COMPARAISON ET INJECTION DU BADGE IS_NEW
+        // Si la carte ouverte n'est pas dans le Set de ta collection, alors isNew = true
+        const mappedCards = fetchedCards.map((card) => ({
+          ...card,
+          isNew: !ownedCardKeys.has(card.slug || card.id),
+        }));
+
         const currentBoosterRemaining = targetBooster.number - 1;
         setHasMoreBoosters(currentBoosterRemaining > 0);
 
-        setCards(fetchedCards);
-        return fetchedCards;
+        setCards(mappedCards);
+        return mappedCards;
       } catch (caughtError) {
         console.error("[BoosterOpener] fetch error:", caughtError);
         setError(

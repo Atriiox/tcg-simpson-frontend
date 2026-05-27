@@ -91,9 +91,9 @@ export default function HeaderDesktop({
                 />
               </div>
             </div>
-            <div className="min-w-16 h-16 rounded-full overflow-hidden p-1">
+            <div className="min-w-16 h-16 rounded-full overflow-hidden p-1 shrink-0">
               <Image
-                src={avatar || "/default-avatar.webp"}
+                src={avatar || "/defaultAvatar.webp"}
                 alt="Avatar"
                 width={70}
                 height={70}
