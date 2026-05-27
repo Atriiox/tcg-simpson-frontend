@@ -9,6 +9,7 @@ interface HeaderDesktopProps {
   logoHref: string;
   token: string | null;
   pseudo: string | null;
+  avatar: string | null;
   displayedMoney: number;
   onOpenProfile: () => void;
   getLinkStyles: (path: string) => { link: string; underline: string };
@@ -21,6 +22,7 @@ export default function HeaderDesktop({
   displayedMoney,
   onOpenProfile,
   getLinkStyles,
+  avatar
 }: HeaderDesktopProps) {
   return (
     <div className="hidden md:flex w-full items-center h-full">
@@ -91,7 +93,7 @@ export default function HeaderDesktop({
             </div>
             <div className="min-w-16 h-16 rounded-full overflow-hidden p-1">
               <Image
-                src="/defaultAvatar.webp"
+                src={avatar || "/default-avatar.webp"}
                 alt="Avatar"
                 width={70}
                 height={70}

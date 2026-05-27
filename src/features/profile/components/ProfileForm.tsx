@@ -96,6 +96,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
       setAuth({
         token: null,
         pseudo: null,
+        avatar: null,
         email: null,
         money: null,
         theme: false,
@@ -125,7 +126,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         <div className="flex items-center gap-5 pb-2">
           <div className="w-16 h-16 rounded-full overflow-hidden shrink-0">
             <Image
-              src="/defaultAvatar.webp"
+              src={profile?.avatar || "/defaultAvatar.webp"}
               alt="Avatar"
               width={72}
               height={72}

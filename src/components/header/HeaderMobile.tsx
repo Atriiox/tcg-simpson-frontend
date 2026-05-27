@@ -9,6 +9,7 @@ interface HeaderMobileProps {
   logoHref: string;
   token: string | null;
   pseudo: string | null;
+  avatar: string | null;
   displayedMoney: number;
   isMenuOpen: boolean;
   onToggleMenu: () => void;
@@ -18,6 +19,7 @@ export default function HeaderMobile({
   logoHref,
   token,
   pseudo,
+  avatar,
   displayedMoney,
   isMenuOpen,
   onToggleMenu,
@@ -74,7 +76,7 @@ export default function HeaderMobile({
             </div>
             <div className="w-11 h-11 rounded-full overflow-hidden p-0.5 shrink-0">
               <Image
-                src="/defaultAvatar.webp"
+                src={avatar || "/default-avatar.webp"}
                 alt="Avatar"
                 width={44}
                 height={44}

@@ -22,11 +22,12 @@ export function useRegister() {
     console.log("data from register:", data);
     if (!res.ok) throw new Error(data.error);
 
-    const { token, pseudo, email, money, theme } = data;
+    const { token, pseudo, email, money, theme, avatar } = data;
     dispatch(
       setAuth({
         token,
         pseudo,
+        avatar: avatar || null,
         email: email || null,
         money,
         theme: typeof theme === "boolean" ? theme : false,

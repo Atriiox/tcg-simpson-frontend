@@ -49,6 +49,7 @@ export const useProfile = () => {
     pseudo: userState.pseudo,
     email: userState.email,
     money: userState.money,
+    avatar: userState.avatar,
     isDarkMode: userState.isDarkMode,
     stats: {
       legendary: legendaryStats.owned,
@@ -102,6 +103,7 @@ export const useProfile = () => {
         pseudo: data.pseudo ?? userState.pseudo,
         email: currentEmail,
         money: data.money ?? userState.money,
+        avatar: data.avatar ?? userState.avatar,
         theme:
           typeof data.darkMode === "boolean"
             ? data.darkMode

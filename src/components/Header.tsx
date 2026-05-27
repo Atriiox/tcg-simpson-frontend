@@ -17,7 +17,7 @@ function Header() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
-  const { token, pseudo, money } = useSelector((state: RootState) => state.user);
+  const { token, pseudo, money, avatar } = useSelector((state: RootState) => state.user);
   const { displayedMoney } = useHeaderMoney(money, mounted);
 
   useEffect(() => {
@@ -63,6 +63,7 @@ function Header() {
               token={token}
               pseudo={pseudo}
               displayedMoney={displayedMoney}
+              avatar={avatar}
               isMenuOpen={isMenuOpen}
               onToggleMenu={() => setIsMenuOpen(!isMenuOpen)}
             />
@@ -71,6 +72,7 @@ function Header() {
               token={token}
               pseudo={pseudo}
               displayedMoney={displayedMoney}
+              avatar={avatar}
               onOpenProfile={() => setIsProfileOpen(true)}
               getLinkStyles={getLinkStyles}
             />
