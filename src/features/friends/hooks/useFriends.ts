@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 import { env } from "@/config/env";
 import { RootState } from "@/store/store";
 
+// 🌟 MISE À JOUR : Ajout du compteur de cartes uniques
 interface Friend {
   pseudo: string;
   avatar: string;
+  uniqueCardsCount?: number;
 }
 
 export function useFriends() {
@@ -16,7 +18,6 @@ export function useFriends() {
   const [suggestions, setSuggestions] = useState<Friend[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 🌟 AJOUT : États pour le design de l'UI
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
