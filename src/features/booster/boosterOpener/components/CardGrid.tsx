@@ -50,13 +50,10 @@ export function CardGrid({
   const getRarityHoverClasses = (rarity?: string) => {
     switch (rarity) {
       case "2":
-        // 🔵 Rare : Énorme lueur bleue diffuse et scale propre
         return "hover:scale-105 hover:-translate-y-2 hover:shadow-[0_0_50px_15px_rgba(59,130,246,0.6)]";
       case "3":
-        // 🟠 Légendaire : Gros effet incandescent jaune/orange qui claque
         return "hover:scale-105 hover:-translate-y-2 hover:shadow-[0_0_55px_18px_rgba(249,115,22,0.75)]";
       default:
-        // ⚪ Commun : Lueur blanche/grise très épurée
         return "hover:scale-105 hover:-translate-y-2 hover:shadow-[0_0_40px_12px_rgba(255,255,255,0.4)]";
     }
   };
@@ -114,7 +111,7 @@ export function CardGrid({
               }}
             />
 
-            {/* --- CONTENEUR PERSPECTIVE (Donne la profondeur 3D nécessaire pour le Flip) --- */}
+            {/* --- CONTENEUR PERSPECTIVE --- */}
             <div
               style={{
                 width: cardSize,
@@ -132,10 +129,16 @@ export function CardGrid({
                 className={`w-full h-full relative transition-transform duration-700 ease-[cubic-bezier(0.175,0.885,0.32,1.1)] cursor-pointer rounded-[0.4em] ${hoverClasses}`}
                 onClick={() => handleCardClick(index, card)}
               >
-                {/* --- FACE A : LE DOS DE LA CARTE (Visible au départ) --- */}
+                {/* --- FACE A : LE DOS DE LA CARTE --- */}
                 <div
-                  style={{ backfaceVisibility: "hidden" }}
-                  className="absolute inset-0 w-full h-full z-10"
+                  style={{ 
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transformStyle: "preserve-3d" // 🌟 FIX FIREFOX
+                  }}
+                  className={`absolute inset-0 w-full h-full transition-all duration-700 ${
+                    isRevealed ? "z-0" : "z-10" // 🌟 FIX FIREFOX : On baisse le z-index quand c'est retourné
+                  }`}
                 >
                   <div
                     style={{ backgroundImage: "url('/logo.webp')" }}
@@ -143,18 +146,22 @@ export function CardGrid({
                   />
                 </div>
 
-                {/* --- FACE B : LA CARTE RÉVÉLÉE (Masquée à l'envers, pivote à 180deg) --- */}
+                {/* --- FACE B : LA CARTE RÉVÉLÉE --- */}
                 <div
                   style={{
                     backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
                     transform: "rotateY(180deg)",
+                    transformStyle: "preserve-3d" // 🌟 FIX FIREFOX
                   }}
-                  className="absolute inset-0 w-full h-full"
+                  className={`absolute inset-0 w-full h-full ${
+                    isRevealed ? "z-10" : "z-0" // 🌟 FIX FIREFOX : On monte le z-index pour forcer l'affichage devant
+                  }`}
                 >
                   {/* Ta carte d'origine */}
                   <Card card={card} size={cardSize} />
 
-                  {/* --- BADGE "NEW" FLOTTANT ULTRA STYLÉ --- */}
+                  {/* --- BADGE "NEW" FLOTTANT --- */}
                   {card.isNew && (
                     <span className="absolute -top-2 -right-2 z-30 bg-simpson-orange text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md border border-simpson-orange animate-bounce">
                       New
@@ -164,7 +171,7 @@ export function CardGrid({
               </div>
             </div>
 
-            {/* --- BADGE DE RARETÉ FIXE (Sous la carte, sans décaler la grille) --- */}
+            {/* --- BADGE DE RARETÉ FIXE --- */}
             <span
               className={`text-[10px] sm:text-xs uppercase tracking-widest px-3 py-1 rounded-full border shadow-sm font-bold transition-all duration-500 transform ${
                 isRevealed
