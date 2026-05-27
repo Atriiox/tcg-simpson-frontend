@@ -42,7 +42,10 @@ export default function FriendsList() {
     handleAddFriend,
     handleRemoveFriend,
     loadFriends,
+    isLoading,
+    error,
   } = useFriends();
+
   const [friendToRemove, setFriendToRemove] = useState<string | null>(null);
   const autocompleteRef = useRef<HTMLDivElement>(null);
 
@@ -87,6 +90,42 @@ export default function FriendsList() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setSuggestions]);
+
+  // 🌟 GESTIONNAIRE D'ÉTATS D'INTERFACE (IDENTIQUE À TA COLLECTION)
+
+  // 1. Loading d'interface stylisé
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-transparent h-full min-h-[50vh]">
+        <div className="text-center space-y-2 animate-pulse">
+          <div className="w-8 h-8 border-4 border-simpson-orange border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-medium text-simpson-gray font-medium">
+            Synchronisation de la liste d'amis...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Écran d'erreur avec la pastille "Alerte Centrale Nucléaire"
+  if (error) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-transparent p-6 h-full min-h-[50vh]">
+        <div className="flex flex-col items-center gap-3 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md px-6 py-4 rounded-2xl border border-red-500/20 dark:border-red-500/10 shadow-lg text-center max-w-sm animate-fadeIn">
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+          </div>
+          <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 font-bold tracking-wide uppercase">
+            Erreur de connexion
+          </p>
+          <p className="text-[11px] sm:text-xs text-simpson-gray dark:text-simpson-white/60 font-medium leading-relaxed">
+            {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
@@ -166,7 +205,7 @@ export default function FriendsList() {
                 </button>
 
                 <div className="flex justify-center shrink-0">
-                  <div className="w-24 h-24 rounded-full relative overflow-hidden  group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-24 h-24 rounded-full relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                     <Image
                       src={friend.avatar || "/defaultAvatar.webp"}
                       alt={friend.pseudo}
@@ -209,8 +248,9 @@ export default function FriendsList() {
               </div>
             ))
           ) : (
-            <div className="col-span-1 lg:col-span-2 text-center py-16 bg-white dark:bg-simpson-darklight rounded-3xl border border-simpson-gray/5 w-full max-w-5xl">
-              <p className="text-sm font-medium text-simpson-gray">
+            // 3. État vide épuré
+            <div className="col-span-1 lg:col-span-2 text-center py-16 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full max-w-5xl">
+              <p className="text-xs sm:text-sm font-medium text-simpson-gray">
                 Ta liste d'amis est bien vide
               </p>
             </div>

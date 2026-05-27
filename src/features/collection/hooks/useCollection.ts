@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { Filters } from "@/features/collection/hooks/useFilter"
+import { Filters } from "@/features/collection/hooks/useFilter";
 
 export type CollectionCard = {
   id: string;
@@ -46,7 +46,10 @@ type UseCollectionReturn = {
   refetch: () => void;
 };
 
-export function useCollection(filters: Filters= { rarity: [], type: [], serie: [] }, search: string = ""): UseCollectionReturn {
+export function useCollection(
+  filters: Filters = { rarity: [], type: [], serie: [] },
+  search: string = "",
+): UseCollectionReturn {
   const [collection, setCollection] = useState<CollectionCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +76,7 @@ export function useCollection(filters: Filters= { rarity: [], type: [], serie: [
     setError(null);
 
     try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection`
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/users/me/collection`;
       const params = new URLSearchParams();
 
       if (debouncedSearch.trim().length > 0) {
@@ -81,47 +84,44 @@ export function useCollection(filters: Filters= { rarity: [], type: [], serie: [
       }
 
       if (filters) {
-  
-      if (filters.rarity && filters.rarity.length > 0) {
-  filters.rarity.forEach((rarityText) => {
-    let rarityId = "1";
+        if (filters.rarity && filters.rarity.length > 0) {
+          filters.rarity.forEach((rarityText) => {
+            let rarityId = "1";
 
-    switch (rarityText) {
-      case "Normal":
-        rarityId = "1";
-        break;
-      case "Rare":
-        rarityId = "2";
-        break;
-      case "Légendaire":
-        rarityId = "3";
-        break;
-    }
+            switch (rarityText) {
+              case "Normal":
+                rarityId = "1";
+                break;
+              case "Rare":
+                rarityId = "2";
+                break;
+              case "Légendaire":
+                rarityId = "3";
+                break;
+            }
 
-        params.append("rarity", rarityId);
-        })}
+            params.append("rarity", rarityId);
+          });
+        }
 
-      if (filters.type && filters.type.length > 0) {
-  filters.type.forEach((t) => params.append("type", t));
-}
+        if (filters.type && filters.type.length > 0) {
+          filters.type.forEach((t) => params.append("type", t));
+        }
 
-if (filters.serie && filters.serie.length > 0) {
-  filters.serie.forEach((s) => params.append("serie", s));
-}
+        if (filters.serie && filters.serie.length > 0) {
+          filters.serie.forEach((s) => params.append("serie", s));
+        }
 
-if (params.toString()) {
-    url += `?${params.toString()}`;
+        if (params.toString()) {
+          url += `?${params.toString()}`;
+        }
       }
-    }
 
-      const response = await fetch(
-        url,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -132,7 +132,9 @@ if (params.toString()) {
       const data = await response.json();
       setCollection(data);
     } catch {
-      setError("NETWORK_ERROR");
+      setError(
+        "Une erreur réseau est survenue. L'administration de la centrale nucléaire refuse de répondre. Code : NETWORK_ERROR",
+      );
     } finally {
       setIsLoading(false);
     }

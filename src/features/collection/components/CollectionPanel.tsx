@@ -50,8 +50,6 @@ export default function CollectionPanel({
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-  
-  // 🌟 AJOUT : Un state pour stocker la quantité de la carte sur laquelle on clique
   const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -72,12 +70,23 @@ export default function CollectionPanel({
     );
   }
 
+  // 🌟 MODIFICATION : Loader / Indicateur d'erreur stylisé
   if (error) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent p-6">
-        <p className="text-medium text-simpson-orange font-semibold bg-simpson-orange/5 px-4 py-2 rounded-xl border border-simpson-orange/10">
-          {error}
-        </p>
+        <div className="flex flex-col items-center gap-3 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md px-6 py-4 rounded-2xl border border-red-500/20 dark:border-red-500/10 shadow-lg text-center max-w-sm animate-fadeIn">
+          {/* Un point d'alerte stylisé façon "alerte centrale nucléaire de Homer" */}
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+          </div>
+          <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 font-bold tracking-wide uppercase">
+           Erreur de connexion
+          </p>
+          <p className="text-[11px] sm:text-xs text-simpson-gray dark:text-simpson-white/60 font-medium leading-relaxed">
+            {error}
+          </p>
+        </div>
       </div>
     );
   }
@@ -92,7 +101,6 @@ export default function CollectionPanel({
     );
   }
 
-  // 1. On calcule la quantité de chaque carte (basé sur le slug ou l'id)
   const cardQuantities = collection.reduce(
     (acc, card) => {
       const key = card.slug || card.id;
@@ -103,10 +111,8 @@ export default function CollectionPanel({
   );
 
   const ownedCardKeys = new Set(myInventory.map((c) => c.slug || c.id));
-
   const isAllCardsMode = title === "Toutes les cartes";
 
-  // 2. On ne garde qu'une seule carte unique par groupe pour l'affichage
   const uniqueCollection = collection.filter(
     (card, index, self) =>
       self.findIndex((c) => (c.slug || c.id) === (card.slug || card.id)) ===
@@ -124,7 +130,6 @@ export default function CollectionPanel({
       return;
     }
 
-    // 🌟 AJOUT : Récupération et stockage de la quantité avant d'ouvrir la modale
     const key = card.slug || card.id;
     const currentQty = cardQuantities[key] || 1;
     setSelectedCardQuantity(currentQty);
@@ -193,11 +198,7 @@ export default function CollectionPanel({
           {uniqueCollection.map((card) => {
             const isSelected = selectedCardIds.includes(card.id);
             const isDimmed = isCreatingDeck && !isSelected && maxCardsReached;
-
-            // On récupère la quantité pour cette carte spécifique
             const quantity = cardQuantities[card.slug || card.id] || 1;
-
-            // On vérification si la carte est possédée
             const isOwned = ownedCardKeys.has(card.slug || card.id);
 
             return (
@@ -211,7 +212,6 @@ export default function CollectionPanel({
             ${isAllCardsMode && !isOwned ? "opacity-30 filter grayscale-20" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
-                {/* Pastille de sélection de Deck */}
                 {isSelected && (
                   <div className="absolute inset-0 z-20 pointer-events-none">
                     <div className="absolute -inset-0.5 border-4 border-simpson-orange rounded-[0.4em]" />
@@ -223,7 +223,6 @@ export default function CollectionPanel({
                   </div>
                 )}
 
-                {/* Pastille de quantité pour les doubles sur la grille */}
                 {!isSelected && quantity > 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
@@ -251,11 +250,10 @@ export default function CollectionPanel({
         </div>
       </div>
 
-      {/* Modale de Détails avec envoi de la quantité */}
       <CardDetailModal
         isOpen={isModalOpen}
         card={selectedCard}
-        quantity={selectedCardQuantity} // 🌟 Passage du state ici
+        quantity={selectedCardQuantity}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);

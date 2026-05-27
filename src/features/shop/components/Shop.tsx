@@ -9,11 +9,6 @@ import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { useShopBooster, ShopBooster } from "../hooks/useShopBooster";
-// 🌟 AJOUTS DES IMPORTS REQUIS
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import { env } from "@/config/env";
-import { UserBoosterArraySchema } from "../../booster/boosterOpener/schema/booster.schema";
 
 interface DonutPack {
   amount: number;
@@ -31,10 +26,13 @@ const donutPacks: DonutPack[] = [
 
 export default function Shop() {
   const { money: userDonuts, updateMoney } = useMoney();
-  const { boosters, isLoading: boostersLoading, buyBooster } = useShopBooster();
-
-  // 🌟 RÉCUPÉRATION DU TOKEN REDUX
-  const { token } = useSelector((state: RootState) => state.user);
+  const {
+    boosters,
+    ownedBoosters,
+    isLoading: boostersLoading,
+    error: boostersError,
+    buyBooster,
+  } = useShopBooster();
 
   const [isMounted, setIsMounted] = useState(false);
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
@@ -43,53 +41,10 @@ export default function Shop() {
     "idle" | "loading" | "success"
   >("idle");
   const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
-  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>(
-    {},
-  );
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // 🌟 FONCTION DE CHARGEMENT DYNAMIQUE DES QUANTITÉS DE BOOSTERS POSSÉDÉS
-  const loadOwnedBoostersCounts = async () => {
-    if (!token) return;
-    try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_API_URL}/users/me/boosters`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (response.ok) {
-        const rawData = await response.json();
-        const userBoosters = UserBoosterArraySchema.parse(rawData);
-
-        // Transformation du tableau de l'API en dictionnaire [boosterId]: quantité
-        const counts: Record<string, number> = {};
-        userBoosters.forEach((ub) => {
-          counts[ub.booster.id] = ub.number;
-        });
-        setOwnedBoosters(counts);
-      }
-    } catch (err) {
-      console.error(
-        "Erreur lors de la récupération des quantités de boosters :",
-        err,
-      );
-    }
-  };
-
-  // Charge l'inventaire possédé dès que le token ou les boosters de la boutique sont disponibles
-  useEffect(() => {
-    if (token) {
-      loadOwnedBoostersCounts();
-    }
-  }, [token, boosters]);
 
   const handleBuyBooster = async (booster: ShopBooster) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
@@ -98,16 +53,9 @@ export default function Shop() {
 
     try {
       const success = await buyBooster(booster.id);
-
       if (success) {
-        // 🌟 MISE À JOUR DES DONUTS : Déduction locale et envoi au store/back
         const newDonutBalance = userDonuts - booster.price;
         await updateMoney(newDonutBalance);
-
-        setOwnedBoosters((prev) => ({
-          ...prev,
-          [booster.id]: (prev[booster.id] || 0) + 1,
-        }));
       }
     } catch (error) {
       console.error("Erreur lors de l'achat :", error);
@@ -125,7 +73,6 @@ export default function Shop() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
       const result = await updateMoney(newBalance);
 
       if (result.ok) {
@@ -147,10 +94,36 @@ export default function Shop() {
     alert(`Probabilités et détails du : ${name}`);
   };
 
+  // 🌟 INTERFACE DE CHARGEMENT STYLEE
   if (boostersLoading) {
     return (
-      <div className="w-full flex-1 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-simpson-orange border-t-transparent rounded-full animate-spin" />
+      <div className="flex-1 flex items-center justify-center bg-transparent h-full min-h-[50vh]">
+        <div className="text-center space-y-2 animate-pulse">
+          <div className="w-8 h-8 border-4 border-simpson-orange border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-medium text-simpson-gray font-medium">
+            Ouverture des rideaux du Kwik-E-Mart...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 🌟 ÉCRAN D'ERREUR STYLEE (Alerte Centrale de Springfield)
+  if (boostersError) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-transparent p-6 h-full min-h-[50vh]">
+        <div className="flex flex-col items-center gap-3 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md px-6 py-4 rounded-2xl border border-red-500/20 dark:border-red-500/10 shadow-lg text-center max-w-sm animate-fadeIn">
+          <div className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+          </div>
+          <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 font-bold tracking-wide uppercase">
+            Erreur de connexion
+          </p>
+          <p className="text-[11px] sm:text-xs text-simpson-gray dark:text-simpson-white/60 font-medium leading-relaxed">
+            {boostersError}
+          </p>
+        </div>
       </div>
     );
   }
@@ -178,93 +151,102 @@ export default function Shop() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
-          {boosters.map((booster) => {
-            const canAfford = isMounted ? userDonuts >= booster.price : false;
-            const isBuying = buyingBoosterId === booster.id;
+        {boosters.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+            {boosters.map((booster) => {
+              const canAfford = isMounted ? userDonuts >= booster.price : false;
+              const isBuying = buyingBoosterId === booster.id;
 
-            return (
-              <div
-                key={booster.id}
-                className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group"
-              >
-                <div className="flex justify-center transform transition-all duration-500 ease-out group-hover:scale-[1.04] group-hover:-rotate-1 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_15px_20px_rgba(0,0,0,0.35)] shrink-0">
-                  <Booster
-                    imageUrl={`/${booster.slug}`}
-                    className="w-44 h-62 sm:w-48 sm:h-68"
-                  />
-                </div>
-
-                <div className="flex flex-col justify-between flex-1 w-full min-h-60">
-                  <div className="flex items-center justify-between w-full mb-2">
-                    <div className="text-xs font-semibold text-simpson-gray dark:text-simpson-white/40 bg-simpson-gray/10 dark:bg-white/5 px-2.5 py-1 rounded-md">
-                      Possédé :{" "}
-                      <span className="text-simpson-dark dark:text-simpson-white font-bold">
-                        {ownedBoosters[booster.id] || 0}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => handleOpenDetails(booster.name)}
-                      className="text-simpson-gray/70 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none p-1.5 hover:bg-simpson-gray/10 dark:hover:bg-white/5 rounded-xl"
-                    >
-                      <LuInfo size={20} />
-                    </button>
+              return (
+                <div
+                  key={booster.id}
+                  className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group"
+                >
+                  <div className="flex justify-center transform transition-all duration-500 ease-out group-hover:scale-[1.04] group-hover:-rotate-1 filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_15px_20px_rgba(0,0,0,0.35)] shrink-0">
+                    <Booster
+                      imageUrl={`/${booster.slug}`}
+                      className="w-44 h-62 sm:w-48 sm:h-68"
+                    />
                   </div>
 
-                  <div className="space-y-2 text-left flex-1 flex flex-col justify-center">
-                    <div>
-                      <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
-                        {booster.name}
-                      </h3>
-                    </div>
-                  </div>
+                  <div className="flex flex-col justify-between flex-1 w-full min-h-60">
+                    <div className="flex items-center justify-between w-full mb-2">
+                      <div className="text-xs font-semibold text-simpson-gray dark:text-simpson-white/40 bg-simpson-gray/10 dark:bg-white/5 px-2.5 py-1 rounded-md">
+                        Possédé :{" "}
+                        <span className="text-simpson-dark dark:text-simpson-white font-bold">
+                          {ownedBoosters[booster.id] || 0}
+                        </span>
+                      </div>
 
-                  <div className="flex items-center gap-4 mt-4 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
-                    <div className="flex flex-col items-start shrink-0">
-                      <span className="text-[10px] font-medium text-simpson-gray block mb-0.5 uppercase tracking-wider">
-                        Prix
-                      </span>
-                      <div className="flex items-center gap-1 font-black text-xl text-simpson-dark dark:text-simpson-white">
-                        <span>{isMounted ? booster.price : "--"}</span>
-                        <Image
-                          src="/donuts1.webp"
-                          alt="Donut Icon"
-                          width={18}
-                          height={18}
-                          className="w-4.5 h-4.5 object-contain"
-                          priority
-                        />
+                      <button
+                        onClick={() => handleOpenDetails(booster.name)}
+                        className="text-simpson-gray/70 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none p-1.5 hover:bg-simpson-gray/10 dark:hover:bg-white/5 rounded-xl"
+                      >
+                        <LuInfo size={20} />
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-left flex-1 flex flex-col justify-center">
+                      <div>
+                        <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
+                          {booster.name}
+                        </h3>
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => handleBuyBooster(booster)}
-                      disabled={!canAfford || isBuying || !!buyingBoosterId}
-                      className={`flex-1 h-11 text-xs font-bold rounded-xl shadow-sm transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 cursor-pointer
-                        ${
-                          !canAfford
-                            ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/60 cursor-not-allowed"
-                            : "bg-simpson-orange hover:bg-simpson-orange/90 text-simpson-white shadow-md"
-                        } ${isBuying || (buyingBoosterId && buyingBoosterId !== booster.id) ? "opacity-50 cursor-not-allowed" : ""}
-                      `}
-                    >
-                      {!isMounted ? (
-                        <div className="w-4 h-4 border-2 border-simpson-gray/40 border-t-transparent rounded-full animate-spin" />
-                      ) : isBuying ? (
-                        <div className="w-4 h-4 border-2 border-simpson-white border-t-transparent rounded-full animate-spin" />
-                      ) : !canAfford ? (
-                        <span>Insuffisant</span>
-                      ) : (
-                        <span>Acheter</span>
-                      )}
-                    </button>
+                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
+                      <div className="flex flex-col items-start shrink-0">
+                        <span className="text-[10px] font-medium text-simpson-gray block mb-0.5 uppercase tracking-wider">
+                          Prix
+                        </span>
+                        <div className="flex items-center gap-1 font-black text-xl text-simpson-dark dark:text-simpson-white">
+                          <span>{isMounted ? booster.price : "--"}</span>
+                          <Image
+                            src="/donuts1.webp"
+                            alt="Donut Icon"
+                            width={18}
+                            height={18}
+                            className="w-4.5 h-4.5 object-contain"
+                            priority
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleBuyBooster(booster)}
+                        disabled={!canAfford || isBuying || !!buyingBoosterId}
+                        className={`flex-1 h-11 text-xs font-bold rounded-xl shadow-sm transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 cursor-pointer
+                          ${
+                            !canAfford
+                              ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/60 cursor-not-allowed"
+                              : "bg-simpson-orange hover:bg-simpson-orange/90 text-simpson-white shadow-md"
+                          } ${isBuying || (buyingBoosterId && buyingBoosterId !== booster.id) ? "opacity-50 cursor-not-allowed" : ""}
+                        `}
+                      >
+                        {!isMounted ? (
+                          <div className="w-4 h-4 border-2 border-simpson-gray/40 border-t-transparent rounded-full animate-spin" />
+                        ) : isBuying ? (
+                          <div className="w-4 h-4 border-2 border-simpson-white border-t-transparent rounded-full animate-spin" />
+                        ) : !canAfford ? (
+                          <span>Insuffisant</span>
+                        ) : (
+                          <span>Acheter</span>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          // 🌟 ÉCRAN VIDE STYLEE
+          <div className="text-center py-16 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full max-w-5xl mx-auto">
+            <p className="text-xs sm:text-sm font-medium text-simpson-gray">
+              Aucun booster n'est disponible en rayon actuellement.
+            </p>
+          </div>
+        )}
       </div>
 
       <Modal

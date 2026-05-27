@@ -30,7 +30,7 @@ export default function ReglesDuJeu() {
                   <span className="text-simpson-orange dark:text-simpson-yellow">1.</span> Le But du Jeu
                 </h2>
                 <p className="text-xs sm:text-sm text-simpson-gray dark:text-simpson-white/60">
-                  Bienvenue dans le jeu de cartes ultime de Springfield ! Le but est de collectionner les personnages de la série, de construire le deck le plus puissant et de cumuler un maximum de points de collection pour dominer le classement des joueurs.
+                  Bienvenue dans le jeu de cartes ultime de Springfield ! Le but est de collectionner tous les personnages de la série et de construire tes propres decks personnalisés pour concevoir les meilleures combinaisons de cartes.
                 </p>
               </section>
 
@@ -40,12 +40,8 @@ export default function ReglesDuJeu() {
                   <span className="text-simpson-orange dark:text-simpson-yellow">2.</span> Obtenir des Cartes (La Boutique)
                 </h2>
                 <p className="text-xs sm:text-sm text-simpson-gray dark:text-simpson-white/60">
-                  Pour agrandir votre collection, vous devez échanger vos précieux **Donuts** contre des Boosters dans la boutique :
+                  Pour agrandir ta collection, tu dois échanger tes précieux **Donuts** contre des Boosters dans la boutique. Chaque booster possède sa propre configuration : un nombre précis de cartes à l'intérieur ainsi que des taux d'obtention spécifiques pour chaque niveau de rareté.
                 </p>
-                <ul className="list-disc pl-6 space-y-1.5 text-xs sm:text-sm text-simpson-gray dark:text-simpson-white/60">
-                  <li><strong>Booster Série 1 :</strong> Contient 5 cartes de rareté aléatoire.</li>
-                  <li><strong>Pack Légendaire :</strong> Plus cher, mais garantit l'obtention d'une carte de rareté <span className="text-simpson-orange dark:text-simpson-yellow font-bold">Légendaire</span> pour booster instantanément votre score.</li>
-                </ul>
               </section>
 
               {/* SECTION 3 */}
@@ -76,10 +72,10 @@ export default function ReglesDuJeu() {
               {/* SECTION 4 */}
               <section className="space-y-2">
                 <h2 className="text-base font-bold text-simpson-dark dark:text-simpson-white uppercase tracking-wider flex items-center gap-2">
-                  <span className="text-simpson-orange dark:text-simpson-yellow">4.</span> Économie du Jeu
+                  <span className="text-simpson-orange dark:text-simpson-yellow">4.</span> Économie (Donuts & Doublons)
                 </h2>
                 <p className="text-xs sm:text-sm text-simpson-gray dark:text-simpson-white/60">
-                  Les Donuts constituent la monnaie principale de Springfield. Vous en gagnez en vous connectant quotidiennement, en validant des quêtes ou en revendant vos cartes en double depuis votre écran de collection.
+                  Les Donuts constituent la monnaie principale du jeu. Tu en obtiens automatiquement en te connectant quotidiennement sur l'application. Si tu tires des cartes que tu possèdes déjà en double, tu as la possibilité de les revendre directement depuis ton écran de collection pour récupérer des Donuts et acheter de nouveaux boosters.
                 </p>
               </section>
 
@@ -89,13 +85,13 @@ export default function ReglesDuJeu() {
                   <span className="text-simpson-orange dark:text-simpson-yellow">5.</span> Évolutions Futures
                 </h2>
                 <p className="text-xs sm:text-sm text-simpson-gray dark:text-simpson-white/60">
-                  Restez à l'affût ! De futures mises à jour intégreront un système de **Duels en ligne (PvP)** où les statistiques d'attaque et de défense de vos cartes de collection seront cruciales pour remporter des tournois et gagner encore plus de Donuts.
+                  Restez à l'affût ! De futures mises à jour intégreront un système de **Duels en ligne (PvP)** où les statistiques d'attaque et de défense de vos cartes de collection seront cruciales pour remporter la victoire.
                 </p>
               </section>
 
             </div>
 
-            {/* Bouton de retour ajusté en bleu d'après ton UI Kit */}
+            {/* Bouton de retour */}
             <div className="mt-8 pt-4 border-t border-simpson-gray/10 dark:border-white/5 flex justify-end">
               <Link
                 href="/collection"

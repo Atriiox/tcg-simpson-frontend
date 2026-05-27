@@ -74,7 +74,7 @@ export default function FilterPanel({
         <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-simpson-gray dark:text-simpson-gray" />
         <input
           className="w-full pl-9 pr-3 py-2 text-body rounded-xl bg-white dark:bg-simpson-darklight border border-transparent dark:border-simpson-dark text-simpson-dark dark:text-simpson-white placeholder-simpson-gray/60 outline-none shadow-xs focus:border-simpson-orange dark:focus:border-simpson-yellow transition-colors"
-          placeholder="Nom, famille, aff..."
+          placeholder="Nom, famille, ..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
         />

@@ -16,10 +16,16 @@ export function useFriends() {
   const [suggestions, setSuggestions] = useState<Friend[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // 🌟 AJOUT : États pour le design de l'UI
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   const { token } = useSelector((state: RootState) => state.user);
 
   const loadFriends = async () => {
     if (!token) return;
+    setIsLoading(true);
+    setError(null);
     try {
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/friends`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -27,9 +33,17 @@ export function useFriends() {
       if (res.ok) {
         const data = await res.json();
         setFriends(data);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Impossible de récupérer la liste d'amis.");
       }
     } catch (err) {
       console.error("Erreur lors du chargement des amis :", err);
+      setError(
+        "Une erreur réseau est survenue. L'administration de la centrale nucléaire refuse de répondre. Code : NETWORK_ERROR",
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,14 +113,13 @@ export function useFriends() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "UNKNOWN_ERROR");
       }
-
 
       await loadFriends();
     } catch (err) {
@@ -128,7 +141,9 @@ export function useFriends() {
     searchQuery,
     setSearchQuery,
     handleAddFriend,
-    handleRemoveFriend, 
+    handleRemoveFriend,
     loadFriends,
+    isLoading,
+    error,
   };
 }
