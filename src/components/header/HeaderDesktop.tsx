@@ -22,12 +22,15 @@ export default function HeaderDesktop({
   displayedMoney,
   onOpenProfile,
   getLinkStyles,
-  avatar
+  avatar,
 }: HeaderDesktopProps) {
   return (
     <div className="hidden md:flex w-full items-center h-full">
       <div className="w-2/12 flex items-center">
-        <Link href={logoHref} className="cursor-pointer inline-block transition-transform duration-200 active:scale-95">
+        <Link
+          href={logoHref}
+          className="cursor-pointer inline-block transition-transform duration-200 active:scale-95"
+        >
           <Image
             className="w-auto h-auto max-h-12.5 object-contain"
             loading="eager"
@@ -66,7 +69,10 @@ export default function HeaderDesktop({
           </>
         )}
 
-        <Link href="/regles-du-jeu" className={getLinkStyles("/regles-du-jeu").link}>
+        <Link
+          href="/regles-du-jeu"
+          className={getLinkStyles("/regles-du-jeu").link}
+        >
           Règles du jeu
           <span className={getLinkStyles("/regles-du-jeu").underline} />
         </Link>
@@ -97,7 +103,7 @@ export default function HeaderDesktop({
                 alt="Avatar"
                 width={70}
                 height={70}
-                className="w-full h-full object-cover rounded-full scale-x-[-1]"
+                className="w-full h-full object-contain rounded-full scale-x-[-1]"
               />
             </div>
             <button

@@ -1,14 +1,14 @@
 "use client";
 
 import { FaTimes, FaHeart, FaCoins } from "react-icons/fa";
-import { LuDonut } from "react-icons/lu";
-import { PiHandFistFill } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import type { CardData } from "@/features/card/interfaces/card.interface";
 import Card from "./Card";
 import CardAffinityView from "./CardAffinityView";
 import CardFamilyView from "./CardFamilyView";
-import { useReward } from "@/components/RewardContext"; // Import du contexte
+import { useReward } from "@/components/RewardContext";
+import Image from "next/image";
+import { PiHandFistFill } from "react-icons/pi";
 
 interface CardDetailModalProps {
   isOpen: boolean;
@@ -34,18 +34,18 @@ export default function CardDetailModal({
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<View>("card");
   const { triggerReward } = useReward(); // Utilisation du hook
-  
+
   const [localQuantity, setLocalQuantity] = useState(quantity);
 
-  useEffect(() => { 
-    setMounted(true); 
+  useEffect(() => {
+    setMounted(true);
   }, []);
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     if (isOpen) {
       setView("card");
       setLocalQuantity(quantity);
-    } 
+    }
   }, [isOpen, quantity]);
 
   if (!mounted) return null;
@@ -56,16 +56,30 @@ export default function CardDetailModal({
   const rarityCount = parseInt(card.rarity || "1") || 1;
 
   const rarityConfig: Record<string, { text: string; style: string }> = {
-    "1": { text: "Commun", style: "text-simpson-gray bg-simpson-light dark:bg-simpson-dark" },
-    "2": { text: "Rare", style: "text-simpson-lightblue bg-simpson-lightblue/10" },
-    "3": { text: "Légendaire", style: "text-simpson-orange bg-simpson-orange/10 border-simpson-orange/20" },
+    "1": {
+      text: "Commun",
+      style: "text-simpson-gray bg-simpson-light dark:bg-simpson-dark",
+    },
+    "2": {
+      text: "Rare",
+      style: "text-simpson-lightblue bg-simpson-lightblue/10",
+    },
+    "3": {
+      text: "Légendaire",
+      style:
+        "text-simpson-orange bg-simpson-orange/10 border-simpson-orange/20",
+    },
   };
-  
+
   const currentRarity = rarityConfig[card.rarity || "1"] || rarityConfig["1"];
   const isBonusType = card.type === "Objet" || card.type === "Terrain";
 
-  const affinityCards = collectionCards.filter((c) => c.affinity?.id === card.affinity?.id);
-  const familyCards = collectionCards.filter((c) => c.family?.id === card.family?.id);
+  const affinityCards = collectionCards.filter(
+    (c) => c.affinity?.id === card.affinity?.id,
+  );
+  const familyCards = collectionCards.filter(
+    (c) => c.family?.id === card.family?.id,
+  );
 
   const handleSellAction = (count: number) => {
     if (onSell) {
@@ -79,7 +93,7 @@ export default function CardDetailModal({
 
       // Action de vente
       onSell(card.id, count);
-      
+
       // Décrémentation visuelle immédiate
       setLocalQuantity((prev) => Math.max(0, prev - count));
     }
@@ -107,11 +121,15 @@ export default function CardDetailModal({
         <div className="flex flex-col items-center text-center gap-3 shrink-0">
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <h2 className="text-4xl font-extrabold text-black dark:text-white tracking-wide">
-              {view === "card" ? card.name : view === "affinity" ? card.affinity?.name : card.family?.name}
+              {view === "card"
+                ? card.name
+                : view === "affinity"
+                  ? card.affinity?.name
+                  : card.family?.name}
             </h2>
-            
-            {view === "card" && (
-              isOwned ? (
+
+            {view === "card" &&
+              (isOwned ? (
                 <span className="bg-simpson-dark dark:bg-white text-white dark:text-simpson-dark font-black text-sm px-3 py-1 rounded-xl shadow-sm select-none">
                   x{localQuantity}
                 </span>
@@ -119,8 +137,7 @@ export default function CardDetailModal({
                 <span className="bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-xs px-2.5 py-1 rounded-xl shadow-sm select-none uppercase tracking-wider">
                   Non possédée
                 </span>
-              )
-            )}
+              ))}
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -141,7 +158,9 @@ export default function CardDetailModal({
             )}
             {card.affinity && card.affinity.name !== "Sans Affinité" && (
               <span
-                onClick={() => setView(view === "affinity" ? "card" : "affinity")}
+                onClick={() =>
+                  setView(view === "affinity" ? "card" : "affinity")
+                }
                 className={`cursor-pointer text-body px-4 py-1.5 rounded-full border backdrop-blur-md shadow-xs transition-all text-black dark:text-white ${
                   view === "affinity"
                     ? "bg-[#a855f7]/20 border-[#a855f7]/40"
@@ -173,13 +192,21 @@ export default function CardDetailModal({
                     <h3 className="text-title text-simpson-blue dark:text-simpson-lightblue tracking-wide">
                       {card.type}
                     </h3>
-                    <span className={`text-xs uppercase px-2.5 py-0.5 rounded-md font-bold tracking-wide border border-transparent ${currentRarity.style}`}>
+                    <span
+                      className={`text-xs uppercase px-2.5 py-0.5 rounded-md font-bold tracking-wide border border-transparent ${currentRarity.style}`}
+                    >
                       {currentRarity.text}
                     </span>
                   </div>
-                  <div className="flex gap-1.5 text-simpson-orange dark:text-simpson-yellow bg-simpson-orange/5 dark:bg-simpson-yellow/5 px-3 py-1.5 rounded-full backdrop-blur-md">
+                  {/* 🌟 LE DONUT DE RARETÉ : Remplacé par ton image personnalisée */}
+                  <div className="flex gap-1.5 bg-simpson-orange/5 dark:bg-simpson-yellow/5 px-3 py-1.5 rounded-full backdrop-blur-md items-center">
                     {Array.from({ length: rarityCount }).map((_, i) => (
-                      <LuDonut key={i} className="w-4.5 h-4.5 shrink-0" />
+                      <img
+                        key={i}
+                        src="/Donuts1.webp"
+                        alt="Donut Rarity"
+                        className="w-4.5 h-4.5 shrink-0 object-contain select-none"
+                      />
                     ))}
                   </div>
                 </div>
@@ -220,52 +247,70 @@ export default function CardDetailModal({
                   </p>
                 </div>
 
-                {duplicatesCount > 0 && (() => {
-                  const rates: Record<string, number> = { "1": 5, "2": 25, "3": 50 };
-                  const pricePerCard = rates[card.rarity || "1"] || 5;
-                  const singleSellGain = pricePerCard;
-                  const totalSellGain = pricePerCard * duplicatesCount;
+                {duplicatesCount > 0 &&
+                  (() => {
+                    const rates: Record<string, number> = {
+                      "1": 5,
+                      "2": 25,
+                      "3": 50,
+                    };
+                    const pricePerCard = rates[card.rarity || "1"] || 5;
+                    const singleSellGain = pricePerCard;
+                    const totalSellGain = pricePerCard * duplicatesCount;
 
-                  return (
-                    <div className="mt-2 p-4 rounded-2xl border border-simpson-orange/20 bg-simpson-orange/5 dark:bg-simpson-orange/10 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-bold text-simpson-orange dark:text-simpson-yellow uppercase tracking-wide">
-                          Doubles disponibles ({duplicatesCount})
-                        </span>
-                        <span className="text-[11px] text-black/60 dark:text-white/60 font-medium">
-                          Gagne des donuts en recyclant tes doublons.
-                        </span>
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-2 w-full sm:justify-end">
-                        <button
-                          type="button"
-                          onClick={() => handleSellAction(1)}
-                          className="px-4 h-9 flex items-center gap-2 text-xs font-black uppercase tracking-wider rounded-xl bg-white dark:bg-simpson-dark text-simpson-orange dark:text-simpson-yellow border border-simpson-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs"
-                        >
-                          <FaCoins className="w-3 h-3 text-simpson-orange dark:text-simpson-yellow" />
-                          Vendre 1 (+{singleSellGain} 🍩)
-                        </button>
+                    return (
+                      <div className="mt-2 p-4 rounded-2xl border border-simpson-orange/20 bg-simpson-orange/5 dark:bg-simpson-orange/10 flex flex-col gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-simpson-orange dark:text-simpson-yellow uppercase tracking-wide">
+                            Doubles disponibles ({duplicatesCount})
+                          </span>
+                          <span className="text-[11px] text-black/60 dark:text-white/60 font-medium">
+                            Gagne des donuts en recyclant tes doublons.
+                          </span>
+                        </div>
 
-                        {duplicatesCount >= 2 && (
+                        <div className="flex flex-wrap gap-2 w-full sm:justify-end">
+                          {/* 🌟 BOUTON VENDRE 1 : Remplacé par ton image personnalisée */}
                           <button
                             type="button"
-                            onClick={() => handleSellAction(duplicatesCount)}
-                            className="px-4 h-9 flex items-center gap-2 text-xs font-black uppercase tracking-wider rounded-xl bg-simpson-orange text-white hover:bg-simpson-orange/90 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
+                            onClick={() => handleSellAction(1)}
+                            className="px-4 h-9 flex items-center gap-1 text-xs font-black uppercase tracking-wider rounded-xl bg-white dark:bg-simpson-dark text-simpson-orange dark:text-simpson-yellow border border-simpson-orange/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-xs"
                           >
-                            <FaCoins className="w-3 h-3 text-white" />
-                            Tout Vendre (+{totalSellGain} 🍩)
+                            <FaCoins className="w-3 h-3 text-simpson-orange dark:text-simpson-yellow" />
+                            Vendre 1 pour {singleSellGain}
+                            <img
+                              src="/Donuts1.webp"
+                              alt="Donut"
+                              className="w-4.5 h-4.5 inline object-contain align-middle"
+                            />
                           </button>
-                        )}
+
+                          {/* 🌟 BOUTON TOUT VENDRE : Remplacé par ton image personnalisée */}
+                          {duplicatesCount >= 2 && (
+                            <button
+                              type="button"
+                              onClick={() => handleSellAction(duplicatesCount)}
+                              className="px-4 h-9 flex items-center gap-2 text-xs font-black uppercase tracking-wider rounded-xl bg-simpson-orange text-white hover:bg-simpson-orange/90 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
+                            >
+                              <FaCoins className="w-3 h-3 text-white" />
+                              Tout Vendre +{totalSellGain}
+                              <img
+                                src="/Donuts1.webp"
+                                alt="Donut"
+                                className="w-4.5 h-4.5 inline object-contain align-middle"
+                              />
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
               </div>
 
               <div className="mt-4 flex items-center justify-end gap-4 shrink-0">
                 <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
-                  {card.serie?.id_serie?.name || "Série 1"} <br /> N°{card.serie?.position || 0}/50
+                  {card.serie?.id_serie?.name || "Série 1"} <br /> N°
+                  {card.serie?.position || 0}/50
                 </span>
               </div>
             </div>
@@ -274,22 +319,22 @@ export default function CardDetailModal({
 
         {view === "affinity" && (
           <div className="flex-1 overflow-hidden">
-            <CardAffinityView 
-              card={card} 
-              affinityCards={affinityCards} 
-              allCards={allCards} 
-              onBack={() => setView("card")} 
+            <CardAffinityView
+              card={card}
+              affinityCards={affinityCards}
+              allCards={allCards}
+              onBack={() => setView("card")}
             />
           </div>
         )}
 
         {view === "family" && (
           <div className="flex-1 overflow-hidden">
-            <CardFamilyView 
-              card={card} 
-              familyCards={familyCards} 
-              allCards={allCards} 
-              onBack={() => setView("card")} 
+            <CardFamilyView
+              card={card}
+              familyCards={familyCards}
+              allCards={allCards}
+              onBack={() => setView("card")}
             />
           </div>
         )}
