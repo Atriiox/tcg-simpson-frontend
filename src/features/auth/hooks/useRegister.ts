@@ -19,6 +19,7 @@ export function useRegister() {
     }
 
     const data = await res.json();
+    console.log("data from register:", data);
     if (!res.ok) throw new Error(data.error);
 
     const { token, pseudo, email, money, theme } = data;
