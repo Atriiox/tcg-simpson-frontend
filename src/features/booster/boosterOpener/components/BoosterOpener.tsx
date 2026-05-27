@@ -166,7 +166,7 @@ export default function BoosterOpener({
 
           {onClose && (
             <Button
-              className="bg-simpson-gray! text-xs py-2 px-4"
+              className="bg-simpson-orange! text-xs py-2 px-4"
               onClick={onClose}
             >
               Fermer

@@ -76,7 +76,7 @@ export default function HeaderMobile({
             </div>
             <div className="w-11 h-11 rounded-full overflow-hidden p-0.5 shrink-0">
               <Image
-                src={avatar || "/default-avatar.webp"}
+                src={avatar || "/defaultAvatar.webp"}
                 alt="Avatar"
                 width={44}
                 height={44}
