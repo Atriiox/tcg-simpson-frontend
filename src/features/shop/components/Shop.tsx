@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useMoney } from "../hooks/useMoney";
+import { useDailyDonuts } from "../hooks/useDailyDonuts";
 import { LuInfo } from "react-icons/lu";
 import { FaPlusCircle, FaPercentage } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
@@ -48,6 +49,16 @@ export default function Shop() {
   const { boosters, ownedBoosters, isLoading: boostersLoading, error: boostersError, buyBooster } = useShopBooster();
   const { triggerReward } = useReward();
 
+  const {
+    isReady: dailyReady,
+    formattedTime,
+    isClaiming: isClaimingDaily,
+    claimDailyDonuts,
+  } = useDailyDonuts(() => {
+    // Déclenché automatiquement si les deux appels API réussissent
+    triggerReward(100);
+  });
+
   const [isMounted, setIsMounted] = useState(false);
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [detailBooster, setDetailBooster] = useState<ShopBooster | null>(null);
@@ -57,6 +68,7 @@ export default function Shop() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  
 
   const handleBuyBooster = async (booster: ShopBooster) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
@@ -146,6 +158,51 @@ export default function Shop() {
             </button>
           </div>
         </div>
+
+
+      {/* 🌟 AJOUT VISUEL : BANNIÈRE DU COMPTE À REBOURS QUOTIDIEN */}
+        <div className="w-full bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md p-6 rounded-2xl border border-white/40 dark:border-white/5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-simpson-orange/10 dark:bg-simpson-yellow/10 rounded-2xl flex items-center justify-center shrink-0">
+              <Image src="/donuts1.webp" alt="Daily Gift" width={36} height={36} className="object-contain animate-bounce" style={{ animationDuration: '4s' }} />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-simpson-dark dark:text-simpson-white">Donuts Quotidiens Gratuits</h3>
+              <p className="text-xs text-simpson-gray dark:text-simpson-white/60 mt-0.5">Récupère ton bonus de 100 donuts toutes les 12 heures !</p>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            {!dailyReady && isMounted && (
+              <div className="text-center sm:text-right">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-simpson-gray block mb-0.5">Disponible dans</span>
+                <span className="font-mono text-sm font-black text-simpson-dark dark:text-simpson-white bg-simpson-gray/10 dark:bg-white/5 px-2.5 py-1 rounded-md tracking-wider">
+                  {formattedTime}
+                </span>
+              </div>
+            )}
+            
+            <button
+              onClick={claimDailyDonuts}
+              disabled={!dailyReady || isClaimingDaily}
+              className={`w-full sm:w-44 h-11 text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all duration-300 active:scale-95
+                ${!dailyReady 
+                  ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed select-none" 
+                  : "bg-simpson-orange hover:bg-simpson-orange/90 text-white cursor-pointer" 
+                }
+              `}
+            >
+              {isClaimingDaily ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : dailyReady ? (
+                <span>Réclamer +100 🍩</span>
+              ) : (
+                <span>Indisponible</span>
+              )}
+            </button>
+          </div>
+        </div>
+
 
         {boosters.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">

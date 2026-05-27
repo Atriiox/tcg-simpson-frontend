@@ -7,7 +7,7 @@ interface UserState {
   avatar: string | null;
   email: string | null;
   money: number | null;
-  countdownEnds: Date | null;
+  countdownEnds: string | null;
   isDarkMode: boolean;
 }
 
@@ -33,7 +33,7 @@ export const userSlice = createSlice({
         avatar: string | null;
         email: string | null;
         money: number | null;
-        countdownEnds: Date | null;
+        countdownEnds: string | null;
         theme: boolean;
       }>,
     ) => {
@@ -52,7 +52,7 @@ export const userSlice = createSlice({
       }
     },
 
-    updateCountdownEnds: (state, action: PayloadAction<Date>) => {
+    updateCountdownEnds: (state, action: PayloadAction<string>) => {
       if (state.countdownEnds !== null) {
         state.countdownEnds = action.payload;
       }
