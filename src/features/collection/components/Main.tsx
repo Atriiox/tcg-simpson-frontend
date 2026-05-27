@@ -8,30 +8,32 @@ import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
 import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
-import { useFilter } from "@/features/collection/hooks/useFilter";
-import { useCollection } from "@/features/collection/hooks/useCollection";
-import { useAllCards } from "@/features/collection/hooks/useAllCards";
 import { useReward } from "@/components/RewardContext";
+import { Filters } from "@/features/collection/hooks/useFilter";
 
-// 🌟 Type pour stocker les infos du booster sélectionné
 interface ActiveBoosterState {
   id: string;
   name: string;
   slug: string;
 }
 
+interface CollectionControls {
+  filters: Filters;
+  handleSelect: (group: string, value: string) => void;
+  resetFilters: () => void;
+  search: string;
+  setSearch: (val: string) => void;
+  showAllCards: boolean;
+  setShowAllCards: (val: boolean) => void;
+}
+
 export default function Main() {
   const [showFilter, setShowFilter] = useState(true);
   const [showRight, setShowRight] = useState(true);
   const [collectionKey, setCollectionKey] = useState(0);
-
-  // 🌟 MODIFICATION : L'état contient maintenant l'objet complet du booster
   const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
-  const [showAllCards, setShowAllCards] = useState(false);
-  const { filters, handleSelect, resetFilters } = useFilter();
-  const [search, setSearch] = useState<string>("");
-  const { collection = [], isLoading: loadingColl, error: errorColl } = useCollection(filters, search);
-  const { cards = [], isLoading: loadingAll, error: errorAll } = useAllCards(filters, search);
+  const [collectionControls, setCollectionControls] = useState<CollectionControls | null>(null);
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const isNewUser = searchParams.get("newUser") === "true";
@@ -39,26 +41,15 @@ export default function Main() {
 
   const { triggerReward } = useReward();
 
-  const displayedCards = showAllCards ? cards : collection;
-  const isLoading = showAllCards ? loadingAll : loadingColl;
-  const error = showAllCards ? errorAll : errorColl;
-
   useEffect(() => {
-    if (isNewUser) {
-      triggerReward(100);
-    }
+    if (isNewUser) triggerReward(100);
   }, [isNewUser]);
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
     setActiveBooster(null);
     router.replace("/collection");
-    setCollectionKey((prev) => prev + 1); 
-  };
-
-  const handleResetAll = () => {
-    resetFilters();
-    setSearch("");
+    setCollectionKey((prev) => prev + 1);
   };
 
   const {
@@ -92,18 +83,17 @@ export default function Main() {
 
   return (
     <>
-      {/* 🌟 MODAL BOOSTER : On transmet le nom et le slug immédiatement au montage */}
       {showBoosterModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
           onClick={handleCloseBooster}
         >
           <div onClick={(e) => e.stopPropagation()}>
-            <BoosterOpener 
-              boosterId={activeBooster?.id || undefined} 
-              boosterName={activeBooster?.name} 
-              imageUrl={activeBooster?.slug}    
-              onClose={handleCloseBooster} 
+            <BoosterOpener
+              boosterId={activeBooster?.id || undefined}
+              boosterName={activeBooster?.name}
+              imageUrl={activeBooster?.slug}
+              onClose={handleCloseBooster}
             />
           </div>
         </div>
@@ -119,15 +109,20 @@ export default function Main() {
         {/* 1. PANNEAU GAUCHE : FILTRES */}
         <div className="relative z-10 border-r border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-xl dark:shadow-[4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
           <div className="w-60 h-full overflow-y-auto custom-scrollbar">
-            <FilterPanel
-              filters={filters}
-              handleSelect={handleSelect}
-              resetFilters={handleResetAll}
-              searchTerm={search}
-              onSearchChange={setSearch}
-              showAllCards={showAllCards}
-              onToggleShowAll={setShowAllCards}
-            />
+            {collectionControls && (
+              <FilterPanel
+                filters={collectionControls.filters}
+                handleSelect={collectionControls.handleSelect}
+                resetFilters={() => {
+                  collectionControls.resetFilters();
+                  collectionControls.setSearch("");
+                }}
+                searchTerm={collectionControls.search}
+                onSearchChange={collectionControls.setSearch}
+                showAllCards={collectionControls.showAllCards}
+                onToggleShowAll={collectionControls.setShowAllCards}
+              />
+            )}
           </div>
         </div>
 
@@ -135,10 +130,7 @@ export default function Main() {
         <button
           onClick={() => setShowFilter(!showFilter)}
           className="absolute top-1/2 -translate-y-1/2 z-40 w-6 h-12 flex items-center justify-center bg-white dark:bg-simpson-darklight border border-simpson-gray/20 dark:border-simpson-dark text-simpson-gray hover:text-white hover:bg-simpson-orange dark:hover:bg-simpson-yellow dark:hover:text-simpson-dark rounded-r-xl shadow-md transition-all duration-200 cursor-pointer"
-          style={{
-            left: showFilter ? "240px" : "0px",
-            transition: "left 300ms ease-in-out",
-          }}
+          style={{ left: showFilter ? "240px" : "0px", transition: "left 300ms ease-in-out" }}
         >
           {showFilter ? <FaAngleLeft size={14} /> : <FaAngleRight size={14} />}
         </button>
@@ -146,19 +138,14 @@ export default function Main() {
         {/* 2. CENTRE : PANNEAU DE LA COLLECTION */}
         <CollectionPanel
           key={collectionKey}
-          filters={filters}
-          collection={displayedCards}
-          myInventory={collection}
-          isLoading={isLoading}
-          error={error}
           isCreatingDeck={isCreating}
           selectedCardIds={isCreating ? selectedCardIds : []}
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
-          title={showAllCards ? "Toutes les cartes" : "Ma Collection"}
+          onControlsReady={setCollectionControls}
         />
 
-        {/* 3. PANNEAU DROIT : DECKS & BOOSTERS */}
+        {/* 3. PANNEAU DROIT */}
         <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
           <div className="w-55 h-full overflow-y-auto custom-scrollbar">
             <RightPanel
@@ -177,7 +164,6 @@ export default function Main() {
               startEditDeck={startEditDeck}
               handleDeleteDeck={handleDeleteDeck}
               handleSetActiveDeck={handleSetActiveDeck}
-              // 🌟 INTERCEPTION DES 3 INFOS : Données poussées directement au clic
               onTriggerOpenBooster={(boosterId, name, slug) => {
                 setActiveBooster({ id: boosterId, name, slug });
                 setShowBoosterModal(true);
@@ -190,10 +176,7 @@ export default function Main() {
         <button
           onClick={() => setShowRight(!showRight)}
           className="absolute top-1/2 -translate-y-1/2 z-40 w-6 h-12 flex items-center justify-center bg-white dark:bg-simpson-darklight border border-simpson-gray/20 dark:border-simpson-dark text-simpson-gray hover:text-white hover:bg-simpson-orange dark:hover:bg-simpson-yellow dark:hover:text-simpson-dark rounded-l-xl shadow-md transition-all duration-200 cursor-pointer"
-          style={{
-            right: showRight ? "220px" : "0px",
-            transition: "right 300ms ease-in-out",
-          }}
+          style={{ right: showRight ? "220px" : "0px", transition: "right 300ms ease-in-out" }}
         >
           {showRight ? <FaAngleRight size={14} /> : <FaAngleLeft size={14} />}
         </button>

@@ -34,10 +34,6 @@ export default function FilterPanel({
   showAllCards,
   onToggleShowAll,
 }: FilterPanelProps) {
-  const [search, setSearch] = useState<string>("");
-  const [checked, setChecked] = useState<Record<string, boolean>>({
-    Normal: true,
-  });
 
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
   const isChecked = (group: string, item: string): boolean => {
