@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
+import { useDailyDonuts } from "@/features/shop/hooks/useDailyDonuts";
 import logo from "../../../public/logo.webp";
 
 interface HeaderDesktopProps {
@@ -24,6 +25,9 @@ export default function HeaderDesktop({
   getLinkStyles,
   avatar,
 }: HeaderDesktopProps) {
+
+  const { isReady: canClaimDaily, isMounted } = useDailyDonuts();
+
   return (
     <div className="hidden md:flex w-full items-center h-full">
       <div className="w-2/12 flex items-center">
@@ -58,10 +62,22 @@ export default function HeaderDesktop({
 
         {token && (
           <>
-            <Link href="/boutique" className={getLinkStyles("/boutique").link}>
-              Boutique
+            <Link 
+              href="/boutique" 
+              className={`${getLinkStyles("/boutique").link} relative flex items-center gap-1`}
+            >
+              <span>Boutique</span>
+              
+              {/* On n'affiche la pastille que si le bonus est prêt ET que le composant est monté côté client */}
+              {canClaimDaily && isMounted && (
+                <span className="relative flex h-2 w-2 mb-3">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+              )}
+              
               <span className={getLinkStyles("/boutique").underline} />
             </Link>
+
             <Link href="/amis" className={getLinkStyles("/amis").link}>
               Amis
               <span className={getLinkStyles("/amis").underline} />

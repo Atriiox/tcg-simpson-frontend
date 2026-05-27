@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname } from "next/navigation";
+import { useDailyDonuts } from "@/features/shop/hooks/useDailyDonuts";
 
 interface HeaderMobileMenuProps {
   token: string | null;
@@ -18,6 +19,8 @@ export default function HeaderMobileMenu({
   getLinkStyles,
 }: HeaderMobileMenuProps) {
   const pathname = usePathname();
+
+  const { isReady: canClaimDaily, isMounted } = useDailyDonuts();
 
   return (
     <div className="absolute top-17.5 left-0 w-full bg-white dark:bg-simpson-darklight shadow-xl border-t border-simpson-gray/5 dark:border-white/5 flex flex-col md:hidden z-40 animate-fade-in">
@@ -37,9 +40,21 @@ export default function HeaderMobileMenu({
         {token && (
           <>
             <Link href="/boutique" onClick={onClose} className={getLinkStyles("/boutique").mobileLink}>
-              <span>Boutique</span>
+              <div className="flex items-center gap-1.5">
+                <span>Boutique</span>
+                
+                {/* On n'affiche la pastille que si le bonus est disponible et le composant monté */}
+                {canClaimDaily && isMounted && (
+                  <span className="relative flex h-2 w-2">
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </span>
+                )}
+              </div>
+              
               {pathname === "/boutique" && <span className="text-simpson-orange dark:text-simpson-yellow">●</span>}
             </Link>
+
+
             <Link href="/amis" onClick={onClose} className={getLinkStyles("/amis").mobileLink}>
               <span>Amis</span>
               {pathname === "/amis" && <span className="text-simpson-orange dark:text-simpson-yellow">●</span>}
