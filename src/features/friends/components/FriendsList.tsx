@@ -166,11 +166,12 @@ export default function FriendsList() {
                 </button>
 
                 <div className="flex justify-center shrink-0">
-                  <div className="w-24 h-24 rounded-full bg-simpson-gray/10 dark:bg-white/5 border border-simpson-gray/10 dark:border-white/5 relative overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-24 h-24 rounded-full relative overflow-hidden  group-hover:scale-105 transition-transform duration-300">
                     <Image
                       src={friend.avatar || "/defaultAvatar.webp"}
                       alt={friend.pseudo}
-                      fill
+                      width={70}
+                      height={70}
                       className="object-cover"
                     />
                   </div>

@@ -123,7 +123,11 @@ export default function RightPanel({
   }, [isCreatingDeck, deckName]);
 
   // 🌟 CORRECTION : Propagation des 3 arguments au parent (Main.tsx)
-  const handleOpenBoosterClick = (boosterId: string, name: string, slug: string) => {
+  const handleOpenBoosterClick = (
+    boosterId: string,
+    name: string,
+    slug: string,
+  ) => {
     if (onTriggerOpenBooster) {
       onTriggerOpenBooster(boosterId, name, slug);
     }
@@ -168,7 +172,7 @@ export default function RightPanel({
             </Button>
             <Button
               onClick={cancelDeckCreation}
-              className="w-full py-2.5 rounded-xl text-xs font-bold uppercase bg-transparent border border-simpson-gray/20 dark:border-white/10 !text-simpson-gray shadow-none"
+              className="w-full py-2.5 rounded-xl text-xs font-bold uppercase bg-transparent border border-simpson-gray/20 dark:border-white/10 text-simpson-gray! shadow-none"
             >
               Annuler
             </Button>
