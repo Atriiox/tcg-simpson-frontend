@@ -1,44 +1,12 @@
+"use client";
+
 import styles from "../style/Card.module.css";
 import { FaHeart } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
 import { LuDonut } from "react-icons/lu";
 
-interface Bonus {
-  ATK: number;
-  PV: number;
-}
-
-interface Family {
-  id: string;
-  name: string;
-  description: string;
-  bonus: Bonus;
-}
-
-interface Affinity {
-  id: string;
-  name: string;
-  description: string;
-  bonus: Bonus;
-}
-
-interface Serie {
-  id_serie: { id: string; name: string };
-  position: number;
-}
-
-interface CardData {
-  name: string;
-  slug: string;
-  type: "Personnage" | "Terrain" | "Objet";
-  rarity: string;
-  ATK: number;
-  PV: number;
-  description: string;
-  family: Family;
-  affinity: Affinity;
-  serie: Serie;
-}
+// 🌟 Importation propre de l'interface centralisée
+import type { CardData } from "@/features/card/interfaces/card.interface";
 
 interface CardProps {
   card: CardData;
@@ -83,7 +51,13 @@ function Card({ card, onClick, size = 200 }: CardProps) {
       onClick={onClick}
     >
       {rarity === "3" && (
-        <video autoPlay loop muted playsInline className={styles.videoBackground}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className={styles.videoBackground}
+        >
           <source src={videoUrl} type="video/webm" />
         </video>
       )}
@@ -109,8 +83,12 @@ function Card({ card, onClick, size = 200 }: CardProps) {
             </div>
 
             <div className={styles.stats}>
-              <span className={styles.atk}>{ATK} <PiHandFistFill /></span>
-              <span className={styles.pv}>{PV} <FaHeart /></span>
+              <span className={styles.atk}>
+                {ATK} <PiHandFistFill />
+              </span>
+              <span className={styles.pv}>
+                {PV} <FaHeart />
+              </span>
             </div>
           </>
         )}
@@ -133,7 +111,9 @@ function Card({ card, onClick, size = 200 }: CardProps) {
       </div>
 
       <div className={styles.footerCard}>
-        <span>{serie.id_serie.name} - {serie.position}/50</span>
+        <span>
+          {serie.id_serie.name} - {serie.position}/50
+        </span>
         <span className={styles.rarity}>{rarityDonuts}</span>
       </div>
     </div>

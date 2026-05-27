@@ -80,8 +80,6 @@ export default function BoosterOpener({
         onBoosterOpenedSuccess();
       }
 
-      // 🌟 SÉCURITÉ INFRAILLIBLE : Si le hook détecte la fin du stock pendant l'ouverture, 
-      // on force le masquage immédiat pour éviter le moindre glitch d'affichage
       if (hasMoreBoosters === false) {
         setForceHideNext(true);
       }
@@ -94,12 +92,16 @@ export default function BoosterOpener({
   }, [reset]);
 
   const hasCards = cards.length > 0;
-
-  // 🌟 CONDITION NETTE : Masquage total si le stock de ce booster est à 0
   const shouldShowButton = hasMoreBoosters && !forceHideNext;
 
   return (
-    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-fit sm:min-w-[80vw] h-[85vh] sm:h-fit sm:min-h-[81vh] flex flex-col font-main overflow-hidden">
+    /* 🌟 FIX DE LA TAILLE DE LA MODAL : 
+      Changement de h-[85vh] sm:h-fit sm:min-h-[81vh] VERS une hauteur STRICTE h-[85vh] sm:h-[82vh].
+      La modal fait maintenant PILE la même taille du début à la fin, elle ne bougera plus d'un pixel !
+    */
+    <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-[80vw] max-w-5xl h-[85vh] sm:h-[82vh] flex flex-col font-main overflow-hidden">
+      
+      {/* Header fixe */}
       <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
         <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
           Ouverture du {displayBoosterName}
@@ -114,6 +116,7 @@ export default function BoosterOpener({
         )}
       </div>
 
+      {/* Zone centrale avec scroll interne automatique (Grâce à flex-1 et overflow-y-auto) */}
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 sm:py-10 gap-4">
         {!hasCards && (
           <div className="w-full flex flex-col items-center justify-center my-auto">
@@ -143,7 +146,11 @@ export default function BoosterOpener({
         )}
 
         {hasCards && (
-          <div className="w-full flex flex-col items-center gap-4 my-auto">
+          /* 🌟 PETIT AJUSTEMENT : 
+            Remplacement de "my-auto" par "py-4 w-full flex flex-col items-center gap-8" 
+            pour éviter que le contenu s'écrase sur les bords si la liste de cartes est grande.
+          */
+          <div className="w-full flex flex-col items-center gap-8 py-4">
             <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">
               {cards.length} nouvelles cartes !
             </p>
@@ -156,6 +163,7 @@ export default function BoosterOpener({
         )}
       </div>
 
+      {/* Footer fixe */}
       {hasCards && (
         <div className="flex gap-3 justify-center items-center px-6 py-4 border-t border-simpson-gray/10 dark:border-white/5 shrink-0 bg-gray-50/50 dark:bg-black/10">
           {shouldShowButton && (
