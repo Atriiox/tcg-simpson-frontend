@@ -14,6 +14,7 @@ interface CardDetailModalProps {
   card: CardData | null;
   quantity: number;
   collectionCards?: CardData[];
+  allCards?: CardData[]; // Pour les vues Famille et Affinité globales
   onClose: () => void;
   onSell?: (cardId: string, count: number) => void;
 }
@@ -26,20 +27,23 @@ export default function CardDetailModal({
   quantity,
   onClose,
   collectionCards = [],
+  allCards = [],
   onSell,
 }: CardDetailModalProps) {
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<View>("card");
   
-  // ON FIXE LA QUANTITÉ DANS UN ÉTAT LOCAL POUR ÉVITER LES SUTAUTS AU REFETCH
+  // État local pour garder la quantité stable pendant le refetch silencieux du panel
   const [localQuantity, setLocalQuantity] = useState(quantity);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { 
+    setMounted(true); 
+  }, []);
   
   useEffect(() => { 
     if (isOpen) {
       setView("card");
-      setLocalQuantity(quantity); // Reset à l'ouverture
+      setLocalQuantity(quantity); // Reset à la quantité actuelle lors de l'ouverture
     } 
   }, [isOpen, quantity]);
 
@@ -48,9 +52,8 @@ export default function CardDetailModal({
 
   const isOwned = localQuantity > 0;
   
-  // CALCUL DES EXEMPLAIRES EN DOUBLE BASÉ SUR L'ÉTAT LOCAL STABLE
+  // Calcul des doublons basé sur l'état local stable
   const duplicatesCount = localQuantity - 1;
-
   const rarityCount = parseInt(card.rarity || "1") || 1;
 
   const rarityConfig: Record<string, { text: string; style: string }> = {
@@ -62,17 +65,20 @@ export default function CardDetailModal({
   const currentRarity = rarityConfig[card.rarity || "1"] || rarityConfig["1"];
   const isBonusType = card.type === "Objet" || card.type === "Terrain";
 
+  // Filtre de la collection possédée pour l'affinité courante
   const affinityCards = collectionCards.filter(
-    (c) => c.affinity.id === card.affinity.id && c.id !== card.id
+    (c) => c.affinity?.id === card.affinity?.id
   );
 
+  // Filtre de la collection possédée pour la famille courante
   const familyCards = collectionCards.filter(
-    (c) => c.family.id === card.family.id && c.id !== card.id
+    (c) => c.family?.id === card.family?.id
   );
 
   const handleSellAction = (count: number) => {
     if (onSell) {
       onSell(card.id, count);
+      // Décrémentation visuelle immédiate au sein de la modal
       setLocalQuantity((prev) => Math.max(0, prev - count));
     }
   };
@@ -82,9 +88,9 @@ export default function CardDetailModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
       onClick={onClose}
     >
-      {/* 🌟 MODIFICATION ICI : md:h-[580px] fixe la hauteur pour bloquer le resize de la modal */}
+      {/* md:h-[580px] fixe la hauteur globale pour bloquer le resize de la modal à la disparition du bouton */}
       <div
-        className="bg-white dark:bg-simpson-darklight border border-white/20 dark:border-simpson-dark w-full max-w-3xl rounded-3xl p-8 shadow-2xl relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 md:h-[580px] max-h-[90vh] overflow-y-auto text-black dark:text-white"
+        className="bg-white dark:bg-simpson-darklight border border-white/20 dark:border-simpson-dark w-full max-w-3xl rounded-3xl p-8 shadow-2xl relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 h-[90vh] overflow-y-auto text-black dark:text-white"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -152,15 +158,15 @@ export default function CardDetailModal({
 
         {/* VUE CARTE */}
         {view === "card" && (
-          // 🌟 MODIFICATION ICI : h-full et overflow-hidden pour caler proprement le layout interne
           <div className="flex flex-col md:flex-row items-center md:items-stretch gap-12 mt-2 flex-1 overflow-hidden">
             <div className="shrink-0 flex items-center">
-              <div className={!isOwned ? "opacity-40 grayscale-[30%]" : ""}>
+              {/* 🌟 Plus aucun filtre grisé ou baisse d'opacité ici, la carte reste éclatante ! */}
+              <div>
                 <Card card={card} size={200} />
               </div>
             </div>
 
-            {/* 🌟 MODIFICATION ICI : h-full et justify-between forcent les éléments haut/bas à s'écarter au max */}
+            {/* Layout flex-col + justify-between pour maintenir le numéro de série tout en bas sans bouger */}
             <div className="flex-1 flex flex-col justify-between h-full py-1 overflow-y-auto pr-1">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between flex-wrap gap-2 border-b border-simpson-light dark:border-simpson-dark pb-3">
@@ -260,7 +266,6 @@ export default function CardDetailModal({
                 })()}
               </div>
 
-              {/* Le numéro de série reste calé tout en bas quoi qu'il arrive */}
               <div className="mt-4 flex items-center justify-end gap-4 shrink-0">
                 <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
                   {card.serie?.id_serie?.name || "Série 1"} <br /> N°{card.serie?.position || 0}/50
@@ -273,14 +278,24 @@ export default function CardDetailModal({
         {/* VUE AFFINITÉ */}
         {view === "affinity" && (
           <div className="flex-1 overflow-hidden">
-            <CardAffinityView card={card} affinityCards={affinityCards} onBack={() => setView("card")} />
+            <CardAffinityView 
+              card={card} 
+              affinityCards={affinityCards} 
+              allCards={allCards} 
+              onBack={() => setView("card")} 
+            />
           </div>
         )}
 
         {/* VUE FAMILLE */}
         {view === "family" && (
           <div className="flex-1 overflow-hidden">
-            <CardFamilyView card={card} familyCards={familyCards} onBack={() => setView("card")} />
+            <CardFamilyView 
+              card={card} 
+              familyCards={familyCards} 
+              allCards={allCards} 
+              onBack={() => setView("card")} 
+            />
           </div>
         )}
       </div>

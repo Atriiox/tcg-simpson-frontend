@@ -84,7 +84,8 @@ export default function CollectionPanel({
     });
   }, [filters, search, showAllCards]);
 
-  if (isLoading && !isModalOpen) { // 👈 On évite le flash blanc si la modal est ouverte pendant le refetch
+  if (isLoading && !isModalOpen) {
+    // 👈 On évite le flash blanc si la modal est ouverte pendant le refetch
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
         <div className="text-center space-y-2 animate-pulse">
@@ -193,7 +194,6 @@ export default function CollectionPanel({
 
       // On rafraîchit la grille en arrière-plan sans bloquer l'interface
       refetchCollection();
-
     } catch (err) {
       console.error("Échec de la vente :", err);
       alert(
@@ -299,6 +299,7 @@ export default function CollectionPanel({
         card={selectedCard}
         quantity={selectedCardQuantity}
         collectionCards={collection as unknown as CardData[]}
+        allCards={cards as unknown as CardData[]} // 🌟 ICI : On transmet toutes les cartes existantes
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);
