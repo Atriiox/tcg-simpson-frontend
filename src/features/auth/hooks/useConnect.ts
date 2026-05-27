@@ -21,11 +21,12 @@ export function useConnect() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    const { token, pseudo, email, money, theme } = data;
+    const { token, pseudo, email, money, theme, avatar } = data;
     dispatch(
       setAuth({
         token,
         pseudo,
+        avatar,
         email: email || null,
         money,
         theme: typeof theme === "boolean" ? theme : false,

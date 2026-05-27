@@ -27,7 +27,7 @@ export function useRegister() {
       setAuth({
         token,
         pseudo,
-        avatar: avatar || null,
+        avatar,
         email: email || null,
         money,
         theme: typeof theme === "boolean" ? theme : false,
