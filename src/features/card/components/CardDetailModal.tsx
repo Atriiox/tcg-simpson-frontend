@@ -8,13 +8,14 @@ import type { CardData } from "@/features/card/interfaces/card.interface";
 import Card from "./Card";
 import CardAffinityView from "./CardAffinityView";
 import CardFamilyView from "./CardFamilyView";
+import { useReward } from "@/components/RewardContext"; // Import du contexte
 
 interface CardDetailModalProps {
   isOpen: boolean;
   card: CardData | null;
   quantity: number;
   collectionCards?: CardData[];
-  allCards?: CardData[]; // Pour les vues Famille et Affinité globales
+  allCards?: CardData[];
   onClose: () => void;
   onSell?: (cardId: string, count: number) => void;
 }
@@ -32,8 +33,8 @@ export default function CardDetailModal({
 }: CardDetailModalProps) {
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<View>("card");
+  const { triggerReward } = useReward(); // Utilisation du hook
   
-  // État local pour garder la quantité stable pendant le refetch silencieux du panel
   const [localQuantity, setLocalQuantity] = useState(quantity);
 
   useEffect(() => { 
@@ -43,7 +44,7 @@ export default function CardDetailModal({
   useEffect(() => { 
     if (isOpen) {
       setView("card");
-      setLocalQuantity(quantity); // Reset à la quantité actuelle lors de l'ouverture
+      setLocalQuantity(quantity);
     } 
   }, [isOpen, quantity]);
 
@@ -51,8 +52,6 @@ export default function CardDetailModal({
   if (!isOpen || !card) return null;
 
   const isOwned = localQuantity > 0;
-  
-  // Calcul des doublons basé sur l'état local stable
   const duplicatesCount = localQuantity - 1;
   const rarityCount = parseInt(card.rarity || "1") || 1;
 
@@ -65,20 +64,23 @@ export default function CardDetailModal({
   const currentRarity = rarityConfig[card.rarity || "1"] || rarityConfig["1"];
   const isBonusType = card.type === "Objet" || card.type === "Terrain";
 
-  // Filtre de la collection possédée pour l'affinité courante
-  const affinityCards = collectionCards.filter(
-    (c) => c.affinity?.id === card.affinity?.id
-  );
-
-  // Filtre de la collection possédée pour la famille courante
-  const familyCards = collectionCards.filter(
-    (c) => c.family?.id === card.family?.id
-  );
+  const affinityCards = collectionCards.filter((c) => c.affinity?.id === card.affinity?.id);
+  const familyCards = collectionCards.filter((c) => c.family?.id === card.family?.id);
 
   const handleSellAction = (count: number) => {
     if (onSell) {
+      // Calcul du gain
+      const rates: Record<string, number> = { "1": 5, "2": 25, "3": 50 };
+      const pricePerCard = rates[card.rarity || "1"] || 5;
+      const totalGain = pricePerCard * count;
+
+      // Déclenchement de l'animation
+      triggerReward(totalGain);
+
+      // Action de vente
       onSell(card.id, count);
-      // Décrémentation visuelle immédiate au sein de la modal
+      
+      // Décrémentation visuelle immédiate
       setLocalQuantity((prev) => Math.max(0, prev - count));
     }
   };
@@ -88,7 +90,6 @@ export default function CardDetailModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4"
       onClick={onClose}
     >
-      {/* md:h-[580px] fixe la hauteur globale pour bloquer le resize de la modal à la disparition du bouton */}
       <div
         className="bg-white dark:bg-simpson-darklight border border-white/20 dark:border-simpson-dark w-full max-w-3xl rounded-3xl p-8 shadow-2xl relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 h-[90vh] overflow-y-auto text-black dark:text-white"
         onClick={(e) => e.stopPropagation()}
@@ -160,13 +161,11 @@ export default function CardDetailModal({
         {view === "card" && (
           <div className="flex flex-col md:flex-row items-center md:items-stretch gap-12 mt-2 flex-1 overflow-hidden">
             <div className="shrink-0 flex items-center">
-              {/* 🌟 Plus aucun filtre grisé ou baisse d'opacité ici, la carte reste éclatante ! */}
               <div>
                 <Card card={card} size={200} />
               </div>
             </div>
 
-            {/* Layout flex-col + justify-between pour maintenir le numéro de série tout en bas sans bouger */}
             <div className="flex-1 flex flex-col justify-between h-full py-1 overflow-y-auto pr-1">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between flex-wrap gap-2 border-b border-simpson-light dark:border-simpson-dark pb-3">
@@ -221,11 +220,9 @@ export default function CardDetailModal({
                   </p>
                 </div>
 
-                {/* BLOC DE REVENTE DES DOUBLES */}
                 {duplicatesCount > 0 && (() => {
                   const rates: Record<string, number> = { "1": 5, "2": 25, "3": 50 };
                   const pricePerCard = rates[card.rarity || "1"] || 5;
-                  
                   const singleSellGain = pricePerCard;
                   const totalSellGain = pricePerCard * duplicatesCount;
 
@@ -275,7 +272,6 @@ export default function CardDetailModal({
           </div>
         )}
 
-        {/* VUE AFFINITÉ */}
         {view === "affinity" && (
           <div className="flex-1 overflow-hidden">
             <CardAffinityView 
@@ -287,7 +283,6 @@ export default function CardDetailModal({
           </div>
         )}
 
-        {/* VUE FAMILLE */}
         {view === "family" && (
           <div className="flex-1 overflow-hidden">
             <CardFamilyView 

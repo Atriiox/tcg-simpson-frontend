@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useMoney } from "../hooks/useMoney";
 import { LuInfo } from "react-icons/lu";
-import { FaPlusCircle, FaCheckCircle, FaPercentage } from "react-icons/fa";
+import { FaPlusCircle, FaPercentage } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -52,8 +52,7 @@ export default function Shop() {
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
   const [detailBooster, setDetailBooster] = useState<ShopBooster | null>(null);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
-  const [purchaseStatus, setPurchaseStatus] = useState<"idle" | "loading" | "success">("idle");
-  const [addedDonutsAmount, setAddedDonutsAmount] = useState<number>(0);
+  const [isPurchasing, setIsPurchasing] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -78,29 +77,22 @@ export default function Shop() {
   };
 
   const handlePurchaseDonuts = async (amount: number) => {
-    if (purchaseStatus !== "idle") return;
-
-    setAddedDonutsAmount(amount);
-    setPurchaseStatus("loading");
-    const newBalance = userDonuts + amount;
+    if (isPurchasing) return;
+    setIsPurchasing(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const result = await updateMoney(newBalance);
+      // Simulation du traitement serveur
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await updateMoney(userDonuts + amount);
 
       if (result.ok) {
         triggerReward(amount);
-        setPurchaseStatus("success");
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      } else {
-        setPurchaseStatus("idle");
+        setIsDonutModalOpen(false); // Fermeture immédiate
       }
     } catch (error) {
       console.error("Erreur d'achat :", error);
-      setPurchaseStatus("idle");
     } finally {
-      setPurchaseStatus("idle");
-      setIsDonutModalOpen(false);
+      setIsPurchasing(false);
     }
   };
 
@@ -281,24 +273,12 @@ export default function Shop() {
       </Modal>
 
       {/* MODAL DONUTS */}
-      <Modal isOpen={isDonutModalOpen} onClose={() => purchaseStatus === "idle" && setIsDonutModalOpen(false)}>
+      <Modal isOpen={isDonutModalOpen} onClose={() => !isPurchasing && setIsDonutModalOpen(false)}>
         <div className="flex flex-col gap-6 p-5 pt-8 font-main rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg">
-          {purchaseStatus === "loading" && (
-            <div className="absolute inset-0 bg-white/90 dark:bg-simpson-darklight/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 animate-fade-in">
+          {isPurchasing && (
+            <div className="absolute inset-0 bg-white/90 dark:bg-simpson-darklight/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 animate-fade-in rounded-2xl">
               <div className="w-10 h-10 border-4 border-simpson-blue border-t-transparent rounded-full animate-spin" />
               <p className="text-sm font-bold text-simpson-dark dark:text-simpson-white tracking-wide">Achat en cours...</p>
-            </div>
-          )}
-
-          {purchaseStatus === "success" && (
-            <div className="absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center gap-3 text-white animate-fade-in rounded-2xl">
-              <FaCheckCircle className="text-white scale-110 drop-shadow-md animate-bounce" size={48} />
-              <div className="text-center space-y-1">
-                <h3 className="text-xl font-black tracking-wide">Achat réussi !</h3>
-                <p className="text-base font-bold bg-white/20 px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-xs">
-                  +{addedDonutsAmount} Donuts
-                </p>
-              </div>
             </div>
           )}
 
@@ -342,11 +322,6 @@ export default function Shop() {
                 </Button>
               </div>
             ))}
-
-            <div className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-simpson-gray/20 text-center gap-1 min-h-35">
-              <p className="text-[11px] font-bold text-simpson-gray">Besoin de plus ?</p>
-              <p className="text-xs font-medium text-simpson-dark dark:text-simpson-white">Mairie de Springfield</p>
-            </div>
           </div>
 
           <p className="text-[11px] text-center text-simpson-gray/70 leading-relaxed px-2">
