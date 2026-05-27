@@ -19,13 +19,15 @@ export function useRegister() {
     }
 
     const data = await res.json();
+    console.log("data from register:", data);
     if (!res.ok) throw new Error(data.error);
 
-    const { token, pseudo, email, money, countdownEnds, theme } = data;
+    const { token, pseudo, email, money, countdownEnds, theme, avatar } = data;
     dispatch(
       setAuth({
         token,
         pseudo,
+        avatar,
         email: email || null,
         money,
         countdownEnds,

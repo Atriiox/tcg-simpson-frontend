@@ -4,6 +4,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface UserState {
   token: string | null;
   pseudo: string | null;
+  avatar: string | null;
   email: string | null;
   money: number | null;
   countdownEnds: Date | null;
@@ -13,6 +14,7 @@ interface UserState {
 const initialState: UserState = {
   token: null,
   pseudo: null,
+  avatar: null,
   email: null,
   money: null,
   countdownEnds: null,
@@ -28,6 +30,7 @@ export const userSlice = createSlice({
       action: PayloadAction<{
         token: string | null;
         pseudo: string | null;
+        avatar: string | null;
         email: string | null;
         money: number | null;
         countdownEnds: Date | null;
@@ -36,6 +39,7 @@ export const userSlice = createSlice({
     ) => {
       state.token = action.payload.token;
       state.pseudo = action.payload.pseudo;
+      state.avatar = action.payload.avatar;
       state.email = action.payload.email;
       state.money = action.payload.money;
       state.countdownEnds = action.payload.countdownEnds;
@@ -65,6 +69,7 @@ export const userSlice = createSlice({
     clearAuth: (state) => {
       state.token = null;
       state.pseudo = null;
+      state.avatar = null;
       state.email = null;
       state.countdownEnds = null;
     },
