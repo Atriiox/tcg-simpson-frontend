@@ -59,7 +59,7 @@ export interface UseBoosterCardsResult {
   isLoading: boolean;
   error: string | null;
   hasMoreBoosters: boolean;
-  boosterDetails: { name: string; slug: string } | null; // 🌟 NOUVEAU : Détails récupérés
+  boosterDetails: { name: string; slug: string } | null;
   openBooster: (specificBoosterId?: string) => Promise<Card[] | null>;
   reset: () => void;
 }
@@ -69,8 +69,6 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
-
-  // 🌟 NOUVEAU : État interne pour centraliser les métadonnées manquantes
   const [boosterDetails, setBoosterDetails] = useState<{
     name: string;
     slug: string;
@@ -79,7 +77,6 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   const isFetchingRef = useRef(false);
   const { token } = useSelector((state: RootState) => state.user);
 
-  // 🌟 NOUVEAU : Le fetch des détails du booster est désormais encapsulé ici
   useEffect(() => {
     async function getBoosterDetails() {
       if (!boosterId || !token) return;
@@ -124,7 +121,8 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           ? userBoosters.find((b) => b.booster.id === specificBoosterId)
           : userBoosters[0];
 
-        if (!targetBooster) {
+        if (!targetBooster || targetBooster.number <= 0) {
+          setHasMoreBoosters(false);
           throw new Error("Le booster sélectionné n'est plus disponible");
         }
 
@@ -133,11 +131,9 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           token,
         );
 
-        const remainingTotal = userBoosters.reduce(
-          (acc, b) => acc + b.number,
-          0,
-        );
-        setHasMoreBoosters(remainingTotal > 1);
+        // 🌟 CORRECTION : Vérification stricte du stock de CE booster précis
+        const currentBoosterRemaining = targetBooster.number - 1;
+        setHasMoreBoosters(currentBoosterRemaining > 0);
 
         setCards(fetchedCards);
         return fetchedCards;

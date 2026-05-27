@@ -17,7 +17,7 @@ export interface BoosterOpenerProps {
   imageUrl?: string;
   onCardClick?: (card: Card) => void;
   onClose?: () => void;
-  onBoosterOpenedSuccess?: () => void; // 🌟 AJOUT : Callback de succès
+  onBoosterOpenedSuccess?: () => void;
 }
 
 export default function BoosterOpener({
@@ -26,7 +26,7 @@ export default function BoosterOpener({
   imageUrl,
   onCardClick,
   onClose,
-  onBoosterOpenedSuccess, // 🌟 Récupération
+  onBoosterOpenedSuccess,
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
 
@@ -40,6 +40,7 @@ export default function BoosterOpener({
     reset,
   } = useBoosterCards(boosterId);
 
+  const [forceHideNext, setForceHideNext] = useState(false);
   const displayBoosterName =
     initialBoosterName || boosterDetails?.name || "Nouveau booster !";
 
@@ -53,11 +54,17 @@ export default function BoosterOpener({
     }
   }, [imageUrl, boosterDetails?.slug]);
 
+  useEffect(() => {
+    setForceHideNext(false);
+  }, [boosterId]);
+
   const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
 
   useEffect(() => {
     function handleResize() {
-      window.innerWidth >= 640 ? setDynamicCardSize(130) : setDynamicCardSize(95);
+      window.innerWidth >= 640
+        ? setDynamicCardSize(130)
+        : setDynamicCardSize(95);
     }
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -69,12 +76,17 @@ export default function BoosterOpener({
     if (!fetchedCards) {
       boosterRef.current?.reset();
     } else {
-      // 🌟 SUCCÈS : On notifie immédiatement le parent pour mettre à jour les comptes
       if (onBoosterOpenedSuccess) {
         onBoosterOpenedSuccess();
       }
+
+      // 🌟 SÉCURITÉ INFRAILLIBLE : Si le hook détecte la fin du stock pendant l'ouverture, 
+      // on force le masquage immédiat pour éviter le moindre glitch d'affichage
+      if (hasMoreBoosters === false) {
+        setForceHideNext(true);
+      }
     }
-  }, [openBooster, boosterId, onBoosterOpenedSuccess]);
+  }, [openBooster, boosterId, onBoosterOpenedSuccess, hasMoreBoosters]);
 
   const handleReset = useCallback((): void => {
     reset();
@@ -83,15 +95,20 @@ export default function BoosterOpener({
 
   const hasCards = cards.length > 0;
 
+  // 🌟 CONDITION NETTE : Masquage total si le stock de ce booster est à 0
+  const shouldShowButton = hasMoreBoosters && !forceHideNext;
+
   return (
     <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-fit sm:min-w-[80vw] h-[85vh] sm:h-fit sm:min-h-[81vh] flex flex-col font-main overflow-hidden">
-      {/* UI Restante inchangée... */}
       <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
         <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
           Ouverture du {displayBoosterName}
         </h2>
         {onClose && (
-          <button onClick={onClose} className="text-simpson-gray hover:text-simpson-orange transition cursor-pointer shrink-0">
+          <button
+            onClick={onClose}
+            className="text-simpson-gray hover:text-simpson-orange transition cursor-pointer shrink-0"
+          >
             <FaTimes size={18} />
           </button>
         )}
@@ -101,25 +118,60 @@ export default function BoosterOpener({
         {!hasCards && (
           <div className="w-full flex flex-col items-center justify-center my-auto">
             <div className="w-full max-w-70 sm:max-w-85 aspect-3/4 flex justify-center items-center relative">
-              <BoosterPack3D ref={boosterRef} imageUrl={currentImageUrl} containerWidth="100%" containerHeight="100%" onOpen={handleBoosterOpen} />
+              <BoosterPack3D
+                ref={boosterRef}
+                imageUrl={currentImageUrl}
+                containerWidth="100%"
+                containerHeight="100%"
+                onOpen={handleBoosterOpen}
+              />
             </div>
-            {isLoading && <p className="text-body text-simpson-orange font-semibold animate-pulse mt-4">Récupération des cartes...</p>}
-            {error && <div role="alert" className="text-body text-simpson-orange bg-simpson-orange/10 px-4 py-2 rounded-lg text-center mt-4 text-xs">{error}</div>}
+            {isLoading && (
+              <p className="text-body text-simpson-orange font-semibold animate-pulse mt-4">
+                Récupération des cartes...
+              </p>
+            )}
+            {error && (
+              <div
+                role="alert"
+                className="text-body text-simpson-orange bg-simpson-orange/10 px-4 py-2 rounded-lg text-center mt-4 text-xs"
+              >
+                {error}
+              </div>
+            )}
           </div>
         )}
 
         {hasCards && (
           <div className="w-full flex flex-col items-center gap-4 my-auto">
-            <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">{cards.length} nouvelles cartes !</p>
-            <CardGrid cards={cards} cardSize={dynamicCardSize} onCardClick={onCardClick} />
+            <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">
+              {cards.length} nouvelles cartes !
+            </p>
+            <CardGrid
+              cards={cards}
+              cardSize={dynamicCardSize}
+              onCardClick={onCardClick}
+            />
           </div>
         )}
       </div>
 
       {hasCards && (
         <div className="flex gap-3 justify-center items-center px-6 py-4 border-t border-simpson-gray/10 dark:border-white/5 shrink-0 bg-gray-50/50 dark:bg-black/10">
-          {hasMoreBoosters && <Button className="text-xs py-2 px-4" onClick={handleReset}>Ouvrir un autre</Button>}
-          {onClose && <Button className="bg-simpson-gray! text-xs py-2 px-4" onClick={onClose}>Fermer</Button>}
+          {shouldShowButton && (
+            <Button className="text-xs py-2 px-4" onClick={handleReset}>
+              Ouvrir un autre
+            </Button>
+          )}
+
+          {onClose && (
+            <Button
+              className="bg-simpson-gray! text-xs py-2 px-4"
+              onClick={onClose}
+            >
+              Fermer
+            </Button>
+          )}
         </div>
       )}
     </div>
