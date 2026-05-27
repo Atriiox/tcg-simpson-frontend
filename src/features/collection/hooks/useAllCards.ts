@@ -1,9 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Filters } from "@/features/collection/hooks/useFilter";
 
-// 🎯 Déclaration du type dédié pour ce hook (indépendant de useCollection)
 export type SystemCard = {
   id: string;
   name: string;
@@ -14,32 +15,35 @@ export type SystemCard = {
   rarity: string;
   type: string;
   serie: {
-    id_serie: { id: string; name: string; };
+    id_serie: { id: string; name: string };
     position: number;
   };
   family: {
     id: string;
     name: string;
     description: string;
-    bonus: { ATK: number; PV: number; };
+    bonus: { ATK: number; PV: number };
   };
   affinity: {
     id: string;
     name: string;
     description: string;
-    bonus: { ATK: number; PV: number; };
+    bonus: { ATK: number; PV: number };
   };
 };
 
 type UseAllCardsReturn = {
-  cards: SystemCard[]; // 👈 Utilisation du type local
+  cards: SystemCard[];
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
 };
 
-export function useAllCards(filters: Filters = { rarity: [], type: [], serie: [] }, search: string = ""): UseAllCardsReturn {
-  const [cards, setCards] = useState<SystemCard[]>([]); // 👈 Utilisation du type local
+export function useAllCards(
+  filters: Filters = { rarity: [], type: [], serie: [] },
+  search: string = "",
+): UseAllCardsReturn {
+  const [cards, setCards] = useState<SystemCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState<string>(search);
@@ -63,8 +67,7 @@ export function useAllCards(filters: Filters = { rarity: [], type: [], serie: []
     setError(null);
 
     try {
-      // 🎯 MODIFICATION DE L'URL POUR CIBLER TOUTES LES CARTES
-      let url = `${process.env.NEXT_PUBLIC_API_URL}/cards`; 
+      let url = `${process.env.NEXT_PUBLIC_API_URL}/cards`;
       const params = new URLSearchParams();
 
       if (debouncedSearch.trim().length > 0) {
@@ -76,9 +79,15 @@ export function useAllCards(filters: Filters = { rarity: [], type: [], serie: []
           filters.rarity.forEach((rarityText) => {
             let rarityId = "1";
             switch (rarityText) {
-              case "Normal": rarityId = "1"; break;
-              case "Rare": rarityId = "2"; break;
-              case "Légendaire": rarityId = "3"; break;
+              case "Normal":
+                rarityId = "1";
+                break;
+              case "Rare":
+                rarityId = "2";
+                break;
+              case "Légendaire":
+                rarityId = "3";
+                break;
             }
             params.append("rarity", rarityId);
           });
@@ -113,9 +122,18 @@ export function useAllCards(filters: Filters = { rarity: [], type: [], serie: []
     }
   };
 
+  // 🌟 FIX LA BOUCLE INFINIE ICI
+  // En utilisant .join(","), on compare des chaînes de caractères ("Normal,Rare" === "Normal,Rare")
+  // au lieu de comparer des références de tableaux, ce qui stoppe net le spam d'API !
   useEffect(() => {
     fetchAllCards();
-  }, [token, filters?.rarity, filters?.type, filters?.serie, debouncedSearch]);
+  }, [
+    token,
+    filters?.rarity?.join(","),
+    filters?.type?.join(","),
+    filters?.serie?.join(","),
+    debouncedSearch,
+  ]);
 
   return { cards, isLoading, error, refetch: fetchAllCards };
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -46,8 +48,11 @@ type UseCollectionReturn = {
   refetch: () => void;
 };
 
+// 🌟 FIX : On crée une référence stable à l'extérieur du composant pour les filtres vides
+const DEFAULT_FILTERS: Filters = { rarity: [], type: [], serie: [] };
+
 export function useCollection(
-  filters: Filters = { rarity: [], type: [], serie: [] },
+  filters: Filters = DEFAULT_FILTERS, // 🌟 Utilisation de la référence stable
   search: string = "",
 ): UseCollectionReturn {
   const [collection, setCollection] = useState<CollectionCard[]>([]);
@@ -140,9 +145,15 @@ export function useCollection(
     }
   };
 
+  // 🌟 FIX DEPENDANCES : On transforme les tableaux de filtres en chaînes de caractères (ex: "Normal,Rare")
+  // pour que le useEffect compare des chaînes de texte primitives et non des références de tableaux JS.
+  const rarityDeps = filters?.rarity?.join(",") || "";
+  const typeDeps = filters?.type?.join(",") || "";
+  const serieDeps = filters?.serie?.join(",") || "";
+
   useEffect(() => {
     fetchCollection();
-  }, [token, filters?.rarity, filters?.type, filters?.serie, debouncedSearch]);
+  }, [token, rarityDeps, typeDeps, serieDeps, debouncedSearch]);
 
   return { collection, isLoading, error, refetch: fetchCollection };
 }

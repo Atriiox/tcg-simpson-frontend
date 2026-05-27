@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react"; // 🌟 Ajout de useMemo
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
@@ -15,53 +15,50 @@ export const useProfile = () => {
 
   const userState = useSelector((state: RootState) => state.user);
 
-  // 🌟 Récupération brute des données (sans aucun filtre appliqué)
   const { collection, isLoading: loadingColl } = useCollection();
   const { cards: allSystemCards, isLoading: loadingCards } = useAllCards();
 
-  // 🎯 CALCUL DYNAMIQUE DES STATS TCG
-  const totalCards = collection.length; // Nombre total de cartes (avec doublons)
+  // 🎯 CALCUL DES STATS ET DU PROFIL CACHÉ (MEMOIZÉ)
+  // L'objet ne sera recréé QUE si l'une de ces dépendances change réellement.
+  const profile = useMemo(() => {
+    const totalCards = collection.length;
+    const uniqueCardIds = Array.from(new Set(collection.map((c) => c.id)));
+    const uniqueCardsCount = uniqueCardIds.length;
 
-  // Tableau des IDs uniques possédés
-  const uniqueCardIds = Array.from(new Set(collection.map((c) => c.id)));
-  const uniqueCardsCount = uniqueCardIds.length;
+    const getStatsByRarity = (rarityId: string) => {
+      const totalInSystem = allSystemCards.filter(
+        (c) => c.rarity === rarityId,
+      ).length;
 
-  // Calcul par rareté
-  // Attention au mapping : ton back-end renvoie des IDs de rareté string ("1", "2", "3")
-  const getStatsByRarity = (rarityId: string) => {
-    const totalInSystem = allSystemCards.filter(
-      (c) => c.rarity === rarityId,
-    ).length;
+      const ownedUnique = allSystemCards.filter(
+        (c) => c.rarity === rarityId && uniqueCardIds.includes(c.id),
+      ).length;
 
-    // Nombre de cartes uniques de cette rareté possédées par le joueur
-    const ownedUnique = allSystemCards.filter(
-      (c) => c.rarity === rarityId && uniqueCardIds.includes(c.id),
-    ).length;
+      return { owned: ownedUnique, total: totalInSystem };
+    };
 
-    return { owned: ownedUnique, total: totalInSystem };
-  };
+    const legendaryStats = getStatsByRarity("3");
+    const rareStats = getStatsByRarity("2");
+    const commonStats = getStatsByRarity("1");
 
-  const legendaryStats = getStatsByRarity("3"); // Légendaire = "3"
-  const rareStats = getStatsByRarity("2"); // Rare = "2"
-  const commonStats = getStatsByRarity("1"); // Normal/Commune = "1"
-
-  const profile = {
-    pseudo: userState.pseudo,
-    email: userState.email,
-    money: userState.money,
-    avatar: userState.avatar,
-    isDarkMode: userState.isDarkMode,
-    stats: {
-      legendary: legendaryStats.owned,
-      legendaryTotal: legendaryStats.total || 4, // Fallback si le fetch n'est pas fini
-      rare: rareStats.owned,
-      rareTotal: rareStats.total || 12,
-      common: commonStats.owned,
-      commonTotal: commonStats.total || 24,
-      uniqueCards: uniqueCardsCount,
-      totalCards: totalCards,
-    },
-  };
+    return {
+      pseudo: userState.pseudo,
+      email: userState.email,
+      money: userState.money,
+      avatar: userState.avatar,
+      isDarkMode: userState.isDarkMode,
+      stats: {
+        legendary: legendaryStats.owned,
+        legendaryTotal: legendaryStats.total || 4,
+        rare: rareStats.owned,
+        rareTotal: rareStats.total || 12,
+        common: commonStats.owned,
+        commonTotal: commonStats.total || 24,
+        uniqueCards: uniqueCardsCount,
+        totalCards: totalCards,
+      },
+    };
+  }, [userState, collection, allSystemCards]); // 🌟 Dépendances strictes
 
   const updateProfile = async (updates: {
     pseudo?: string;
@@ -108,6 +105,7 @@ export const useProfile = () => {
           typeof data.darkMode === "boolean"
             ? data.darkMode
             : userState.isDarkMode,
+        countdownEnds: data.countdownEnds ?? userState.countdownEnds,
       }),
     );
 
@@ -117,7 +115,7 @@ export const useProfile = () => {
 
   return {
     profile,
-    isLoading: isLoadingUpdate || loadingColl || loadingCards, // Agrégation des états de chargement
+    isLoading: isLoadingUpdate || loadingColl || loadingCards,
     error,
     updateProfile,
   };
