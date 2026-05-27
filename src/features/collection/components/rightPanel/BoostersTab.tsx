@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -10,14 +10,19 @@ import {
   UserBoosterArraySchema,
   UserBoosters,
 } from "../../../booster/boosterOpener/schema/booster.schema";
-import Button from "@/components/ui/Button"; // 🌟 AJOUT : Ton composant Bouton UI
+import Button from "@/components/ui/Button";
 
 interface BoostersTabProps {
   onOpen: (boosterId: string, name: string, slug: string) => void;
   activeTab: string;
+  onRefreshRef?: React.RefObject<(() => void) | null>; // 🌟 AJOUT : Ref pour exposer le refresh
 }
 
-export default function BoostersTab({ onOpen, activeTab }: BoostersTabProps) {
+export default function BoostersTab({
+  onOpen,
+  activeTab,
+  onRefreshRef,
+}: BoostersTabProps) {
   const [userBoosters, setUserBoosters] = useState<UserBoosters>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { token } = useSelector((state: RootState) => state.user);
@@ -47,6 +52,16 @@ export default function BoostersTab({ onOpen, activeTab }: BoostersTabProps) {
       setIsLoading(false);
     }
   };
+
+  // 🌟 AJOUT : On attache la fonction à la ref partagée
+  useEffect(() => {
+    if (onRefreshRef) {
+      onRefreshRef.current = loadBoosters;
+    }
+    return () => {
+      if (onRefreshRef) onRefreshRef.current = null;
+    };
+  }, [onRefreshRef, token]);
 
   useEffect(() => {
     if (activeTab === "boosters") {
@@ -117,11 +132,7 @@ export default function BoostersTab({ onOpen, activeTab }: BoostersTabProps) {
       <p className="text-xs text-simpson-gray font-medium">
         Aucun booster disponible
       </p>
-      {/* 🌟 INCORPORATION DE TON COMPOSANT BUTTON */}
-      <Button
-        onClick={() => router.push("/boutique")}
-        className="text-xs"
-      >
+      <Button onClick={() => router.push("/boutique")} className="text-xs">
         Acheter des boosters
       </Button>
     </div>

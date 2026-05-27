@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import FilterPanel from "./FilterPanel";
 import RightPanel from "./rightPanel/RightPanel";
@@ -13,7 +13,6 @@ import { useCollection } from "@/features/collection/hooks/useCollection";
 import { useAllCards } from "@/features/collection/hooks/useAllCards";
 import { useReward } from "@/components/RewardContext";
 
-// 🌟 Type pour stocker les infos du booster sélectionné
 interface ActiveBoosterState {
   id: string;
   name: string;
@@ -25,7 +24,6 @@ export default function Main() {
   const [showRight, setShowRight] = useState(true);
   const [collectionKey, setCollectionKey] = useState(0);
 
-  // 🌟 MODIFICATION : L'état contient maintenant l'objet complet du booster
   const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
   const [showAllCards, setShowAllCards] = useState(false);
   const { filters, handleSelect, resetFilters } = useFilter();
@@ -36,6 +34,9 @@ export default function Main() {
   const router = useRouter();
   const isNewUser = searchParams.get("newUser") === "true";
   const [showBoosterModal, setShowBoosterModal] = useState(isNewUser);
+
+  // 🌟 AJOUT : Ref pour intercepter la fonction de rechargement du RightPanel / BoostersTab
+  const boostersRefreshRef = useRef<(() => void) | null>(null);
 
   const { triggerReward } = useReward();
 
@@ -53,6 +54,12 @@ export default function Main() {
     setShowBoosterModal(false);
     setActiveBooster(null);
     router.replace("/collection");
+    
+    // 🌟 SÉCURITÉ : On rafraîchit aussi l'inventaire à la fermeture du modal
+    if (boostersRefreshRef.current) {
+      boostersRefreshRef.current();
+    }
+    
     setCollectionKey((prev) => prev + 1); 
   };
 
@@ -92,7 +99,6 @@ export default function Main() {
 
   return (
     <>
-      {/* 🌟 MODAL BOOSTER : On transmet le nom et le slug immédiatement au montage */}
       {showBoosterModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
@@ -104,6 +110,12 @@ export default function Main() {
               boosterName={activeBooster?.name} 
               imageUrl={activeBooster?.slug}    
               onClose={handleCloseBooster} 
+              // 🌟 AJOUT : Exécution du refresh dès que le pack s'ouvre avec succès
+              onBoosterOpenedSuccess={() => {
+                if (boostersRefreshRef.current) {
+                  boostersRefreshRef.current();
+                }
+              }}
             />
           </div>
         </div>
@@ -177,11 +189,12 @@ export default function Main() {
               startEditDeck={startEditDeck}
               handleDeleteDeck={handleDeleteDeck}
               handleSetActiveDeck={handleSetActiveDeck}
-              // 🌟 INTERCEPTION DES 3 INFOS : Données poussées directement au clic
               onTriggerOpenBooster={(boosterId, name, slug) => {
                 setActiveBooster({ id: boosterId, name, slug });
                 setShowBoosterModal(true);
               }}
+              // 🌟 AJOUT : On injecte la ref pour connecter BoostersTab au cycle de vie du modal
+              boostersRefreshRef={boostersRefreshRef}
             />
           </div>
         </div>

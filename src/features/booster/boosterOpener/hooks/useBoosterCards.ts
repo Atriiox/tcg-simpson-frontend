@@ -22,7 +22,7 @@ async function fetchUserBoosters(token: string): Promise<UserBoosters> {
 
   if (!response.ok)
     throw new Error(
-      `Échec de la récupération des boosters (HTTP ${response.status})`
+      `Échec de la récupération des boosters (HTTP ${response.status})`,
     );
 
   const rawData: unknown = await response.json();
@@ -46,7 +46,7 @@ async function fetchOpenBooster(
 
   if (!response.ok)
     throw new Error(
-      `Échec de l'ouverture du booster (HTTP ${response.status})`
+      `Échec de l'ouverture du booster (HTTP ${response.status})`,
     );
 
   const rawData: unknown = await response.json();
@@ -69,10 +69,13 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
-  
+
   // 🌟 NOUVEAU : État interne pour centraliser les métadonnées manquantes
-  const [boosterDetails, setBoosterDetails] = useState<{ name: string; slug: string } | null>(null);
-  
+  const [boosterDetails, setBoosterDetails] = useState<{
+    name: string;
+    slug: string;
+  } | null>(null);
+
   const isFetchingRef = useRef(false);
   const { token } = useSelector((state: RootState) => state.user);
 
@@ -83,7 +86,7 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
       try {
         const userBoosters = await fetchUserBoosters(token);
         const current = userBoosters.find((b) => b.booster.id === boosterId);
-        
+
         if (current && current.booster) {
           setBoosterDetails({
             name: current.booster.name,
@@ -91,7 +94,10 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           });
         }
       } catch (err) {
-        console.error("[useBoosterCards] Impossible de charger les détails du booster:", err);
+        console.error(
+          "[useBoosterCards] Impossible de charger les détails du booster:",
+          err,
+        );
       }
     }
     getBoosterDetails();
@@ -156,7 +162,15 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
     setError(null);
   }, []);
 
-  return { cards, isLoading, error, hasMoreBoosters, boosterDetails, openBooster, reset };
+  return {
+    cards,
+    isLoading,
+    error,
+    hasMoreBoosters,
+    boosterDetails,
+    openBooster,
+    reset,
+  };
 }
 
 export { CardSchema };
