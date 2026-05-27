@@ -85,7 +85,6 @@ export default function CollectionPanel({
   }, [filters, search, showAllCards]);
 
   if (isLoading && !isModalOpen) {
-    // 👈 On évite le flash blanc si la modal est ouverte pendant le refetch
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
         <div className="text-center space-y-2 animate-pulse">
@@ -160,7 +159,6 @@ export default function CollectionPanel({
     setIsModalOpen(true);
   };
 
-  // 🌟 REVENTE TOTALEMENT FLUIDE ET SILENCIEUSE
   const handleSellCard = async (cardId: string, count: number) => {
     if (!selectedCard) return;
 
@@ -185,14 +183,10 @@ export default function CollectionPanel({
         throw new Error("Erreur lors du retrait de la carte côté serveur");
       }
 
-      // Créditer l'argent
       const newMoneyTotal = money + totalGains;
       await updateMoney(newMoneyTotal);
 
-      // On synchronise la quantité locale du Panel également
       setSelectedCardQuantity((prev) => Math.max(0, prev - count));
-
-      // On rafraîchit la grille en arrière-plan sans bloquer l'interface
       refetchCollection();
     } catch (err) {
       console.error("Échec de la vente :", err);
@@ -267,7 +261,8 @@ export default function CollectionPanel({
                   </div>
                 )}
 
-                {!isSelected && quantity > 1 && (
+                {/* 🌟 CHANGEMENT ICI : Affiche le badge dès que quantity >= 1 */}
+                {!isSelected && quantity >= 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
                   </div>
@@ -276,6 +271,7 @@ export default function CollectionPanel({
                 <Card
                   size={cardSize}
                   card={{
+                    id: card.id,
                     name: card.name,
                     slug: card.slug,
                     type: card.type as "Personnage" | "Terrain" | "Objet",
@@ -299,7 +295,7 @@ export default function CollectionPanel({
         card={selectedCard}
         quantity={selectedCardQuantity}
         collectionCards={collection as unknown as CardData[]}
-        allCards={cards as unknown as CardData[]} // 🌟 ICI : On transmet toutes les cartes existantes
+        allCards={cards as unknown as CardData[]}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);
