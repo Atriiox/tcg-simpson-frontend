@@ -12,6 +12,10 @@ export interface ShopBooster {
   slug: string;
   price: number;
   quantity: number;
+  probabilities: {
+    rarity: "Common" | "Rare" | "Legendary";
+    value: number;
+  }[];
 }
 
 export interface UseShopBoosterResult {

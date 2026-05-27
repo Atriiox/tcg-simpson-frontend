@@ -22,7 +22,7 @@ async function fetchUserBoosters(token: string): Promise<UserBoosters> {
 
   if (!response.ok)
     throw new Error(
-      `Échec de la récupération des boosters (HTTP ${response.status})`
+      `Échec de la récupération des boosters (HTTP ${response.status})`,
     );
 
   const rawData: unknown = await response.json();
@@ -46,7 +46,7 @@ async function fetchOpenBooster(
 
   if (!response.ok)
     throw new Error(
-      `Échec de l'ouverture du booster (HTTP ${response.status})`
+      `Échec de l'ouverture du booster (HTTP ${response.status})`,
     );
 
   const rawData: unknown = await response.json();
@@ -59,7 +59,7 @@ export interface UseBoosterCardsResult {
   isLoading: boolean;
   error: string | null;
   hasMoreBoosters: boolean;
-  boosterDetails: { name: string; slug: string } | null; // 🌟 NOUVEAU : Détails récupérés
+  boosterDetails: { name: string; slug: string } | null;
   openBooster: (specificBoosterId?: string) => Promise<Card[] | null>;
   reset: () => void;
 }
@@ -69,21 +69,21 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMoreBoosters, setHasMoreBoosters] = useState(true);
-  
-  // 🌟 NOUVEAU : État interne pour centraliser les métadonnées manquantes
-  const [boosterDetails, setBoosterDetails] = useState<{ name: string; slug: string } | null>(null);
-  
+  const [boosterDetails, setBoosterDetails] = useState<{
+    name: string;
+    slug: string;
+  } | null>(null);
+
   const isFetchingRef = useRef(false);
   const { token } = useSelector((state: RootState) => state.user);
 
-  // 🌟 NOUVEAU : Le fetch des détails du booster est désormais encapsulé ici
   useEffect(() => {
     async function getBoosterDetails() {
       if (!boosterId || !token) return;
       try {
         const userBoosters = await fetchUserBoosters(token);
         const current = userBoosters.find((b) => b.booster.id === boosterId);
-        
+
         if (current && current.booster) {
           setBoosterDetails({
             name: current.booster.name,
@@ -91,7 +91,10 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           });
         }
       } catch (err) {
-        console.error("[useBoosterCards] Impossible de charger les détails du booster:", err);
+        console.error(
+          "[useBoosterCards] Impossible de charger les détails du booster:",
+          err,
+        );
       }
     }
     getBoosterDetails();
@@ -118,7 +121,8 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           ? userBoosters.find((b) => b.booster.id === specificBoosterId)
           : userBoosters[0];
 
-        if (!targetBooster) {
+        if (!targetBooster || targetBooster.number <= 0) {
+          setHasMoreBoosters(false);
           throw new Error("Le booster sélectionné n'est plus disponible");
         }
 
@@ -127,11 +131,9 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           token,
         );
 
-        const remainingTotal = userBoosters.reduce(
-          (acc, b) => acc + b.number,
-          0,
-        );
-        setHasMoreBoosters(remainingTotal > 1);
+        // 🌟 CORRECTION : Vérification stricte du stock de CE booster précis
+        const currentBoosterRemaining = targetBooster.number - 1;
+        setHasMoreBoosters(currentBoosterRemaining > 0);
 
         setCards(fetchedCards);
         return fetchedCards;
@@ -156,7 +158,15 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
     setError(null);
   }, []);
 
-  return { cards, isLoading, error, hasMoreBoosters, boosterDetails, openBooster, reset };
+  return {
+    cards,
+    isLoading,
+    error,
+    hasMoreBoosters,
+    boosterDetails,
+    openBooster,
+    reset,
+  };
 }
 
 export { CardSchema };

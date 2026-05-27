@@ -4,10 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { useFriends } from "../hooks/useFriends";
 import { useFormik } from "formik";
 import Image from "next/image";
-import { BiTransfer, BiUserCircle, BiTrash } from "react-icons/bi";
+import { BiTransfer, BiTrash } from "react-icons/bi";
 import { GiSwordsEmblem } from "react-icons/gi";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
+
+// 🌟 CONFIGURATION : Nombre total de cartes du TCG
+const TOTAL_CARDS_SET = 40; 
 
 interface FriendFormValues {
   pseudo: string;
@@ -25,7 +28,7 @@ function ActionButton({
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-center gap-2 py-2 px-2 rounded-xl text-xs font-semibold transition-all duration-200 bg-simpson-gray/5 dark:bg-white/5 hover:bg-simpson-orange/10 dark:hover:bg-simpson-yellow/10 text-simpson-dark dark:text-simpson-white hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer"
+      className="flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-bold transition-all duration-200 bg-simpson-gray/5 dark:bg-white/5 hover:bg-simpson-orange/10 dark:hover:bg-simpson-yellow/10 text-simpson-dark dark:text-simpson-white hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer"
     >
       {icon}
       {label}
@@ -91,9 +94,6 @@ export default function FriendsList() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setSuggestions]);
 
-  // 🌟 GESTIONNAIRE D'ÉTATS D'INTERFACE (IDENTIQUE À TA COLLECTION)
-
-  // 1. Loading d'interface stylisé
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent h-full min-h-[50vh]">
@@ -107,7 +107,6 @@ export default function FriendsList() {
     );
   }
 
-  // 2. Écran d'erreur avec la pastille "Alerte Centrale Nucléaire"
   if (error) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent p-6 h-full min-h-[50vh]">
@@ -129,7 +128,7 @@ export default function FriendsList() {
 
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
-      <div className="max-w-6xl mx-auto space-y-12">
+      <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-simpson-gray/10 dark:border-white/10 pb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">
@@ -156,7 +155,7 @@ export default function FriendsList() {
                   setNewFriendPseudo(e.target.value);
                 }}
                 disabled={formik.isSubmitting}
-                className={`w-full md:w-64 bg-white dark:bg-simpson-darklight border px-4 py-2.5 rounded-xl text-sm transition-colors font-medium placeholder:text-simpson-gray/50 ${
+                className={`w-full md:w-64 bg-white dark:bg-simpson-darklight border px-4 py-2 rounded-xl text-sm transition-colors font-medium placeholder:text-simpson-gray/50 ${
                   formik.errors.pseudo
                     ? "border-red-500"
                     : "border-simpson-gray/20 dark:border-white/5"
@@ -165,7 +164,7 @@ export default function FriendsList() {
               <Button
                 type="submit"
                 disabled={formik.isSubmitting}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold cursor-pointer h-10"
+                className="px-5 py-2 rounded-xl text-sm font-bold cursor-pointer h-10"
               >
                 {formik.isSubmitting ? "..." : "Ajouter"}
               </Button>
@@ -190,57 +189,63 @@ export default function FriendsList() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full pt-2">
           {friends.length > 0 ? (
             friends.map((friend, i) => (
               <div
                 key={i}
-                className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl transition-all duration-300 hover:shadow-2xl group relative"
+                className="flex flex-row items-center gap-4 w-full bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-4 rounded-xl border border-white/40 dark:border-white/10 shadow-md transition-all duration-200 hover:shadow-lg group relative"
               >
                 <button
                   onClick={() => setFriendToRemove(friend.pseudo)}
-                  className="absolute top-4 right-4 text-simpson-gray hover:text-red-500 transition-colors cursor-pointer p-1"
+                  className="absolute top-3 right-3 text-simpson-gray hover:text-red-500 transition-colors cursor-pointer p-1 rounded-lg hover:bg-red-500/5"
                 >
-                  <BiTrash size={18} />
+                  <BiTrash size={16} />
                 </button>
 
-                <div className="flex justify-center shrink-0">
-                  <div className="w-24 h-24 rounded-full relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                <div className="shrink-0">
+                  <div className="w-16 h-16 rounded-full relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                     <Image
                       src={friend.avatar || "/defaultAvatar.webp"}
                       alt={friend.pseudo}
-                      width={70}
-                      height={70}
+                      fill
+                      sizes="64px"
                       className="object-cover"
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between flex-1 w-full min-h-30">
-                  <div className="space-y-1 text-left">
-                    <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
+                <div className="flex flex-col justify-between flex-1 min-w-0 pr-6">
+                  <div className="text-left">
+                    <h3 className="text-base font-bold text-simpson-dark dark:text-simpson-white truncate">
                       {friend.pseudo}
                     </h3>
-                    <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-500">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />{" "}
-                      En ligne
-                    </span>
+
+                    <div className="flex flex-col gap-1.5 mt-1">
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-500">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        En ligne
+                      </span>
+
+                      <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-simpson-gray dark:text-white/70 bg-simpson-gray/5 dark:bg-black/10 px-2 py-0.5 rounded-md w-fit mt-0.5">
+                        <span>Collection :</span>
+                        <strong className="text-simpson-dark dark:text-white font-extrabold text-sm">
+                          {friend.uniqueCardsCount || 0}
+                        </strong>
+                        <span className="text-[10px] opacity-60">/ {TOTAL_CARDS_SET}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-simpson-gray/10 dark:border-white/5">
                     <ActionButton
-                      icon={<GiSwordsEmblem size={15} />}
+                      icon={<GiSwordsEmblem size={14} />}
                       label="Duel"
                       onClick={() => {}}
                     />
                     <ActionButton
-                      icon={<BiTransfer size={15} />}
+                      icon={<BiTransfer size={14} />}
                       label="Échange"
-                      onClick={() => {}}
-                    />
-                    <ActionButton
-                      icon={<BiUserCircle size={15} />}
-                      label="Profil"
                       onClick={() => {}}
                     />
                   </div>
@@ -248,9 +253,8 @@ export default function FriendsList() {
               </div>
             ))
           ) : (
-            // 3. État vide épuré
-            <div className="col-span-1 lg:col-span-2 text-center py-16 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full max-w-5xl">
-              <p className="text-xs sm:text-sm font-medium text-simpson-gray">
+            <div className="col-span-1 md:col-span-3 text-center py-12 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full">
+              <p className="text-sm font-medium text-simpson-gray">
                 Ta liste d'amis est bien vide
               </p>
             </div>
@@ -259,7 +263,7 @@ export default function FriendsList() {
       </div>
 
       <Modal isOpen={!!friendToRemove} onClose={() => setFriendToRemove(null)}>
-        <div className="flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main">
+        <div className="flex flex-col gap-6 p-5 max-w-xl w-full mx-auto font-main">
           <div className="space-y-1">
             <h3 className="text-xl font-bold text-simpson-dark dark:text-simpson-white">
               Supprimer un ami

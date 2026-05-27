@@ -17,6 +17,7 @@ export interface BoosterOpenerProps {
   imageUrl?: string;
   onCardClick?: (card: Card) => void;
   onClose?: () => void;
+  onBoosterOpenedSuccess?: () => void;
 }
 
 export default function BoosterOpener({
@@ -25,10 +26,10 @@ export default function BoosterOpener({
   imageUrl,
   onCardClick,
   onClose,
+  onBoosterOpenedSuccess,
 }: BoosterOpenerProps): React.JSX.Element {
   const boosterRef = useRef<BoosterPack3DHandle>(null);
 
-  // 🌟 Le hook reçoit l'ID et s'occupe de la logique d'inventaire
   const {
     cards,
     isLoading,
@@ -39,11 +40,10 @@ export default function BoosterOpener({
     reset,
   } = useBoosterCards(boosterId);
 
-  // 🌟 Résolution dynamique et synchrone du nom (Prop > Hook > Fallback)
+  const [forceHideNext, setForceHideNext] = useState(false);
   const displayBoosterName =
     initialBoosterName || boosterDetails?.name || "Nouveau booster !";
 
-  // 🌟 Résolution dynamique et synchrone de l'image (Prop > Hook > Fallback)
   const [currentImageUrl, setCurrentImageUrl] =
     useState<string>("/booster1.webp");
 
@@ -54,16 +54,17 @@ export default function BoosterOpener({
     }
   }, [imageUrl, boosterDetails?.slug]);
 
-  // État pour gérer la taille de la carte dynamiquement (Responsive)
+  useEffect(() => {
+    setForceHideNext(false);
+  }, [boosterId]);
+
   const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
 
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth >= 640) {
-        setDynamicCardSize(130);
-      } else {
-        setDynamicCardSize(95);
-      }
+      window.innerWidth >= 640
+        ? setDynamicCardSize(130)
+        : setDynamicCardSize(95);
     }
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -72,8 +73,20 @@ export default function BoosterOpener({
 
   const handleBoosterOpen = useCallback(async (): Promise<void> => {
     const fetchedCards = await openBooster(boosterId);
-    if (!fetchedCards) boosterRef.current?.reset();
-  }, [openBooster, boosterId]);
+    if (!fetchedCards) {
+      boosterRef.current?.reset();
+    } else {
+      if (onBoosterOpenedSuccess) {
+        onBoosterOpenedSuccess();
+      }
+
+      // 🌟 SÉCURITÉ INFRAILLIBLE : Si le hook détecte la fin du stock pendant l'ouverture, 
+      // on force le masquage immédiat pour éviter le moindre glitch d'affichage
+      if (hasMoreBoosters === false) {
+        setForceHideNext(true);
+      }
+    }
+  }, [openBooster, boosterId, onBoosterOpenedSuccess, hasMoreBoosters]);
 
   const handleReset = useCallback((): void => {
     reset();
@@ -82,9 +95,11 @@ export default function BoosterOpener({
 
   const hasCards = cards.length > 0;
 
+  // 🌟 CONDITION NETTE : Masquage total si le stock de ce booster est à 0
+  const shouldShowButton = hasMoreBoosters && !forceHideNext;
+
   return (
     <div className="bg-simpson-white dark:bg-simpson-dark rounded-2xl shadow-2xl w-[95vw] sm:w-fit sm:min-w-[80vw] h-[85vh] sm:h-fit sm:min-h-[81vh] flex flex-col font-main overflow-hidden">
-      {/* Header */}
       <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-simpson-gray/10 shrink-0">
         <h2 className="text-subtitle font-bold text-simpson-dark dark:text-simpson-white flex items-center gap-2 truncate">
           Ouverture du {displayBoosterName}
@@ -99,7 +114,6 @@ export default function BoosterOpener({
         )}
       </div>
 
-      {/* ZONE DE CONTENU DYNAMIQUE */}
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 sm:py-10 gap-4">
         {!hasCards && (
           <div className="w-full flex flex-col items-center justify-center my-auto">
@@ -112,7 +126,6 @@ export default function BoosterOpener({
                 onOpen={handleBoosterOpen}
               />
             </div>
-
             {isLoading && (
               <p className="text-body text-simpson-orange font-semibold animate-pulse mt-4">
                 Récupération des cartes...
@@ -134,7 +147,6 @@ export default function BoosterOpener({
             <p className="text-medium text-simpson-orange font-semibold tracking-widest uppercase text-xs sm:text-sm">
               {cards.length} nouvelles cartes !
             </p>
-
             <CardGrid
               cards={cards}
               cardSize={dynamicCardSize}
@@ -144,14 +156,14 @@ export default function BoosterOpener({
         )}
       </div>
 
-      {/* Footer permanent */}
       {hasCards && (
         <div className="flex gap-3 justify-center items-center px-6 py-4 border-t border-simpson-gray/10 dark:border-white/5 shrink-0 bg-gray-50/50 dark:bg-black/10">
-          {hasMoreBoosters && (
+          {shouldShowButton && (
             <Button className="text-xs py-2 px-4" onClick={handleReset}>
               Ouvrir un autre
             </Button>
           )}
+
           {onClose && (
             <Button
               className="bg-simpson-gray! text-xs py-2 px-4"

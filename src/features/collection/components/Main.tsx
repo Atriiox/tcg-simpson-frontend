@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import FilterPanel from "./FilterPanel";
 import RightPanel from "./rightPanel/RightPanel";
@@ -39,6 +39,8 @@ export default function Main() {
   const isNewUser = searchParams.get("newUser") === "true";
   const [showBoosterModal, setShowBoosterModal] = useState(isNewUser);
 
+  const boostersRefreshRef = useRef<(() => void) | null>(null);
+
   const { triggerReward } = useReward();
 
   useEffect(() => {
@@ -49,6 +51,11 @@ export default function Main() {
     setShowBoosterModal(false);
     setActiveBooster(null);
     router.replace("/collection");
+
+    if (boostersRefreshRef.current) {
+      boostersRefreshRef.current();
+    }
+
     setCollectionKey((prev) => prev + 1);
   };
 
@@ -94,6 +101,11 @@ export default function Main() {
               boosterName={activeBooster?.name}
               imageUrl={activeBooster?.slug}
               onClose={handleCloseBooster}
+              onBoosterOpenedSuccess={() => {
+                if (boostersRefreshRef.current) {
+                  boostersRefreshRef.current();
+                }
+              }}
             />
           </div>
         </div>
@@ -168,6 +180,7 @@ export default function Main() {
                 setActiveBooster({ id: boosterId, name, slug });
                 setShowBoosterModal(true);
               }}
+              boostersRefreshRef={boostersRefreshRef}
             />
           </div>
         </div>

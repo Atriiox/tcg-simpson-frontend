@@ -41,10 +41,10 @@ function generateNormalMap(canvas: HTMLCanvasElement): void {
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       const h =
-        Math.sin(x * 0.025 + y * 0.040) * 0.50 +
-        Math.sin(x * 0.060 - y * 0.020) * 0.30 +
-        Math.sin(x * 0.130 + y * 0.110) * 0.15 +
-        Math.cos(x * 0.018 + y * 0.080) * 0.20;
+        Math.sin(x * 0.025 + y * 0.04) * 0.5 +
+        Math.sin(x * 0.06 - y * 0.02) * 0.3 +
+        Math.sin(x * 0.13 + y * 0.11) * 0.15 +
+        Math.cos(x * 0.018 + y * 0.08) * 0.2;
       heights[y * W + x] = h;
     }
   }
@@ -62,7 +62,7 @@ function generateNormalMap(canvas: HTMLCanvasElement): void {
       const len = Math.sqrt(dx * dx + dy * dy + 1);
       const nx = -dx / len;
       const ny = -dy / len;
-      const nz =   1 / len;
+      const nz = 1 / len;
       const i = idx * 4;
       data[i + 0] = (nx * 0.5 + 0.5) * 255;
       data[i + 1] = (ny * 0.5 + 0.5) * 255;
@@ -83,9 +83,9 @@ function detectBoosterBounds(img: HTMLImageElement): BoosterBounds {
   canvas.width = SAMPLE_W;
   canvas.height = sampleH;
   const ctx = canvas.getContext("2d");
-  
+
   if (!ctx) return { u0: 0, u1: 1, v0: 0, v1: 1, aspect: 1949 / 2600 };
-  
+
   ctx.drawImage(img, 0, 0, SAMPLE_W, sampleH);
   const data = ctx.getImageData(0, 0, SAMPLE_W, sampleH).data;
 
@@ -187,7 +187,11 @@ function useBoosterTextures(imageUrl: string): BoosterTextures | null {
   return data;
 }
 
-function buildUVPlane(width: number, height: number, bounds: BoosterBounds): THREE.PlaneGeometry {
+function buildUVPlane(
+  width: number,
+  height: number,
+  bounds: BoosterBounds,
+): THREE.PlaneGeometry {
   const geo = new THREE.PlaneGeometry(width, height, 1, 1);
   const uvs = geo.attributes.uv.array as Float32Array;
   const { u0, u1, v0, v1 } = bounds;
@@ -213,11 +217,15 @@ function FullBoosterMesh({ textures }: { textures: BoosterTextures }) {
   const aspect = textures.aspect;
   const packH = PACK_W / aspect;
 
-  const geo = useMemo(() => buildUVPlane(PACK_W, packH, bounds), [packH, bounds]);
+  const geo = useMemo(
+    () => buildUVPlane(PACK_W, packH, bounds),
+    [packH, bounds],
+  );
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.2) * 0.03;
+      meshRef.current.position.y =
+        Math.sin(state.clock.elapsedTime * 1.2) * 0.03;
     }
   });
 
@@ -242,14 +250,25 @@ function FullBoosterMesh({ textures }: { textures: BoosterTextures }) {
 // ============================================================
 // Effet Parallaxe
 // ============================================================
-interface TiltState { rx: number; ry: number }
+interface TiltState {
+  rx: number;
+  ry: number;
+}
 
-function ParallaxGroup({ tilt, children }: { tilt: TiltState; children: React.ReactNode }) {
+function ParallaxGroup({
+  tilt,
+  children,
+}: {
+  tilt: TiltState;
+  children: React.ReactNode;
+}) {
   const groupRef = useRef<THREE.Group>(null);
   useFrame(() => {
     if (!groupRef.current) return;
-    groupRef.current.rotation.x += (tilt.rx - groupRef.current.rotation.x) * 0.08;
-    groupRef.current.rotation.y += (tilt.ry - groupRef.current.rotation.y) * 0.08;
+    groupRef.current.rotation.x +=
+      (tilt.rx - groupRef.current.rotation.x) * 0.08;
+    groupRef.current.rotation.y +=
+      (tilt.ry - groupRef.current.rotation.y) * 0.08;
   });
   return <group ref={groupRef}>{children}</group>;
 }
@@ -259,7 +278,7 @@ function ParallaxGroup({ tilt, children }: { tilt: TiltState; children: React.Re
 // ============================================================
 export default function BoosterDisplay({
   imageUrl = "/booster1.webp",
-  className = "w-[240px] h-[340px]",
+  className = "w-60 h-85",
 }: BoosterDisplayProps) {
   const [tilt, setTilt] = useState<TiltState>({ rx: 0, ry: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -272,7 +291,7 @@ export default function BoosterDisplay({
     const cy = rect.top + rect.height / 2;
     const nx = (e.clientX - cx) / (rect.width / 2);
     const ny = (e.clientY - cy) / (rect.height / 2);
-    setTilt({ rx: -ny * 0.25, ry: nx * 0.30 });
+    setTilt({ rx: -ny * 0.25, ry: nx * 0.3 });
   };
 
   const handleHoverLeave = () => {
@@ -291,7 +310,11 @@ export default function BoosterDisplay({
           dpr={[1, 2]}
           camera={{ position: [0, 0, 6.5], fov: 28 }}
           className="w-full h-full"
-          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, alpha: true }}
+          gl={{
+            antialias: true,
+            toneMapping: THREE.ACESFilmicToneMapping,
+            alpha: true,
+          }}
           onCreated={({ gl }) => {
             gl.domElement.style.touchAction = "none";
             gl.setClearColor(0x000000, 0);
