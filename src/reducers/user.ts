@@ -6,6 +6,7 @@ interface UserState {
   pseudo: string | null;
   email: string | null;
   money: number | null;
+  countdownEnds: Date | null;
   isDarkMode: boolean;
 }
 
@@ -14,6 +15,7 @@ const initialState: UserState = {
   pseudo: null,
   email: null,
   money: null,
+  countdownEnds: null,
   isDarkMode: false,
 };
 
@@ -28,6 +30,7 @@ export const userSlice = createSlice({
         pseudo: string | null;
         email: string | null;
         money: number | null;
+        countdownEnds: Date | null;
         theme: boolean;
       }>,
     ) => {
@@ -35,12 +38,19 @@ export const userSlice = createSlice({
       state.pseudo = action.payload.pseudo;
       state.email = action.payload.email;
       state.money = action.payload.money;
+      state.countdownEnds = action.payload.countdownEnds;
       state.isDarkMode = action.payload.theme;
     },
 
     updateMoney: (state, action: PayloadAction<number>) => {
       if (state.money !== null) {
         state.money = action.payload;
+      }
+    },
+
+    updateCountdownEnds: (state, action: PayloadAction<Date>) => {
+      if (state.countdownEnds !== null) {
+        state.countdownEnds = action.payload;
       }
     },
 
@@ -56,7 +66,7 @@ export const userSlice = createSlice({
       state.token = null;
       state.pseudo = null;
       state.email = null;
-      state.money = null;
+      state.countdownEnds = null;
     },
   },
 });
