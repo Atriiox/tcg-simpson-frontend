@@ -42,7 +42,7 @@ export default function HeaderMobileMenu({
             <Link href="/boutique" onClick={onClose} className={getLinkStyles("/boutique").mobileLink}>
               <div className="flex items-center gap-1.5">
                 <span>Boutique</span>
-                
+
                 {/* On n'affiche la pastille que si le bonus est disponible et le composant monté */}
                 {canClaimDaily && isMounted && (
                   <span className="relative flex h-2 w-2">
@@ -50,7 +50,7 @@ export default function HeaderMobileMenu({
                   </span>
                 )}
               </div>
-              
+
               {pathname === "/boutique" && <span className="text-simpson-orange dark:text-simpson-yellow">●</span>}
             </Link>
 

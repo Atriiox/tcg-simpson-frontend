@@ -19,7 +19,6 @@ export const filterSlice = createSlice({
 
     rarity: (state, action: PayloadAction<number>) => {
       state.rarity.push(action.payload);
-      console.log(state)
     },
 
     type: (state, action: PayloadAction<string>) => {
