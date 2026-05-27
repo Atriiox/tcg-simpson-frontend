@@ -22,7 +22,7 @@ export function useRegister() {
     console.log("data from register:", data);
     if (!res.ok) throw new Error(data.error);
 
-    const { token, pseudo, email, money, theme, avatar } = data;
+    const { token, pseudo, email, money, countdownEnds, theme, avatar } = data;
     dispatch(
       setAuth({
         token,
@@ -30,6 +30,7 @@ export function useRegister() {
         avatar,
         email: email || null,
         money,
+        countdownEnds,
         theme: typeof theme === "boolean" ? theme : false,
       }),
     );

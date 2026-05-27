@@ -12,6 +12,7 @@ interface RootState {
     email: string | null;
     avatar: string | null;
     money: number | null;
+    countdownEnds: Date | null;
     isDarkMode: boolean;
   };
 }
@@ -77,6 +78,7 @@ export const useMoney = () => {
           email: user.email,
           avatar: user.avatar,
           money: data.money !== undefined ? data.money : newMoneyAmount, // Fallback si le back ne renvoie pas la valeur mise à jour
+          countdownEnds: user.countdownEnds,
           theme: user.isDarkMode,
         }),
       );
