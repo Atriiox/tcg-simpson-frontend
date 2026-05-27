@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useMoney } from "../hooks/useMoney";
 import { LuInfo } from "react-icons/lu";
-import { FaPlusCircle, FaCheckCircle } from "react-icons/fa";
+import { FaPlusCircle, FaCheckCircle, FaPercentage } from "react-icons/fa";
 import Booster from "../../booster/components/BoosterDisplay";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -15,6 +15,28 @@ interface DonutPack {
   price: string;
   popular: boolean;
 }
+
+// 🌟 DICTIONNAIRE DE TRADUCTION ET STYLES POUR LES RARETÉS
+const rarityStyles: Record<
+  string,
+  { label: string; textClass: string; bgClass: string }
+> = {
+  Common: {
+    label: "Commun",
+    textClass: "text-slate-500 dark:text-slate-400",
+    bgClass: "bg-slate-100 dark:bg-slate-800",
+  },
+  Rare: {
+    label: "Rare",
+    textClass: "text-sky-500 dark:text-sky-400",
+    bgClass: "bg-sky-100 dark:bg-sky-900/40",
+  },
+  Legendary: {
+    label: "Légendaire",
+    textClass: "text-amber-500 dark:text-simpson-yellow",
+    bgClass: "bg-amber-100 dark:bg-amber-900/40",
+  },
+};
 
 const donutPacks: DonutPack[] = [
   { amount: 50, price: "1,99 €", popular: false },
@@ -36,6 +58,7 @@ export default function Shop() {
 
   const [isMounted, setIsMounted] = useState(false);
   const [isDonutModalOpen, setIsDonutModalOpen] = useState(false);
+  const [detailBooster, setDetailBooster] = useState<ShopBooster | null>(null);
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
   const [purchaseStatus, setPurchaseStatus] = useState<
     "idle" | "loading" | "success"
@@ -90,11 +113,10 @@ export default function Shop() {
     }
   };
 
-  const handleOpenDetails = (name: string) => {
-    alert(`Probabilités et détails du : ${name}`);
+  const handleOpenDetails = (booster: ShopBooster) => {
+    setDetailBooster(booster);
   };
 
-  // 🌟 INTERFACE DE CHARGEMENT STYLEE
   if (boostersLoading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent h-full min-h-[50vh]">
@@ -108,7 +130,6 @@ export default function Shop() {
     );
   }
 
-  // 🌟 ÉCRAN D'ERREUR STYLEE (Alerte Centrale de Springfield)
   if (boostersError) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent p-6 h-full min-h-[50vh]">
@@ -136,9 +157,9 @@ export default function Shop() {
             <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">
               Boutique
             </h1>
-            <p className="text-sm font-medium text-simpson-gray mt-1">
+            <h2 className="text-sm font-medium text-simpson-gray mt-1">
               Échange tes donuts contre des boosters !
-            </p>
+            </h2>
           </div>
           <div>
             <button
@@ -179,19 +200,22 @@ export default function Shop() {
                       </div>
 
                       <button
-                        onClick={() => handleOpenDetails(booster.name)}
+                        onClick={() => handleOpenDetails(booster)}
                         className="text-simpson-gray/70 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none p-1.5 hover:bg-simpson-gray/10 dark:hover:bg-white/5 rounded-xl"
                       >
                         <LuInfo size={20} />
                       </button>
                     </div>
 
-                    <div className="space-y-2 text-left flex-1 flex flex-col justify-center">
-                      <div>
-                        <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
-                          {booster.name}
-                        </h3>
-                      </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-simpson-dark dark:text-simpson-white">
+                        {booster.name}
+                      </h3>
+                      {/* 🌟 CORRECTION : Gestion du pluriel de "carte" */}
+                      <p className="text-xs font-medium text-simpson-gray mt-0.5">
+                        Contient {booster.quantity || 5} carte
+                        {(booster.quantity || 5) > 1 ? "s" : ""}
+                      </p>
                     </div>
 
                     <div className="flex items-center gap-4 mt-4 pt-4 border-t border-simpson-gray/10 dark:border-white/5">
@@ -240,7 +264,6 @@ export default function Shop() {
             })}
           </div>
         ) : (
-          // 🌟 ÉCRAN VIDE STYLEE
           <div className="text-center py-16 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full max-w-5xl mx-auto">
             <p className="text-xs sm:text-sm font-medium text-simpson-gray">
               Aucun booster n'est disponible en rayon actuellement.
@@ -249,11 +272,78 @@ export default function Shop() {
         )}
       </div>
 
+      {/* 🌟 1. MODAL DES PROBABILITÉS DYNAMIQUE (Corrigé w-fit compact & croix) */}
+      <Modal isOpen={!!detailBooster} onClose={() => setDetailBooster(null)}>
+        <div className="flex flex-col gap-5 p-5 pt-8 font-main text-simpson-dark dark:text-simpson-white w-72 sm:w-80 max-w-full">
+          <div className="text-center space-y-1">
+            <h2 className="text-xl font-bold text-simpson-orange dark:text-simpson-yellow leading-tight">
+              {detailBooster?.name}
+            </h2>
+            <p className="text-xs text-simpson-gray">
+              Contient {detailBooster?.quantity || 5} carte
+              {(detailBooster?.quantity || 5) > 1 ? "s" : ""} • Taux d'obtention
+            </p>
+          </div>
+
+          <div className="bg-simpson-gray/5 dark:bg-black/20 rounded-xl p-4 border border-simpson-gray/10 dark:border-white/5 space-y-3">
+            <div className="flex items-center justify-between text-xs font-semibold pb-2 border-b border-simpson-gray/10 dark:border-white/10 text-simpson-gray">
+              <span>Rareté</span>
+              <span className="flex items-center gap-1">
+                <FaPercentage /> Probabilité
+              </span>
+            </div>
+
+            {detailBooster?.probabilities &&
+            detailBooster.probabilities.length > 0 ? (
+              detailBooster.probabilities.map((prob, index) => {
+                const style = rarityStyles[prob.rarity] || {
+                  label: prob.rarity,
+                  textClass: "text-simpson-dark dark:text-white",
+                  bgClass: "bg-simpson-gray/10",
+                };
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between text-xs font-bold gap-6"
+                  >
+                    <span className={style.textClass}>{style.label}</span>
+                    <span
+                      className={`${style.bgClass} px-2 py-0.5 rounded-md shrink-0`}
+                    >
+                      {prob.value.toFixed(1)}%
+                    </span>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-center text-xs text-simpson-gray py-2">
+                Aucune donnée de probabilité disponible.
+              </p>
+            )}
+          </div>
+
+          <div className="text-[11px] text-simpson-gray/80 text-center leading-relaxed px-1">
+            Chaque booster contient un ensemble de cartes distribuées
+            aléatoirement selon les taux indiqués ci-dessus. Les tirages sont
+            certifiés conformes.
+          </div>
+
+          <Button
+            onClick={() => setDetailBooster(null)}
+            className="w-full py-2 text-xs font-bold rounded-xl bg-simpson-dark dark:bg-white dark:text-simpson-dark"
+          >
+            Fermer
+          </Button>
+        </div>
+      </Modal>
+
+      {/* 🌟 2. MODAL DES DONUTS (Corrigé pour libérer l'emplacement de la croix absolue) */}
       <Modal
         isOpen={isDonutModalOpen}
         onClose={() => purchaseStatus === "idle" && setIsDonutModalOpen(false)}
       >
-        <div className="relative flex flex-col gap-6 p-5 max-w-2xl w-full mx-auto font-main overflow-hidden rounded-2xl">
+        <div className="flex flex-col gap-6 p-5 pt-8 font-main rounded-2xl w-full max-w-sm sm:max-w-md md:max-w-lg">
           {purchaseStatus === "loading" && (
             <div className="absolute inset-0 bg-white/90 dark:bg-simpson-darklight/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 animate-fade-in">
               <div className="w-10 h-10 border-4 border-simpson-blue border-t-transparent rounded-full animate-spin" />
@@ -264,7 +354,7 @@ export default function Shop() {
           )}
 
           {purchaseStatus === "success" && (
-            <div className="absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center gap-3 text-white animate-fade-in">
+            <div className="absolute inset-0 bg-emerald-500 z-50 flex flex-col items-center justify-center gap-3 text-white animate-fade-in rounded-2xl">
               <FaCheckCircle
                 className="text-white scale-110 drop-shadow-md animate-bounce"
                 size={48}
