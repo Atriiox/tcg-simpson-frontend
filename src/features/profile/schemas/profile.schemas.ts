@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const AVATAR_COUNT = 13;
+const AVATAR_COUNT = 19;
 const validAvatars = Array.from(
   { length: AVATAR_COUNT },
   (_, i) => `/avatars/avatar-${i + 1}.webp`
