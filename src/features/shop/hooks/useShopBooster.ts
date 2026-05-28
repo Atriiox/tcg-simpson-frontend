@@ -38,23 +38,18 @@ export function useShopBooster(): UseShopBoosterResult {
   const loadOwnedBoostersCounts = useCallback(async () => {
     if (!token) return;
     try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_API_URL}/users/me/boosters`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       if (response.ok) {
         const rawData = await response.json();
         const userBoosters = UserBoosterArraySchema.parse(rawData);
         const counts: Record<string, number> = {};
-        userBoosters.forEach((ub) => {
-          counts[ub.booster.id] = ub.number;
-        });
+        userBoosters.forEach((ub) => { counts[ub.booster.id] = ub.number; });
         setOwnedBoosters(counts);
       } else {
         throw new Error();
@@ -70,25 +65,40 @@ export function useShopBooster(): UseShopBoosterResult {
       if (!token) return;
       setIsLoading(true);
       setError(null);
+
       try {
-        const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/boosters`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error();
-        const data = await response.json();
-        setBoosters(data);
-        await loadOwnedBoostersCounts();
+        const [boostersRes, inventoryRes] = await Promise.all([
+          fetch(`${env.NEXT_PUBLIC_API_URL}/boosters`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        if (!boostersRes.ok || !inventoryRes.ok) throw new Error();
+
+        const [boostersData, inventoryData] = await Promise.all([
+          boostersRes.json(),
+          inventoryRes.json(),
+        ]);
+
+        setBoosters(boostersData);
+
+        const userBoosters = UserBoosterArraySchema.parse(inventoryData);
+        const counts: Record<string, number> = {};
+        userBoosters.forEach((ub) => { counts[ub.booster.id] = ub.number; });
+        setOwnedBoosters(counts);
+
       } catch {
-        setError(
-          "Une erreur réseau est survenue. L'administration de la centrale nucléaire refuse de répondre. Code : NETWORK_ERROR",
-        );
+        setError("Une erreur réseau est survenue. L'administration de la centrale nucléaire refuse de répondre. Code : NETWORK_ERROR");
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchShopAndInventory();
-  }, [token, loadOwnedBoostersCounts]);
+  }, [token]);
 
   const buyBooster = useCallback(
     async (boosterId: string): Promise<{ ok: boolean; money?: number }> => {
@@ -105,7 +115,6 @@ export function useShopBooster(): UseShopBoosterResult {
         );
 
         const json = await response.json();
-
         if (!response.ok) return { ok: false };
 
         const parsed = BuyBoosterResponseSchema.safeParse(json);

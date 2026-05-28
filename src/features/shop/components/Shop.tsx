@@ -67,16 +67,22 @@ export default function Shop() {
     }
   };
 
-  if (boostersLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center bg-transparent h-full min-h-[50vh]">
-        <div className="text-center space-y-2 animate-pulse">
-          <div className="w-8 h-8 border-4 border-simpson-orange border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-medium text-simpson-gray font-medium">Ouverture des rideaux du Kwik-E-Mart...</p>
+if (boostersLoading) {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+      {[1, 2].map((i) => (
+        <div key={i} className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl animate-pulse">
+          <div className="w-44 h-62 bg-simpson-gray/20 dark:bg-white/5 rounded-xl shrink-0" />
+          <div className="flex flex-col gap-4 flex-1 w-full">
+            <div className="h-4 bg-simpson-gray/20 dark:bg-white/5 rounded-lg w-3/4" />
+            <div className="h-3 bg-simpson-gray/20 dark:bg-white/5 rounded-lg w-1/2" />
+            <div className="h-10 bg-simpson-gray/20 dark:bg-white/5 rounded-xl mt-4" />
+          </div>
         </div>
-      </div>
-    );
-  }
+      ))}
+    </div>
+  );
+}
 
   if (boostersError) {
     return (
