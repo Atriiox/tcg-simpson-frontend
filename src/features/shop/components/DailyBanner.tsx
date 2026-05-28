@@ -15,7 +15,14 @@ export default function DailyBanner({ isReady, isMounted, isClaiming, formattedT
     <div className="w-full bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md p-2 rounded-2xl border border-white/40 dark:border-white/5 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 flex items-center justify-center shrink-0">
-          <Image src="/donuts1.webp" alt="Daily Gift" width={36} height={36} className="object-contain animate-bounce" style={{ animationDuration: "4s" }} />
+          <Image
+            src="/donuts1.webp"
+            alt="Daily Gift"
+            width={36}
+            height={36}
+            className="w-9 h-9 object-contain animate-bounce"
+            style={{ animationDuration: "4s" }}
+          />
         </div>
         <div>
           <h3 className="text-base font-bold text-simpson-dark dark:text-simpson-white">Donuts quotidiens gratuits</h3>
@@ -33,11 +40,10 @@ export default function DailyBanner({ isReady, isMounted, isClaiming, formattedT
         <button
           onClick={onClaim}
           disabled={!isReady || isClaiming}
-          className={`w-full sm:w-44 h-11 text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 ${
-            !isReady
+          className={`w-full sm:w-44 h-11 text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all duration-300 active:scale-95 ${!isReady
               ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed select-none"
               : "bg-simpson-lightblue hover:bg-simpson-lightblue/90 text-simpson-white cursor-pointer"
-          }`}
+            }`}
         >
           {isClaiming ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -5,36 +5,37 @@ export function useHeaderMoney(money: number | undefined | null, mounted: boolea
   const prevMoneyRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!mounted) return;
-    if (money === undefined || money === null) return;
+  if (!mounted) return;
+  if (money === undefined || money === null) return;
 
+  if (prevMoneyRef.current !== null) return; // 👈 ne réinitialise pas si déjà initialisé
+
+  const end = money;
+  if (end === 0) {
+    setDisplayedMoney(0);
     prevMoneyRef.current = 0;
+    return;
+  }
 
-    const end = money;
-    if (end === 0) {
-      setDisplayedMoney(0);
-      return;
+  const duration = 2000;
+  const startTime = performance.now();
+
+  const animate = (currentTime: number) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(end * eased);
+    setDisplayedMoney(current);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      prevMoneyRef.current = end;
     }
+  };
 
-    const duration = 2000;
-    const startTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(end * eased);
-      setDisplayedMoney(current);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        prevMoneyRef.current = end;
-      }
-    };
-
-    requestAnimationFrame(animate);
-  }, [mounted]);
+  requestAnimationFrame(animate);
+}, [mounted, money]);
 
   useEffect(() => {
     if (!mounted) return;

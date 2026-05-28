@@ -46,27 +46,30 @@ export default function MoneyModal({ isOpen, isPurchasing, onClose, onPurchase }
           {donutPacks.map((pack) => (
             <div
               key={pack.id}
-              className={`relative flex flex-col items-center gap-3 p-4 rounded-xl border transition-all group ${
-                pack.popular
+              className={`relative flex flex-col items-center gap-3 p-4 rounded-xl border transition-all group ${pack.popular
                   ? "border-simpson-orange bg-simpson-orange/5 dark:bg-simpson-yellow/5 dark:border-simpson-yellow"
                   : "border-simpson-gray/10 bg-white dark:bg-simpson-darklight dark:border-white/5 hover:border-simpson-orange/30"
-              }`}
+                }`}
             >
               {pack.popular && (
                 <span className="absolute -top-2.5 px-2 py-0.5 bg-simpson-orange dark:bg-simpson-yellow text-white dark:text-simpson-dark text-[9px] font-bold rounded-full">Populaire</span>
               )}
               <div className="w-11 h-11 relative flex items-center justify-center bg-simpson-gray/5 dark:bg-white/5 rounded-full group-hover:scale-105 transition-transform mt-1">
-                <Image src="/donuts1.webp" alt="Donut" width={28} height={28} className="object-contain" />
-              </div>
+                <Image
+                  src="/donuts1.webp"
+                  alt="Donut"
+                  width={28}
+                  height={28}
+                  className="w-7 h-7 object-contain"
+                />              </div>
               <div className="text-center">
                 <h3 className="text-base font-bold text-simpson-dark dark:text-simpson-white">x{pack.amount}</h3>
                 <p className="text-xs text-simpson-gray">Donuts</p>
               </div>
               <Button
                 onClick={() => onPurchase(pack)}
-                className={`w-full py-1.5 text-xs font-bold rounded-lg transition-all ${
-                  pack.popular ? "bg-simpson-orange dark:bg-simpson-yellow" : "bg-simpson-dark dark:bg-white dark:text-simpson-dark"
-                }`}
+                className={`w-full py-1.5 text-xs font-bold rounded-lg transition-all ${pack.popular ? "bg-simpson-orange dark:bg-simpson-yellow" : "bg-simpson-dark dark:bg-white dark:text-simpson-dark"
+                  }`}
               >
                 {pack.price}
               </Button>
