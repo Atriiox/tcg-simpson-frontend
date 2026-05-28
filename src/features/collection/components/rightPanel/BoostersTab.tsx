@@ -11,7 +11,7 @@ import { FaPercentage } from "react-icons/fa"; // 🌟 AJOUT : Pour la modal de 
 import {
   UserBoosterArraySchema,
   UserBoosters,
-} from "../../../booster/boosterOpener/schema/booster.schema";
+} from "@/features/booster/boosterOpener/schema/booster.schema";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal"; // 🌟 AJOUT : Pour afficher les détails
 

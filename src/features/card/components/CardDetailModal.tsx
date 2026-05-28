@@ -7,7 +7,6 @@ import Card from "./Card";
 import CardAffinityView from "./CardAffinityView";
 import CardFamilyView from "./CardFamilyView";
 import { useReward } from "@/components/RewardContext";
-import Image from "next/image";
 import { PiHandFistFill } from "react-icons/pi";
 
 interface CardDetailModalProps {

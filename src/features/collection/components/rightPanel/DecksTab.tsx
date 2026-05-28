@@ -2,7 +2,7 @@
 
 import { BiPencil, BiTrash } from "react-icons/bi";
 import Button from "@/components/ui/Button";
-import { DeckData } from "../../hooks/useDeckBuilder";
+import { DeckData } from "@/features/collection/hooks/useDeckBuilder";
 
 interface DecksTabProps {
   onStart: () => void;

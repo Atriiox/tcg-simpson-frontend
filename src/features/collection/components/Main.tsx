@@ -6,7 +6,7 @@ import FilterPanel from "./FilterPanel";
 import RightPanel from "./rightPanel/RightPanel";
 import CollectionPanel from "./CollectionPanel";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
-import { useDeckBuilder } from "../hooks/useDeckBuilder";
+import { useDeckBuilder } from "@/features/collection/hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
 import { useReward } from "@/components/RewardContext";
 import { Filters } from "@/features/collection/hooks/useFilter";

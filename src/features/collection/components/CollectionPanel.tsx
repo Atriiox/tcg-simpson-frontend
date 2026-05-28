@@ -6,7 +6,7 @@ import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
 import { useFilter, Filters } from "@/features/collection/hooks/useFilter";
 import { useCollection } from "@/features/collection/hooks/useCollection";
-import { useMoney } from "../../shop/hooks/useMoney";
+import { useMoney } from "@/features/shop/hooks/useMoney";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import {

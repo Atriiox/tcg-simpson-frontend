@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Button from "@/components/ui/Button";
 import { Filters } from "@/features/collection/hooks/useFilter";
 import { FaSearch } from "react-icons/fa";

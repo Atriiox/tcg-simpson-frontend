@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "../style/Card.module.css";
+import styles from "@card/style/Card.module.css";
 import { FaHeart } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
 import { LuDonut } from "react-icons/lu";

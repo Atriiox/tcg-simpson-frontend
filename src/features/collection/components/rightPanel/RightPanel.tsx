@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { DeckData } from "../../hooks/useDeckBuilder";
+import { DeckData } from "@/features/collection/hooks/useDeckBuilder";
 import DecksTab from "./DecksTab";
 import BoostersTab from "./BoostersTab";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Modal from "@/components/ui/Modal";
 import ProfileForm from "../features/profile/components/Profile";
