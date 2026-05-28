@@ -13,17 +13,27 @@ interface BoosterListProps {
   onDetail: (booster: ShopBooster) => void;
 }
 
-export default function BoosterList({ boosters, ownedBoosters, userDonuts, buyingBoosterId, isMounted, onBuy, onDetail }: BoosterListProps) {
+export default function BoosterList({
+  boosters,
+  ownedBoosters,
+  userDonuts,
+  buyingBoosterId,
+  isMounted,
+  onBuy,
+  onDetail,
+}: BoosterListProps) {
   if (boosters.length === 0) {
     return (
       <div className="text-center py-16 bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md rounded-2xl border border-simpson-gray/10 dark:border-white/5 w-full max-w-5xl mx-auto">
-        <p className="text-xs sm:text-sm font-medium text-simpson-gray">Aucun booster n'est disponible en rayon actuellement.</p>
+        <p className="text-xs sm:text-sm font-medium text-simpson-gray">
+          Aucun booster n'est disponible en rayon actuellement.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center max-w-6xl mx-auto w-full pt-2">
       {boosters.map((booster) => (
         <BoosterCard
           key={booster.id}

@@ -70,34 +70,25 @@ export default function Shop() {
   if (boostersLoading) {
     return (
       <div className="w-full flex-1 p-6 md:p-10 font-main select-none overflow-y-auto">
-        <div className="max-w-6xl mx-auto space-y-6 animate-pulse">
-
+        <div className="max-w-6xl mx-auto space-y-8 animate-pulse">
           {/* Header skeleton */}
-          <div className="flex justify-between items-center pb-2 border-b border-simpson-gray/10 dark:border-white/10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-simpson-gray/10 dark:border-white/10">
             <div className="space-y-2">
               <div className="h-7 w-32 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
               <div className="h-4 w-56 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
             </div>
-            <div className="h-10 w-44 bg-simpson-gray/20 dark:bg-white/5 rounded-xl" />
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+              <div className="h-11 w-40 bg-simpson-gray/20 dark:bg-white/5 rounded-xl" />
+              <div className="h-11 w-44 bg-simpson-gray/20 dark:bg-white/5 rounded-xl" />
+            </div>
           </div>
 
-          {/* Daily banner skeleton */}
-          <div className="w-full h-20 bg-simpson-gray/20 dark:bg-white/5 rounded-2xl" />
-
-          {/* Boosters skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
-            {[1, 2].map((i) => (
-              <div key={i} className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl">
-                <div className="w-44 h-62 bg-simpson-gray/20 dark:bg-white/5 rounded-xl shrink-0" />
-                <div className="flex flex-col gap-4 flex-1 w-full">
-                  <div className="h-4 w-3/4 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
-                  <div className="h-3 w-1/2 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
-                  <div className="h-10 bg-simpson-gray/20 dark:bg-white/5 rounded-xl mt-4" />
-                </div>
-              </div>
+          {/* Boosters grid skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center max-w-5xl mx-auto w-full">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex flex-col items-center p-4 w-full max-w-[290px] bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-[360px]" />
             ))}
           </div>
-
         </div>
       </div>
     );
@@ -120,31 +111,34 @@ export default function Shop() {
 
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
-      <div className="max-w-6xl mx-auto space-y-6">
-
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-simpson-gray/10 dark:border-white/10 pb-2">
+      <div className="max-w-6xl mx-auto space-y-4">
+        
+        {/* HEADER COMPACT (Titre + Actions quotidiens/achats alignés) */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-simpson-gray/10 dark:border-white/10 pb-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">Boutique</h1>
-            <h2 className="text-sm font-medium text-simpson-gray mt-1">Échange tes donuts contre des boosters !</h2>
+            <h2 className="text-xs font-medium text-simpson-gray mt-0.5">Échange tes donuts contre des boosters !</h2>
           </div>
-          <button
-            onClick={() => setIsMoneyModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-simpson-blue hover:bg-simpson-blue/90 text-white rounded-xl font-bold text-sm transition-all shadow-sm cursor-pointer h-10"
-          >
-            <FaPlusCircle size={16} />
-            Acheter des donuts
-          </button>
+              <DailyBanner
+              isReady={dailyReady}
+              isMounted={isMounted}
+              isClaiming={isClaimingDaily}
+              formattedTime={formattedTime}
+              onClaim={claimDailyDonuts}
+            />
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end">
+        
+            <button
+              onClick={() => setIsMoneyModalOpen(true)}
+              className="flex items-center justify-center gap-2 px-4 h-11 bg-simpson-blue hover:bg-simpson-blue/90 text-white rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer w-full sm:w-auto"
+            >
+              <FaPlusCircle size={14} />
+              Acheter des donuts
+            </button>
+          </div>
         </div>
 
-        <DailyBanner
-          isReady={dailyReady}
-          isMounted={isMounted}
-          isClaiming={isClaimingDaily}
-          formattedTime={formattedTime}
-          onClaim={claimDailyDonuts}
-        />
-
+        {/* LISTE DES BOOSTERS (Le gap global est géré ici dans BoosterList ou via ses parents) */}
         <BoosterList
           boosters={boosters}
           ownedBoosters={ownedBoosters}
