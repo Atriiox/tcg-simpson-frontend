@@ -7,7 +7,7 @@ export const profileSchema = z.object({
   password: z
     .string({ error: "Mot de passe requis" })
     .min(8, "Minimum 8 caractères")
-    .or(z.literal("********")) // Conserve la flexibilité pour ton placeholder par défaut
+    .or(z.literal("********"))
     .optional(),
 });
 

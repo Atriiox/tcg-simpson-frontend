@@ -10,7 +10,6 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
   const dispatch = useDispatch();
   const { money: userDonuts, updateMoney } = useMoney();
   
-  // 🌟 Récupération en temps réel depuis le store Redux permanent
   const user = useSelector((state: any) => state.user);
   const countdownEnds = user.countdownEnds;
 
@@ -71,8 +70,7 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
     ].join(":");
   };
 
-  // Logique du Clic : Seul moment où l'on appelle la route PUT pour enregistrer la date sur le serveur
-  const claimDailyDonuts = async () => {
+ const claimDailyDonuts = async () => {
     if (!isReady || isClaiming) return;
 
     setIsClaiming(true);
@@ -81,7 +79,7 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
     const token = localStorage.getItem("token") || user.token;
 
     try {
-      // 1. Envoi de la monnaie via useMoney (Route : /users/me/money)
+  
       const moneyResult = await updateMoney(newBalance);
       
       if (!moneyResult.ok) {
@@ -90,8 +88,7 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
         return;
       }
 
-      // 2. 🌟 Unique appel API : Envoi du compte à rebours vers ta route d'update générale (PUT)
-      const targetUrl = `${env.NEXT_PUBLIC_API_URL}/users/me/countdownends`; 
+     const targetUrl = `${env.NEXT_PUBLIC_API_URL}/users/me/countdownends`; 
       console.log("Appel API Update Countdown (PUT) :", targetUrl);
 
       const res = await fetch(targetUrl, {
@@ -105,7 +102,6 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
 
       if (res.ok) {
 
-        // 3. Si l'enregistrement en BDD s'est bien passé -> On synchronise immédiatement Redux
         dispatch(
           setAuth({
             token: token,

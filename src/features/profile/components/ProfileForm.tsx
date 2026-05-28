@@ -127,10 +127,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
   };
 
   return (
-    /* 🌟 FIX CSS DE SÉCURITÉ : 
-      On s'assure via 'relative z-50 pointer-events-auto' que RIEN ne recouvre le formulaire 
-      et que le navigateur autorise explicitement les clics et le focus dans cette zone.
-    */
+
     <div className="relative z-50 pointer-events-auto w-full md:w-190 grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[85vh] overflow-y-auto p-2 text-black dark:text-white selection:bg-simpson-orange/20">
       {/* ================= COLONNE GAUCHE : IDENTITÉ & STATS ================= */}
       <div className="flex flex-col gap-6 md:pr-2">
@@ -243,7 +240,6 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
       </div>
 
       {/* ================= COLONNE DROITE : COMPTE & CONFIGURATION ================= */}
-      {/* 🌟 AJOUT CSS : relative z-50 pour forcer la priorité absolue au clic sur cette colonne */}
       <div className="relative z-50 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-black/5 dark:border-white/5 pt-6 md:pt-0 md:pl-6 justify-between">
         <div className="space-y-4">
           {/* NOM D'UTILISATEUR */}

@@ -9,8 +9,8 @@ import { GiSwordsEmblem } from "react-icons/gi";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 
-// 🌟 CONFIGURATION : Nombre total de cartes du TCG
-const TOTAL_CARDS_SET = 40; 
+// Nombre total de cartes du TCG
+const TOTAL_CARDS_SET = 40;
 
 interface FriendFormValues {
   pseudo: string;
@@ -232,7 +232,9 @@ export default function FriendsList() {
                         <strong className="text-simpson-dark dark:text-white font-extrabold text-sm">
                           {friend.uniqueCardsCount || 0}
                         </strong>
-                        <span className="text-[10px] opacity-60">/ {TOTAL_CARDS_SET}</span>
+                        <span className="text-[10px] opacity-60">
+                          / {TOTAL_CARDS_SET}
+                        </span>
                       </div>
                     </div>
                   </div>
