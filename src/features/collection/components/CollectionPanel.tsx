@@ -31,7 +31,7 @@ interface CollectionPanelProps {
   toggleCardSelection: (id: string) => void;
   maxCardsReached: boolean;
   onControlsReady: (controls: CollectionControls) => void;
-  isAuthentificated: boolean
+  isAuthentificated: boolean;
 }
 
 export default function CollectionPanel({
@@ -86,7 +86,8 @@ export default function CollectionPanel({
     });
   }, [filters, search, showAllCards]);
 
-  if (isLoading && !isModalOpen) {
+  // 🌟 Premier chargement uniquement : si c'est vide ET que ça charge au tout début
+  if (isLoading && displayedCards.length === 0 && !isModalOpen) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
         <div className="text-center space-y-2 animate-pulse">
@@ -118,7 +119,8 @@ export default function CollectionPanel({
     );
   }
 
-  if (displayedCards.length === 0) {
+  // Affiche ce message uniquement si l'API a terminé de charger et qu'il n'y a vraiment rien
+  if (displayedCards.length === 0 && !isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
         <p className="text-medium text-simpson-gray font-medium">
@@ -235,6 +237,7 @@ export default function CollectionPanel({
       </div>
 
       <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
+        {/* 🌟 Plus d'opacité changeante ni de pointer-events bloqués, l'affichage reste stable à 100% */}
         <div
           className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
           style={{ gridTemplateColumns: `repeat(auto-fill, ${cardSize}px)` }}
@@ -245,7 +248,8 @@ export default function CollectionPanel({
             const quantity = cardQuantities[card.slug || card.id] || 0;
             const isOwned = ownedCardKeys.has(card.slug || card.id);
 
-            const shouldShowAsNotOwned = isAuthentificated && showAllCards && !isOwned;
+            const shouldShowAsNotOwned =
+              isAuthentificated && showAllCards && !isOwned;
 
             return (
               <div
@@ -265,7 +269,6 @@ export default function CollectionPanel({
                   </div>
                 )}
 
-                {/* 🌟 CHANGEMENT ICI : Affiche le badge dès que quantity >= 1 */}
                 {!isSelected && isAuthentificated && quantity >= 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
