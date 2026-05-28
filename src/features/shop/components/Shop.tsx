@@ -23,7 +23,7 @@ const rarityStyles: Record<
   { label: string; textClass: string; bgClass: string }
 > = {
   Common: {
-    label: "Commun",
+    label: "Commune",
     textClass: "text-slate-500 dark:text-slate-400",
     bgClass: "bg-slate-100 dark:bg-slate-800",
   },
