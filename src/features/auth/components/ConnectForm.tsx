@@ -75,7 +75,6 @@ export default function SignIn({ onSwitch }: Props) {
             {...formik.getFieldProps("email")}
           />
         </div>
-        {/* 🎯 h-5 bloque la hauteur sous l'email pour éviter les sauts d'interface */}
         <div className="h-5 mt-0.5 flex items-center">
           {formik.touched.email && formik.errors.email && (
             <p className="text-red-500 text-xs truncate">
@@ -106,7 +105,6 @@ export default function SignIn({ onSwitch }: Props) {
             {...formik.getFieldProps("password")}
           />
         </div>
-        {/* 🎯 h-5 bloque la hauteur sous le mot de passe avec le compteur de caractères */}
         <div className="flex justify-start items-center gap-2 h-5 mt-0.5">
           <span
             className={`text-xs shrink-0 ${formik.values.password.length >= PASSWORD_MAX ? "text-red-500" : "text-text/40"}`}

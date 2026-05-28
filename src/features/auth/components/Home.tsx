@@ -14,7 +14,6 @@ function Home() {
 
   return (
     <>
-      {/* 1. Remplacement de flex-col par justify-center pour centrer verticalement le contenu principal */}
       <div className="min-h-(--size-screen-content) h-full w-full relative overflow-hidden flex items-center justify-center">
         <div className="absolute right-16 top-0 flex items-center justify-center">
           <Image
@@ -27,13 +26,10 @@ function Home() {
           />
         </div>
 
-        {/* 2. Optimisation du conteneur central : il prend toute la hauteur disponible (sans taille fixe) */}
         <div className="w-full max-w-md h-full flex flex-col items-center justify-center p-6 gap-6">
-
-          {/* 3. L'image grandit de manière flexible grâce à flex-1 et max-h-[50vh] pour ne pas écraser les boutons */}
           <div className="flex-1 w-full max-h-[50vh] flex items-center justify-center">
             <Image
-              className="w-full h-full object-contain" // 💡 object-contain évite que l'image soit rognée/déformée
+              className="w-full h-full object-contain"
               src="/welcomeSimpson.webp"
               alt="WelcomeImage"
               height={375}
@@ -42,9 +38,10 @@ function Home() {
             />
           </div>
 
-          {/* 4. Bloc boutons ajusté */}
           <div className="flex flex-col gap-4 w-full max-w-xs items-center shrink-0">
-            <Button onClick={() => setModal('connect')} className="w-full">Se connecter</Button>
+            <Button onClick={() => setModal("connect")} className="w-full">
+              Se connecter
+            </Button>
             <button
               className="cursor-pointer border-b border-text/60 text-sm pb-0.5 hover:text-simpson-orange dark:hover:text-simpson-jaune transition-colors duration-200"
               onClick={() => setModal("register")}
@@ -60,8 +57,8 @@ function Home() {
           <RegisterForm onSwitch={() => setModal("connect")} />
         )}
 
-        {modal === 'connect' && (
-          <ConnectForm onSwitch={() => setModal('register')} />
+        {modal === "connect" && (
+          <ConnectForm onSwitch={() => setModal("register")} />
         )}
       </Modal>
     </>

@@ -6,7 +6,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { RewardProvider } from "@/components/RewardContext";
 
-
 const fredokaVariable = localFont({
   src: "./fonts/Fredoka-Variable.ttf",
   weight: "300 700",
@@ -30,12 +29,13 @@ export default function RootLayout({
       className={`${fredokaVariable.variable} antialiased h-full w-full overflow-hidden`}
       suppressHydrationWarning
     >
-      {/* 🎯 h-svh + overflow-hidden ici verrouille l'écran. Le Header et le Footer deviennent fixes. */}
-      <body className="h-svh w-full flex flex-col overflow-hidden bg-white dark:bg-simpson-dark" suppressHydrationWarning>
+      <body
+        className="h-svh w-full flex flex-col overflow-hidden bg-white dark:bg-simpson-dark"
+        suppressHydrationWarning
+      >
         <StoreProvider>
           <RewardProvider>
             <Header />
-            {/* 🎯 Le main prend tout l'espace restant entre le header et le footer et bloque tout scroll externe */}
             <main className="flex-1 overflow-hidden flex w-full relative">
               {children}
             </main>
