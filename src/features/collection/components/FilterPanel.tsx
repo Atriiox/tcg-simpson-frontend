@@ -107,7 +107,7 @@ export default function FilterPanel({
           {/* La bille blanche : Plus grande que le fond pour l'effet moderne/surélevé */}
           <span
             className={`absolute h-[1.6em] w-[1.6em] bg-white rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 border border-gray-100 dark:border-transparent ${
-              showAllCards ? "taranslate-x-[1.6em]" : "translate-x-0"
+              showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
             }`}
           />
         </label>
