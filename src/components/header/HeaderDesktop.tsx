@@ -62,12 +62,12 @@ export default function HeaderDesktop({
         {token && (
           <Link
             href="/boutique"
-            className={`${getLinkStyles("/boutique").link} relative flex items-center gap-1`} // 🌟 Ajout d'un pr-3 pour laisser la place à la pastille à droite
+            className={`${getLinkStyles("/boutique").link} relative flex items-center gap-1`}
           >
             <span>Boutique</span>
 
-            {/* On n'affiche la pastille que si le bonus est prêt ET que le composant est monté côté client */}
-            {canClaimDaily && isMounted && (
+            {/* Pastille de notification Daily Bonus */}
+            {canClaimDaily && (
               <span className="absolute top-1.5 -right-2 flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
@@ -75,6 +75,14 @@ export default function HeaderDesktop({
             )}
 
             <span className={getLinkStyles("/boutique").underline} />
+          </Link>
+        )}
+
+        {/* 🌟 AMIS : Uniquement si connecté, sorti de la pastille et remis à sa place */}
+        {token && (
+          <Link href="/amis" className={getLinkStyles("/amis").link}>
+            Amis
+            <span className={getLinkStyles("/amis").underline} />
           </Link>
         )}
 
