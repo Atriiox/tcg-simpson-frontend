@@ -207,6 +207,7 @@ export default function Main() {
         )}
 
         {/* 🔘 TOGGLE DROITE */}
+        {isAuthentificated && (
         <button
           onClick={() => setShowRight(!showRight)}
           className="absolute top-1/2 -translate-y-1/2 z-40 w-6 h-12 flex items-center justify-center bg-white dark:bg-simpson-darklight border border-simpson-gray/20 dark:border-simpson-dark text-simpson-gray hover:text-white hover:bg-simpson-orange dark:hover:bg-simpson-yellow dark:hover:text-simpson-dark rounded-l-xl shadow-md transition-all duration-200 cursor-pointer"
@@ -214,6 +215,7 @@ export default function Main() {
         >
           {showRight ? <FaAngleRight size={14} /> : <FaAngleLeft size={14} />}
         </button>
+        )}
       </div>
     </>
   );
