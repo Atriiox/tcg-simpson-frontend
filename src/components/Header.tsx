@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Modal from "@/components/ui/Modal";
-import ProfileForm from "../features/profile/components/ProfileForm";
+import ProfileForm from "../features/profile/components/Profile";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useHeaderMoney } from "./header/useHeaderMoney";
