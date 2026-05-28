@@ -27,7 +27,7 @@ export function useDeckBuilder() {
   const MAX_CARDS = 10;
   const MAX_DECKS = 3;
   const cardCount = selectedCardIds.length;
-  const isValid = cardCount === MAX_CARDS && deckName.trim() !== "";
+  const isValid = cardCount === MAX_CARDS && deckName.trim().length >= 3;
 
   // 🔄 GET : Récupérer les decks existants
   const fetchDecks = useCallback(async () => {
