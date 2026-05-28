@@ -214,17 +214,28 @@ export default function Shop() {
               onClick={claimDailyDonuts}
               disabled={!dailyReady || isClaimingDaily}
               className={`w-full sm:w-44 h-11 text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all duration-300 active:scale-95
-                ${
-                  !dailyReady
-                    ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed select-none"
-                    : "bg-simpson-orange hover:bg-simpson-orange/90 text-white cursor-pointer"
-                }
-              `}
+    ${
+      !dailyReady
+        ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed select-none"
+        : "bg-simpson-lightblue hover:bg-simpson-lightblue/90 text-simpson-white cursor-pointer"
+    }
+  `}
             >
               {isClaimingDaily ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : dailyReady ? (
-                <span>Réclamer +100 🍩</span>
+                /* 🌟 FIX : Alignement flex interne pour intégrer proprement l'image */
+                <span className="flex items-center gap-1.5">
+                  Récupérer +100
+                  <Image
+                    src="/donuts1.webp"
+                    alt="Donut"
+                    width={18}
+                    height={18}
+                    className="object-contain w-4.5 h-4.5 shrink-0 select-none"
+                    priority
+                  />
+                </span>
               ) : (
                 <span>Indisponible</span>
               )}

@@ -76,7 +76,7 @@ export function CardGrid({
         };
       default:
         return {
-          text: "Commun",
+          text: "Commune",
           style: "text-gray-400 bg-gray-500/10 border-gray-500/20",
         };
     }
