@@ -121,6 +121,7 @@ export default function HeaderDesktop({
                 width={70}
                 height={70}
                 className="w-full h-full object-contain rounded-full scale-x-[-1]"
+                priority
               />
             </div>
             <button

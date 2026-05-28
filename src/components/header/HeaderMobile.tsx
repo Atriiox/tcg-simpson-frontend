@@ -81,6 +81,7 @@ export default function HeaderMobile({
                 width={44}
                 height={44}
                 className="w-full h-full object-cover rounded-full scale-x-[-1]"
+                priority
               />
             </div>
           </>
