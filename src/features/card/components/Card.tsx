@@ -5,7 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
 import { LuDonut } from "react-icons/lu";
 
-// 🌟 Importation propre de l'interface centralisée
+// Importation interface 
 import type { CardData } from "@/features/card/interfaces/card.interface";
 
 interface CardProps {

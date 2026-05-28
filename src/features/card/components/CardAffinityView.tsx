@@ -13,15 +13,13 @@ interface CardAffinityViewProps {
 }
 
 export default function CardAffinityView({ card, affinityCards, allCards = [], onBack }: CardAffinityViewProps) {
-  // 1. Trouver la carte courante possédée ou non
+
   const currentQty = affinityCards.filter((c) => (c.slug || c.id) === (card.slug || card.id)).length;
 
-  // 2. Trouver le partenaire universel
   const globalTargetCard = allCards.find(
     (c) => c.affinity?.id === card.affinity?.id && (c.slug || c.id) !== (card.slug || card.id)
   );
 
-  // 3. Calculer la quantité du partenaire
   const partnerQty = globalTargetCard
     ? affinityCards.filter((c) => (c.slug || c.id) === (globalTargetCard.slug || globalTargetCard.id)).length
     : 0;
@@ -41,7 +39,7 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
 
       <div className="flex items-center justify-between w-full gap-4 flex-1 pt-8 px-2">
         
-        {/* Carte gauche (carte courante) */}
+        {/* Carte gauche */}
         <div className="flex-1 flex justify-center">
           <div className="relative flex flex-col items-center">
             {isCurrentOwned && (

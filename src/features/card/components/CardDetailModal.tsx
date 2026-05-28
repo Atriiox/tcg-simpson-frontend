@@ -285,7 +285,6 @@ export default function CardDetailModal({
                             />
                           </button>
 
-                          {/* 🌟 BOUTON TOUT VENDRE : Remplacé par ton image personnalisée */}
                           {duplicatesCount >= 2 && (
                             <button
                               type="button"
