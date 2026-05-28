@@ -111,7 +111,7 @@ function Card({ card, onClick, size = 200 }: CardProps) {
 
       <div className={styles.footerCard}>
         <span>
-          {serie.id_serie.name} - {serie.position}/50
+          {serie.id_serie.name} - {serie.position}/40
         </span>
         <span className={styles.rarity}>{rarityDonuts}</span>
       </div>
