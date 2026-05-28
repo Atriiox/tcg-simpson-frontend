@@ -173,7 +173,7 @@ export default function Main() {
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
           onControlsReady={setCollectionControls}
-          isAuthenticated={isAuthentificated}
+          isAuthentificated={isAuthentificated}
         />
 
         {/* 3. PANNEAU DROIT */}
