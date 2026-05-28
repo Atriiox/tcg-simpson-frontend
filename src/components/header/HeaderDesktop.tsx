@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
-import { useDailyDonuts } from "@/features/shop/hooks/useDailyDonuts";
+import { useDailyDonuts } from "@/features/shop/hooks/useDailyMoney";
 import logo from "../../../public/logo.webp";
 
 interface HeaderDesktopProps {

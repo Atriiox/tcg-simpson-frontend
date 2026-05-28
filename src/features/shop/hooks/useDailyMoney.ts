@@ -2,27 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useMoney } from "./useMoney";
-import { setAuth } from "@/reducers/user"; // Import de ton action Redux
+import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
 
 export const useDailyDonuts = (onSuccessCallback?: () => void) => {
   const dispatch = useDispatch();
-  const { money: userDonuts, updateMoney } = useMoney();
-  
   const user = useSelector((state: any) => state.user);
   const countdownEnds = user.countdownEnds;
+  const token = user.token;
 
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  useEffect(() => { setIsMounted(true); }, []);
 
-  // Gestion du compte à rebours basé sur la valeur du Store Redux
   useEffect(() => {
     if (!countdownEnds) {
       setIsReady(true);
@@ -62,7 +57,6 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
     const seconds = Math.floor((timeLeft / 1000) % 60);
     const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
     const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-
     return [
       hours.toString().padStart(2, "0"),
       minutes.toString().padStart(2, "0"),
@@ -70,58 +64,36 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
     ].join(":");
   };
 
- const claimDailyDonuts = async () => {
+  const claimDailyDonuts = async () => {
     if (!isReady || isClaiming) return;
-
     setIsClaiming(true);
-    const newBalance = userDonuts + 100;
-    const twelveHoursFromNow = new Date(new Date().getTime() + 12 * 60 * 60 * 1000).toISOString();
-    const token = localStorage.getItem("token") || user.token;
 
     try {
-  
-      const moneyResult = await updateMoney(newBalance);
-      
-      if (!moneyResult.ok) {
-        alert("Erreur lors de la mise à jour des donuts.");
-        setIsClaiming(false);
-        return;
-      }
-
-     const targetUrl = `${env.NEXT_PUBLIC_API_URL}/users/me/countdownends`; 
-      console.log("Appel API Update Countdown (PUT) :", targetUrl);
-
-      const res = await fetch(targetUrl, {
-        method: "PUT",
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/donuts/daily`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ countdownends: twelveHoursFromNow }),
       });
 
       if (res.ok) {
-
-        dispatch(
-          setAuth({
-            token: token,
-            pseudo: user.pseudo,
-            email: user.email,
-            money: newBalance,
-            countdownEnds: twelveHoursFromNow,
-            theme: user.isDarkMode,
-            avatar: user.avatar,
-          })
-        );
-
-        if (onSuccessCallback) {
-          onSuccessCallback();
-        }
+        const data = await res.json();
+        dispatch(setAuth({
+          token,
+          pseudo: user.pseudo,
+          email: user.email,
+          avatar: user.avatar,
+          money: data.money,
+          countdownEnds: data.countdownEnds,
+          theme: user.isDarkMode,
+        }));
+        onSuccessCallback?.();
       } else {
-        alert("Erreur lors de la mise à jour du compte à rebours sur le serveur.");
+        console.error("Erreur lors du claim des donuts quotidiens");
       }
     } catch (error) {
-      console.error("Erreur globale lors du claim :", error);
+      console.error("Erreur lors du claim :", error);
     } finally {
       setIsClaiming(false);
     }

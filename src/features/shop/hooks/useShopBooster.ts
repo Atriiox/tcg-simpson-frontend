@@ -23,20 +23,17 @@ export interface UseShopBoosterResult {
   ownedBoosters: Record<string, number>;
   isLoading: boolean;
   error: string | null;
-  buyBooster: (boosterId: string) => Promise<boolean>;
+  buyBooster: (boosterId: string) => Promise<{ ok: boolean; money?: number }>;
   loadOwnedBoostersCounts: () => Promise<void>;
 }
 
 export function useShopBooster(): UseShopBoosterResult {
   const [boosters, setBoosters] = useState<ShopBooster[]>([]);
-  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>(
-    {},
-  );
+  const [ownedBoosters, setOwnedBoosters] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const token = useSelector((state: RootState) => state.user.token);
 
-  // Charger l'inventaire de boosters possédés
   const loadOwnedBoostersCounts = useCallback(async () => {
     if (!token) return;
     try {
@@ -53,7 +50,6 @@ export function useShopBooster(): UseShopBoosterResult {
       if (response.ok) {
         const rawData = await response.json();
         const userBoosters = UserBoosterArraySchema.parse(rawData);
-
         const counts: Record<string, number> = {};
         userBoosters.forEach((ub) => {
           counts[ub.booster.id] = ub.number;
@@ -68,7 +64,6 @@ export function useShopBooster(): UseShopBoosterResult {
     }
   }, [token]);
 
-  // Charger les boosters de la boutique au montage
   useEffect(() => {
     async function fetchShopAndInventory() {
       if (!token) return;
@@ -81,8 +76,6 @@ export function useShopBooster(): UseShopBoosterResult {
         if (!response.ok) throw new Error();
         const data = await response.json();
         setBoosters(data);
-
-        // On enchaîne avec l'inventaire
         await loadOwnedBoostersCounts();
       } catch {
         setError(
@@ -97,7 +90,7 @@ export function useShopBooster(): UseShopBoosterResult {
   }, [token, loadOwnedBoostersCounts]);
 
   const buyBooster = useCallback(
-    async (boosterId: string): Promise<boolean> => {
+    async (boosterId: string): Promise<{ ok: boolean; money?: number }> => {
       try {
         const response = await fetch(
           `${env.NEXT_PUBLIC_API_URL}/users/me/boosters/${boosterId}`,
@@ -110,16 +103,16 @@ export function useShopBooster(): UseShopBoosterResult {
           },
         );
         if (response.ok) {
-        
+          const data = await response.json();
           setOwnedBoosters((prev) => ({
             ...prev,
             [boosterId]: (prev[boosterId] || 0) + 1,
           }));
-          return true;
+          return { ok: true, money: data.money };
         }
-        return false;
+        return { ok: false };
       } catch {
-        return false;
+        return { ok: false };
       }
     },
     [token],

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname } from "next/navigation";
-import { useDailyDonuts } from "@/features/shop/hooks/useDailyDonuts";
+import { useDailyDonuts } from "@/features/shop/hooks/useDailyMoney";
 
 interface HeaderMobileMenuProps {
   token: string | null;
