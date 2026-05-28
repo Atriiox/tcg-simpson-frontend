@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { useMoney } from "../hooks/useMoney";
-import { useDailyDonuts } from "../hooks/useDailyMoney";
+import { useDailyMoney } from "../hooks/useDailyMoney";
 import { useShopBooster, ShopBooster } from "../hooks/useShopBooster";
 import { useReward } from "@/components/RewardContext";
 import DailyBanner from "./DailyBanner";
@@ -23,7 +23,7 @@ export default function Shop() {
   const { boosters, ownedBoosters, isLoading: boostersLoading, error: boostersError, buyBooster } = useShopBooster();
   const { triggerReward } = useReward();
 
-  const { isReady: dailyReady, formattedTime, isClaiming: isClaimingDaily, claimDailyDonuts } = useDailyDonuts(() => {
+  const { isReady: dailyReady, formattedTime, isClaiming: isClaimingDaily, claimDailyDonuts } = useDailyMoney(() => {
     triggerReward(100);
   });
 

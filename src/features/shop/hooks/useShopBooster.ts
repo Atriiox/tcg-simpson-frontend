@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { env } from "@/config/env";
 import { UserBoosterArraySchema } from "../../booster/boosterOpener/schema/booster.schema";
+import { BuyBoosterResponseSchema } from "../schemas/buyBooster.schema";
 
 export interface ShopBooster {
   id: string;
@@ -102,15 +103,20 @@ export function useShopBooster(): UseShopBoosterResult {
             },
           },
         );
-        if (response.ok) {
-          const data = await response.json();
-          setOwnedBoosters((prev) => ({
-            ...prev,
-            [boosterId]: (prev[boosterId] || 0) + 1,
-          }));
-          return { ok: true, money: data.money };
-        }
-        return { ok: false };
+
+        const json = await response.json();
+
+        if (!response.ok) return { ok: false };
+
+        const parsed = BuyBoosterResponseSchema.safeParse(json);
+        if (!parsed.success) return { ok: false };
+
+        setOwnedBoosters((prev) => ({
+          ...prev,
+          [boosterId]: (prev[boosterId] || 0) + 1,
+        }));
+
+        return { ok: true, money: parsed.data.money };
       } catch {
         return { ok: false };
       }

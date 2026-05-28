@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { DeckData } from "@/features/collection/hooks/useDeckBuilder";
+import {Deck} from "@/features/collection/schemas/deck.schema";
 import DecksTab from "./DecksTab";
 import BoostersTab from "./BoostersTab";
 
@@ -21,10 +21,10 @@ interface RightPanelProps {
   startNewDeck: () => void;
   cancelDeckCreation: () => void;
   handleSaveDeck: (name: string) => Promise<void>;
-  decks: DeckData[];
+  decks: Deck[];
   isLoadingDecks: boolean;
   maxDecks: number;
-  startEditDeck: (deck: DeckData) => void;
+  startEditDeck: (deck: Deck) => void;
   handleDeleteDeck: (deckId: string) => void;
   handleSetActiveDeck: (deckId: string) => void;
   onTriggerOpenBooster?: (

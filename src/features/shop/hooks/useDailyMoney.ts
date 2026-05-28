@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
+import { DailyMoneyResponseSchema } from "../schemas/money.schema";
 
-export const useDailyDonuts = (onSuccessCallback?: () => void) => {
+export const useDailyMoney = (onSuccessCallback?: () => void) => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user);
   const countdownEnds = user.countdownEnds;
@@ -78,7 +79,9 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        const parsed = DailyMoneyResponseSchema.safeParse(await res.json());
+        if (!parsed.success) { setIsClaiming(false); return; }
+        const data = parsed.data;
         dispatch(setAuth({
           token,
           pseudo: user.pseudo,

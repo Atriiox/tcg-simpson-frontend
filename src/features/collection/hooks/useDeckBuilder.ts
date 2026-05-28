@@ -3,13 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-
-export type DeckData = {
-  id: string;
-  name: string;
-  cards: string[] | any[];
-  isActive: boolean;
-};
+import type { Deck } from "@/features/collection/schemas/deck.schema";
 
 export function useDeckBuilder() {
   const [isCreating, setIsCreating] = useState(false);
@@ -18,7 +12,7 @@ export function useDeckBuilder() {
   const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
 
   // États pour la liste des decks existants
-  const [decks, setDecks] = useState<DeckData[]>([]);
+  const [decks, setDecks] = useState<Deck[]>([]);
   const [isLoadingDecks, setIsLoadingDecks] = useState(false);
   const [deckError, setDeckError] = useState<string | null>(null);
 
@@ -67,7 +61,7 @@ export function useDeckBuilder() {
     setDeckName("");
   };
 
-  const startEditDeck = (deck: DeckData) => {
+  const startEditDeck = (deck: Deck) => {
     setIsCreating(true);
     setEditingDeckId(deck.id || (deck as any).id);
     setDeckName(deck.name);

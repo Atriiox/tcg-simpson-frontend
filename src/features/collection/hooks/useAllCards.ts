@@ -4,36 +4,11 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Filters } from "@/features/collection/hooks/useFilter";
+import type { Card } from "@/features/card/schema/card.schema";
 
-export type SystemCard = {
-  id: string;
-  name: string;
-  ATK: number;
-  PV: number;
-  description: string;
-  slug: string;
-  rarity: string;
-  type: string;
-  serie: {
-    id_serie: { id: string; name: string };
-    position: number;
-  };
-  family: {
-    id: string;
-    name: string;
-    description: string;
-    bonus: { ATK: number; PV: number };
-  };
-  affinity: {
-    id: string;
-    name: string;
-    description: string;
-    bonus: { ATK: number; PV: number };
-  };
-};
 
 type UseAllCardsReturn = {
-  cards: SystemCard[];
+  cards: Card[];
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
@@ -43,7 +18,7 @@ export function useAllCards(
   filters: Filters = { rarity: [], type: [], serie: [] },
   search: string = "",
 ): UseAllCardsReturn {
-  const [cards, setCards] = useState<SystemCard[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState<string>(search);

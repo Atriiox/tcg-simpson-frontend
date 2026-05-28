@@ -11,4 +11,16 @@ export const profileSchema = z.object({
     .optional(),
 });
 
+
+export const UpdateProfileResponseSchema = z.object({
+  pseudo: z.string().optional(),
+  money: z.number().optional(),
+  avatar: z.string().optional(),
+  darkMode: z.boolean().optional(),
+  countdownEnds: z.string().nullable().optional(),
+  email: z.string().optional(),
+});
+
+export type UpdateProfileResponse = z.infer<typeof UpdateProfileResponseSchema>;
+
 export type ProfileFormValues = z.infer<typeof profileSchema>;

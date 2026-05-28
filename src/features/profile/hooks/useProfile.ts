@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
 import { RootState } from "@/store/store";
-import { useCollection } from "../../collection/hooks/useCollection";
-import { useAllCards } from "../../collection/hooks/useAllCards";
+import { useCollection } from "@/features/collection/hooks/useCollection";
+import { useAllCards } from "@/features/collection/hooks/useAllCards";
+import { UpdateProfileResponseSchema } from "../schemas/profile.schemas";
 
 export const useProfile = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -85,20 +86,21 @@ export const useProfile = () => {
       return { ok: false, error: "NETWORK_ERROR" };
     }
 
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error || "Erreur de mise à jour");
+    const parsed = UpdateProfileResponseSchema.safeParse(await res.json());
+    if (!parsed.success) {
+      setError("INVALID_RESPONSE");
       setIsLoadingUpdate(false);
-      return { ok: false, error: data.error };
+      return { ok: false, error: "INVALID_RESPONSE" };
     }
-
+    const data = parsed.data;
+  
     const currentEmail = userState.email || data.email;
 
     dispatch(
       setAuth({
         token: token || "",
         pseudo: data.pseudo ?? userState.pseudo,
-        email: currentEmail,
+        email: currentEmail ?? null,
         money: data.money ?? userState.money,
         avatar: data.avatar ?? userState.avatar,
         theme:

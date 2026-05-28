@@ -2,14 +2,14 @@
 
 import { BiPencil, BiTrash } from "react-icons/bi";
 import Button from "@/components/ui/Button";
-import { DeckData } from "@/features/collection/hooks/useDeckBuilder";
+import { Deck } from "@/features/collection/schemas/deck.schema";
 
 interface DecksTabProps {
   onStart: () => void;
-  decks: DeckData[];
+  decks: Deck[];
   isLoading: boolean;
   maxDecks: number;
-  onEdit: (deck: DeckData) => void;
+  onEdit: (deck: Deck) => void;
   onDelete: (deckId: string) => void;
   onSetActive: (deckId: string) => void;
 }

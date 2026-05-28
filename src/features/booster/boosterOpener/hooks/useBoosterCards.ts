@@ -10,7 +10,6 @@ import { Card, CardSchema } from "@/features/card/schema/card.schema";
 import { env } from "@/config/env";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import type { CardData } from "@/features/card/interfaces/card.interface";
 
 async function fetchUserBoosters(token: string): Promise<UserBoosters> {
   const response = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
@@ -146,7 +145,7 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
         let ownedCardKeys = new Set<string>();
         if (collectionResponse.ok) {
           const currentCollection =
-            (await collectionResponse.json()) as CardData[];
+            (await collectionResponse.json()) as Card[];
           ownedCardKeys = new Set(currentCollection.map((c) => c.slug || c.id));
         }
 

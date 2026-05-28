@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Card from "@/features/card/components/Card";
+import CardComponent from "@/features/card/components/Card";
 import { FiMinus, FiPlus, FiZoomIn } from "react-icons/fi";
 import CardDetailModal from "@/features/card/components/CardDetailModal";
 import { useFilter, Filters } from "@/features/collection/hooks/useFilter";
@@ -11,9 +11,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import {
   useAllCards,
-  SystemCard,
 } from "@/features/collection/hooks/useAllCards";
-import type { CardData } from "@/features/card/interfaces/card.interface";
+import type { Card } from "@/features/card/schema/card.schema";
 
 interface CollectionControls {
   filters: Filters;
@@ -43,7 +42,7 @@ export default function CollectionPanel({
   isAuthentificated,
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
-  const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [selectedCardQuantity, setSelectedCardQuantity] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAllCards, setShowAllCards] = useState(false);
@@ -152,14 +151,14 @@ export default function CollectionPanel({
   const handleZoomIn = () =>
     setCardSize((prev) => Math.min(MAX_SIZE, prev + STEP));
 
-  const handleCardAction = (card: SystemCard) => {
+  const handleCardAction = (card: Card) => {
     if (isCreatingDeck) {
       toggleCardSelection(card.id);
       return;
     }
     const key = card.slug || card.id;
     setSelectedCardQuantity(cardQuantities[key] || 0);
-    setSelectedCard(card as unknown as CardData);
+    setSelectedCard(card as unknown as Card);
     setIsModalOpen(true);
   };
 
@@ -275,7 +274,7 @@ export default function CollectionPanel({
                   </div>
                 )}
 
-                <Card
+                <CardComponent
                   size={cardSize}
                   card={{
                     id: card.id,
@@ -301,8 +300,8 @@ export default function CollectionPanel({
         isOpen={isModalOpen}
         card={selectedCard}
         quantity={selectedCardQuantity}
-        collectionCards={collection as unknown as CardData[]}
-        allCards={cards as unknown as CardData[]}
+        collectionCards={collection as unknown as Card[]}
+        allCards={cards as unknown as Card[]}
         onClose={() => {
           setIsModalOpen(false);
           setSelectedCard(null);

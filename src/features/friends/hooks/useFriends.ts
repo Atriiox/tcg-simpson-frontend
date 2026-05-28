@@ -4,13 +4,8 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { env } from "@/config/env";
 import { RootState } from "@/store/store";
+import { Friend, FriendArraySchema } from "@/features/friends/schemas/friend.schema";
 
-// 🌟 MISE À JOUR : Ajout du compteur de cartes uniques
-interface Friend {
-  pseudo: string;
-  avatar: string;
-  uniqueCardsCount?: number;
-}
 
 export function useFriends() {
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -32,7 +27,7 @@ export function useFriends() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        const data = await res.json();
+        const data = FriendArraySchema.parse(await res.json());
         setFriends(data);
       } else {
         const data = await res.json();
@@ -65,7 +60,7 @@ export function useFriends() {
           { headers: { Authorization: `Bearer ${token}` } },
         );
         if (res.ok) {
-          const data = await res.json();
+          const data = FriendArraySchema.parse(await res.json());
           setSuggestions(data);
         }
       } catch (err) {

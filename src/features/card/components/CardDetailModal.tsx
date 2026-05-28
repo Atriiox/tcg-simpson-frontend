@@ -2,8 +2,8 @@
 
 import { FaTimes, FaHeart, FaCoins } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import type { CardData } from "@/features/card/interfaces/card.interface";
-import Card from "./Card";
+import type { Card } from "@/features/card/schema/card.schema";
+import CardComponent from "./Card";
 import CardAffinityView from "./CardAffinityView";
 import CardFamilyView from "./CardFamilyView";
 import { useReward } from "@/components/RewardContext";
@@ -11,10 +11,10 @@ import { PiHandFistFill } from "react-icons/pi";
 
 interface CardDetailModalProps {
   isOpen: boolean;
-  card: CardData | null;
+  card: Card | null;
   quantity: number;
-  collectionCards?: CardData[];
-  allCards?: CardData[];
+  collectionCards?: Card[];
+  allCards?: Card[];
   onClose: () => void;
   onSell?: (cardId: string, count: number) => void;
 }
@@ -180,7 +180,7 @@ export default function CardDetailModal({
           <div className="flex flex-col md:flex-row items-center md:items-stretch gap-12 mt-2 flex-1 overflow-hidden">
             <div className="shrink-0 flex items-center">
               <div>
-                <Card card={card} size={200} />
+                <CardComponent card={card} size={200} />
               </div>
             </div>
 

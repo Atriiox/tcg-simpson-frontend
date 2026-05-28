@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
+import { MoneyResponseSchema } from "../schemas/money.schema";
 
 interface RootState {
   user: {
@@ -12,7 +13,7 @@ interface RootState {
     email: string | null;
     avatar: string | null;
     money: number | null;
-    countdownEnds: Date | null;
+    countdownEnds: string | null;
     isDarkMode: boolean;
   };
 }
@@ -34,10 +35,7 @@ export const useMoney = () => {
         email: user.email,
         avatar: user.avatar,
         money: newMoney,
-        countdownEnds:
-          user.countdownEnds instanceof Date
-            ? user.countdownEnds.toISOString()
-            : user.countdownEnds,
+        countdownEnds: user.countdownEnds,
         theme: user.isDarkMode,
       }),
     );
@@ -57,15 +55,22 @@ export const useMoney = () => {
         body: JSON.stringify({ packId }),
       });
 
+      const json = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error || `Erreur ${res.status}`);
-        return { ok: false, error: data.error };
+        const errorMsg = json.error || `Erreur ${res.status}`;
+        setError(errorMsg);
+        return { ok: false, error: errorMsg };
       }
 
-      const data = await res.json();
-      updateReduxMoney(data.money);
-      return { ok: true, money: data.money };
+      const parsed = MoneyResponseSchema.safeParse(json);
+      if (!parsed.success) {
+        setError("INVALID_RESPONSE");
+        return { ok: false, error: "INVALID_RESPONSE" };
+      }
+
+      updateReduxMoney(parsed.data.money);
+      return { ok: true, money: parsed.data.money };
     } catch {
       setError("NETWORK_ERROR");
       return { ok: false, error: "NETWORK_ERROR" };
