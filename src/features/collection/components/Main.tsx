@@ -131,7 +131,9 @@ export default function Main() {
       <div
         className="grid h-full w-full overflow-hidden relative bg-simpson-white dark:bg-simpson-dark"
         style={{
-          gridTemplateColumns: `${showFilter ? "240px" : "0px"} minmax(0, 1fr) ${showRight ? "220px" : "0px"}`,
+          gridTemplateColumns:isAuthentificated 
+          ?`${showFilter ? "240px" : "0px"} minmax(0, 1fr) ${showRight ? "220px" : "0px"}`
+          : `${showFilter ? "240px" : "0px"} minmax(0, 1fr)`,
           transition: "grid-template-columns 300ms ease-in-out",
         }}
       >
