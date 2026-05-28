@@ -12,16 +12,27 @@ interface CardAffinityViewProps {
   onBack: () => void;
 }
 
-export default function CardAffinityView({ card, affinityCards, allCards = [], onBack }: CardAffinityViewProps) {
-
-  const currentQty = affinityCards.filter((c) => (c.slug || c.id) === (card.slug || card.id)).length;
+export default function CardAffinityView({
+  card,
+  affinityCards,
+  allCards = [],
+  onBack,
+}: CardAffinityViewProps) {
+  const currentQty = affinityCards.filter(
+    (c) => (c.slug || c.id) === (card.slug || card.id),
+  ).length;
 
   const globalTargetCard = allCards.find(
-    (c) => c.affinity?.id === card.affinity?.id && (c.slug || c.id) !== (card.slug || card.id)
+    (c) =>
+      c.affinity?.id === card.affinity?.id &&
+      (c.slug || c.id) !== (card.slug || card.id),
   );
 
   const partnerQty = globalTargetCard
-    ? affinityCards.filter((c) => (c.slug || c.id) === (globalTargetCard.slug || globalTargetCard.id)).length
+    ? affinityCards.filter(
+        (c) =>
+          (c.slug || c.id) === (globalTargetCard.slug || globalTargetCard.id),
+      ).length
     : 0;
 
   const isCurrentOwned = currentQty > 0;
@@ -38,7 +49,6 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
       </button>
 
       <div className="flex items-center justify-between w-full gap-4 flex-1 pt-8 px-2">
-
         {/* Carte gauche */}
         <div className="flex-1 flex justify-center">
           <div className="relative flex flex-col items-center">
@@ -58,7 +68,9 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
 
         {/* Bonus centre */}
         <div className="flex flex-col items-center gap-3 shrink-0">
-          <span className="text-xl font-bold text-[#a855f7] dark:text-[#c084fc]">Duo d'Affinité</span>
+          <span className="text-xl font-bold text-[#a855f7] dark:text-[#c084fc]">
+            Duo d'Affinité
+          </span>
           <p className="text-xs text-text/60 dark:text-white/50 text-center max-w-32 leading-relaxed">
             {card.affinity.description}
           </p>

@@ -12,16 +12,30 @@ interface CardFamilyViewProps {
   onBack: () => void;
 }
 
-export default function CardFamilyView({ card, familyCards, allCards = [], onBack }: CardFamilyViewProps) {
-  const ownedQuantities = familyCards.reduce((acc, c) => {
-    const key = c.slug || c.id;
-    acc[key] = (acc[key] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+export default function CardFamilyView({
+  card,
+  familyCards,
+  allCards = [],
+  onBack,
+}: CardFamilyViewProps) {
+  const hasFamilyBonus =
+    card.family?.bonus?.ATK > 0 || card.family?.bonus?.PV > 0;
+
+  const ownedQuantities = familyCards.reduce(
+    (acc, c) => {
+      const key = c.slug || c.id;
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const allFamilyMembers = allCards
     .filter((c) => c.family?.id === card.family?.id)
-    .filter((c, index, self) => self.findIndex((o) => (o.slug || o.id) === (c.slug || c.id)) === index);
+    .filter(
+      (c, index, self) =>
+        self.findIndex((o) => (o.slug || o.id) === (c.slug || c.id)) === index,
+    );
 
   return (
     <div className="flex flex-col gap-4 h-full relative">
@@ -40,7 +54,9 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
           </p>
 
           <div className="flex flex-col items-center gap-4">
-            <span className="text-lg font-bold text-simpson-orange dark:text-simpson-yellow">Bonus de Famille</span>
+            <span className="text-lg font-bold text-simpson-orange dark:text-simpson-yellow">
+              Bonus de Famille
+            </span>
             <div className="flex flex-wrap justify-center gap-4">
               {card.family.bonus.ATK > 0 && (
                 <div className="flex items-center gap-2 bg-simpson-blue/5 border border-simpson-blue/15 px-3 py-1 rounded-full">
@@ -67,14 +83,20 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
 
           {allFamilyMembers.length > 0 && (
             <div className="flex flex-col items-center gap-4 w-full">
-              <span className="text-sm font-semibold text-simpson-gray">Membres de la famille</span>
+              <span className="text-sm font-semibold text-simpson-gray">
+                Membres de la famille
+              </span>
+              {/* Grille de cartes qui scrollera si la liste est longue */}
               <div className="flex gap-4 flex-wrap justify-center">
                 {allFamilyMembers.map((c) => {
                   const qty = ownedQuantities[c.slug || c.id] || 0;
                   const isOwned = qty > 0;
 
                   return (
-                    <div key={c.id} className="relative flex flex-col items-center">
+                    <div
+                      key={c.id}
+                      className="relative flex flex-col items-center"
+                    >
                       {isOwned && (
                         <div className="absolute -top-1.5 -right-1.5 z-20 min-w-5 h-5 px-1 bg-simpson-dark dark:bg-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md font-black text-[10px]">
                           x{qty}
