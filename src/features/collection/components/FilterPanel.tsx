@@ -36,7 +36,6 @@ export default function FilterPanel({
   onToggleShowAll,
   isAuthentificated,
 }: FilterPanelProps) {
-
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
   const isChecked = (group: string, item: string): boolean => {
     let key: keyof Filters;
@@ -80,38 +79,37 @@ export default function FilterPanel({
 
       {/*  Barre à Slide */}
       {isAuthentificated && (
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
-        <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
-          Voir les cartes non possédées :
-        </span>
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
+          <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
+            Voir les cartes non possédées :
+          </span>
 
-        {/* Conteneur du Switch : Hauteur totale pour la zone de clic */}
-        <label className="relative inline-flex items-center w-[3.2em] h-[2em] text-[12px] shrink-0 select-none cursor-pointer">
-          {/* Checkbox invisible */}
-          <input
-            type="checkbox"
-            checked={showAllCards}
-            onChange={handleToggleSlide}
-            className="opacity-0 w-0 h-0 peer"
-          />
+          {/* Conteneur du Switch : Hauteur totale pour la zone de clic */}
+          <label className="relative inline-flex items-center w-[3.2em] h-[2em] text-[12px] shrink-0 select-none cursor-pointer">
+            {/* Checkbox invisible */}
+            <input
+              type="checkbox"
+              checked={showAllCards}
+              onChange={handleToggleSlide}
+              className="opacity-0 w-0 h-0 peer"
+            />
 
-          {/* Le Slider d'arrière-plan : Plus fin (h-[1.2em] au lieu de h-[2em]) */}
-          <span
-            className={`absolute w-full h-[1.2em] rounded-full transition-colors duration-300 ${
-              showAllCards
-                ? "bg-simpson-orange" // Utilisation de ta variable ou #cd690b
-                : "bg-simpson-orange/30 dark:bg-simpson-dark/50"
-            }`}
-          />
+            {/* Le Slider d'arrière-plan : Plus fin (h-[1.2em] au lieu de h-[2em]) */}
+            <span
+              className={`absolute w-full h-[1.2em] rounded-full transition-colors duration-300 ${
+                showAllCards
+                  ? "bg-simpson-orange" // Utilisation de ta variable ou #cd690b
+                  : "bg-simpson-orange/30 dark:bg-simpson-dark/50"
+              }`}
+            />
 
-          {/* La bille blanche : Plus grande que le fond pour l'effet moderne/surélevé */}
-          <span
-            className={`absolute h-[1.6em] w-[1.6em] bg-white rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 border border-gray-100 dark:border-transparent ${
-              showAllCards ? "taranslate-x-[1.6em]" : "translate-x-0"
-            }`}
-          />
-        </label>
-      </div>
+            <span
+              className={`absolute h-[1.6em] w-[1.6em] bg-white rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 border border-gray-100 dark:border-transparent ${
+                showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
+              }`}
+            />
+          </label>
+        </div>
       )}
 
       {/* Groupes de filtres */}
