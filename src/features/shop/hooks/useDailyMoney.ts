@@ -69,7 +69,7 @@ export const useDailyDonuts = (onSuccessCallback?: () => void) => {
     setIsClaiming(true);
 
     try {
-      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/donuts/daily`, {
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/money/daily`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

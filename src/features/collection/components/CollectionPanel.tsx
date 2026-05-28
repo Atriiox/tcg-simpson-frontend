@@ -50,7 +50,7 @@ export default function CollectionPanel({
   const [search, setSearch] = useState<string>("");
 
   const token = useSelector((state: RootState) => state.user.token);
-  const { money, updateMoney } = useMoney();
+  const { money, updateReduxMoney } = useMoney();
 
   const { filters, handleSelect, resetFilters } = useFilter();
   const {
@@ -188,7 +188,7 @@ export default function CollectionPanel({
       }
 
       const newMoneyTotal = money + totalGains;
-      await updateMoney(newMoneyTotal);
+      updateReduxMoney(newMoneyTotal);
 
       setSelectedCardQuantity((prev) => Math.max(0, prev - count));
       refetchCollection();
