@@ -2,19 +2,17 @@
 
 import { FaHeart, FaArrowLeft } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
-import type { CardData } from "@/features/card/interfaces/card.interface";
-import Card from "./Card";
+import type { Card } from "@/features/card/schema/card.schema";
+import CardComponent from "./Card";
 
 interface CardFamilyViewProps {
-  card: CardData;
-  familyCards: CardData[];
-  allCards?: CardData[];
+  card: Card;
+  familyCards: Card[];
+  allCards?: Card[];
   onBack: () => void;
 }
 
 export default function CardFamilyView({ card, familyCards, allCards = [], onBack }: CardFamilyViewProps) {
-  const hasFamilyBonus = card.family?.bonus?.ATK > 0 || card.family?.bonus?.PV > 0;
-
   const ownedQuantities = familyCards.reduce((acc, c) => {
     const key = c.slug || c.id;
     acc[key] = (acc[key] || 0) + 1;
@@ -27,7 +25,6 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
 
   return (
     <div className="flex flex-col gap-4 h-full relative">
-      {/* Bouton retour fixe */}
       <button
         onClick={onBack}
         className="flex items-center gap-2 text-simpson-orange dark:text-simpson-yellow hover:opacity-70 transition-opacity cursor-pointer z-10"
@@ -36,7 +33,6 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
         <span className="text-sm font-bold">Retour</span>
       </button>
 
-      {/* Conteneur principal avec scroll vertical */}
       <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
         <div className="flex flex-col items-center gap-6 pb-6">
           <p className="text-sm text-text/70 dark:text-white/60 text-center max-w-md">
@@ -72,7 +68,6 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
           {allFamilyMembers.length > 0 && (
             <div className="flex flex-col items-center gap-4 w-full">
               <span className="text-sm font-semibold text-simpson-gray">Membres de la famille</span>
-              {/* Grille de cartes qui scrollera si la liste est longue */}
               <div className="flex gap-4 flex-wrap justify-center">
                 {allFamilyMembers.map((c) => {
                   const qty = ownedQuantities[c.slug || c.id] || 0;
@@ -90,7 +85,7 @@ export default function CardFamilyView({ card, familyCards, allCards = [], onBac
                           non possédée
                         </div>
                       )}
-                      <Card card={c} size={140} />
+                      <CardComponent card={c} size={140} />
                     </div>
                   );
                 })}

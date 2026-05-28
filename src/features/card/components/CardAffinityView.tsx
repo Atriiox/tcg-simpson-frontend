@@ -2,13 +2,13 @@
 
 import { FaHeart, FaArrowLeft } from "react-icons/fa";
 import { PiHandFistFill } from "react-icons/pi";
-import type { CardData } from "@/features/card/interfaces/card.interface";
-import Card from "./Card";
+import type { Card } from "@/features/card/schema/card.schema";
+import CardComponent from "./Card";
 
 interface CardAffinityViewProps {
-  card: CardData;
-  affinityCards: CardData[];
-  allCards?: CardData[];
+  card: Card;
+  affinityCards: Card[];
+  allCards?: Card[];
   onBack: () => void;
 }
 
@@ -38,7 +38,7 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
       </button>
 
       <div className="flex items-center justify-between w-full gap-4 flex-1 pt-8 px-2">
-        
+
         {/* Carte gauche */}
         <div className="flex-1 flex justify-center">
           <div className="relative flex flex-col items-center">
@@ -52,7 +52,7 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
                 non possédée
               </div>
             )}
-            <Card card={card} size={200} />
+            <CardComponent card={card} size={200} />
           </div>
         </div>
 
@@ -100,7 +100,7 @@ export default function CardAffinityView({ card, affinityCards, allCards = [], o
                   non possédée
                 </div>
               )}
-              <Card card={globalTargetCard} size={200} />
+              <CardComponent card={globalTargetCard} size={200} />
             </div>
           ) : (
             <div className="w-40 h-56 rounded-2xl bg-simpson-light dark:bg-simpson-dark/30 border border-simpson-gray/10 flex items-center justify-center text-center p-4">

@@ -67,22 +67,41 @@ export default function Shop() {
     }
   };
 
-if (boostersLoading) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
-      {[1, 2].map((i) => (
-        <div key={i} className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl animate-pulse">
-          <div className="w-44 h-62 bg-simpson-gray/20 dark:bg-white/5 rounded-xl shrink-0" />
-          <div className="flex flex-col gap-4 flex-1 w-full">
-            <div className="h-4 bg-simpson-gray/20 dark:bg-white/5 rounded-lg w-3/4" />
-            <div className="h-3 bg-simpson-gray/20 dark:bg-white/5 rounded-lg w-1/2" />
-            <div className="h-10 bg-simpson-gray/20 dark:bg-white/5 rounded-xl mt-4" />
+  if (boostersLoading) {
+    return (
+      <div className="w-full flex-1 p-6 md:p-10 font-main select-none overflow-y-auto">
+        <div className="max-w-6xl mx-auto space-y-6 animate-pulse">
+
+          {/* Header skeleton */}
+          <div className="flex justify-between items-center pb-2 border-b border-simpson-gray/10 dark:border-white/10">
+            <div className="space-y-2">
+              <div className="h-7 w-32 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
+              <div className="h-4 w-56 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
+            </div>
+            <div className="h-10 w-44 bg-simpson-gray/20 dark:bg-white/5 rounded-xl" />
           </div>
+
+          {/* Daily banner skeleton */}
+          <div className="w-full h-20 bg-simpson-gray/20 dark:bg-white/5 rounded-2xl" />
+
+          {/* Boosters skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 justify-items-center max-w-5xl mx-auto w-full pt-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 w-full max-w-md bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-6 rounded-xl border border-white/40 dark:border-white/10 shadow-xl">
+                <div className="w-44 h-62 bg-simpson-gray/20 dark:bg-white/5 rounded-xl shrink-0" />
+                <div className="flex flex-col gap-4 flex-1 w-full">
+                  <div className="h-4 w-3/4 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
+                  <div className="h-3 w-1/2 bg-simpson-gray/20 dark:bg-white/5 rounded-lg" />
+                  <div className="h-10 bg-simpson-gray/20 dark:bg-white/5 rounded-xl mt-4" />
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
-      ))}
-    </div>
-  );
-}
+      </div>
+    );
+  }
 
   if (boostersError) {
     return (
