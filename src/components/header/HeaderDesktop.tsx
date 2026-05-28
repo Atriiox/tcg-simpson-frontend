@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
-import { useDailyDonuts } from "@/features/shop/hooks/useDailyMoney";
+import { useDailyMoney } from "@/features/shop/hooks/useDailyMoney";
 import logo from "../../../public/logo.webp";
 
 interface HeaderDesktopProps {
@@ -25,7 +25,7 @@ export default function HeaderDesktop({
   getLinkStyles,
   avatar,
 }: HeaderDesktopProps) {
-  const { isReady: canClaimDaily, isMounted } = useDailyDonuts();
+  const { isReady: canClaimDaily, isMounted } = useDailyMoney();
 
   return (
     <div className="hidden md:flex w-full items-center h-full">

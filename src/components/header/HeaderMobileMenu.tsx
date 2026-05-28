@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { IoMdSettings } from "react-icons/io";
 import { usePathname } from "next/navigation";
-import { useDailyDonuts } from "@/features/shop/hooks/useDailyMoney";
+import { useDailyMoney } from "@/features/shop/hooks/useDailyMoney";
 
 interface HeaderMobileMenuProps {
   token: string | null;
@@ -20,7 +20,7 @@ export default function HeaderMobileMenu({
 }: HeaderMobileMenuProps) {
   const pathname = usePathname();
 
-  const { isReady: canClaimDaily, isMounted } = useDailyDonuts();
+  const { isReady: canClaimDaily, isMounted } = useDailyMoney();
 
   return (
     <div className="absolute top-17.5 left-0 w-full bg-white dark:bg-simpson-darklight shadow-xl border-t border-simpson-gray/5 dark:border-white/5 flex flex-col md:hidden z-40 animate-fade-in">
