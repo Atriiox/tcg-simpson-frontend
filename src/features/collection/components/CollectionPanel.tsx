@@ -31,6 +31,7 @@ interface CollectionPanelProps {
   toggleCardSelection: (id: string) => void;
   maxCardsReached: boolean;
   onControlsReady: (controls: CollectionControls) => void;
+  isAuthentificated: boolean
 }
 
 export default function CollectionPanel({
@@ -39,6 +40,7 @@ export default function CollectionPanel({
   toggleCardSelection,
   maxCardsReached,
   onControlsReady,
+  isAuthentificated,
 }: CollectionPanelProps) {
   const [cardSize, setCardSize] = useState<number>(135);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
@@ -48,7 +50,6 @@ export default function CollectionPanel({
   const [search, setSearch] = useState<string>("");
 
   const token = useSelector((state: RootState) => state.user.token);
-  const isAuthenticated = !!token;
   const { money, updateMoney } = useMoney();
 
   const { filters, handleSelect, resetFilters } = useFilter();
@@ -244,7 +245,7 @@ export default function CollectionPanel({
             const quantity = cardQuantities[card.slug || card.id] || 0;
             const isOwned = ownedCardKeys.has(card.slug || card.id);
 
-            const shouldShowAsNotOwned = isAuthenticated && showAllCards && !isOwned;
+            const shouldShowAsNotOwned = isAuthentificated && showAllCards && !isOwned;
 
             return (
               <div
@@ -265,7 +266,7 @@ export default function CollectionPanel({
                 )}
 
                 {/* 🌟 CHANGEMENT ICI : Affiche le badge dès que quantity >= 1 */}
-                {!isSelected && isAuthenticated && quantity >= 1 && (
+                {!isSelected && isAuthentificated && quantity >= 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
                   </div>

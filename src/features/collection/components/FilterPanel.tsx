@@ -23,7 +23,7 @@ interface FilterPanelProps {
   onSearchChange: (val: string) => void;
   showAllCards: boolean;
   onToggleShowAll: (showAll: boolean) => void;
-  isAuthenticated: boolean;
+  isAuthentificated: boolean;
 }
 
 export default function FilterPanel({
@@ -34,7 +34,7 @@ export default function FilterPanel({
   onSearchChange,
   showAllCards,
   onToggleShowAll,
-  isAuthenticated,
+  isAuthentificated,
 }: FilterPanelProps) {
 
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
@@ -79,7 +79,7 @@ export default function FilterPanel({
       </div>
 
       {/*  Barre à Slide */}
-      {isAuthenticated && (
+      {isAuthentificated && (
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
         <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
           Voir les cartes non possédées :
