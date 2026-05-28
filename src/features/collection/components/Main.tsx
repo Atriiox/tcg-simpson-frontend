@@ -36,8 +36,14 @@ export default function Main() {
   const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
   const [collectionControls, setCollectionControls] = useState<CollectionControls | null>(null);
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true); // Passe à true uniquement sur le client après le premier rendu
+  }, [])
+
   const token = useSelector((state: RootState) => state.user.token);
-  const isAuthenticated = !!token;
+  const isAuthentificated = isMounted ? !!token : false;
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -53,10 +59,10 @@ export default function Main() {
   }, [isNewUser]);
 
   useEffect(() => {
-    if (!isAuthenticated && collectionControls) {
+    if (!isAuthentificated && collectionControls) {
       collectionControls.setShowAllCards(true);
     }
-  }, [isAuthenticated, collectionControls]);
+  }, [isAuthentificated, collectionControls]);
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
@@ -144,7 +150,7 @@ export default function Main() {
                 onSearchChange={collectionControls.setSearch}
                 showAllCards={collectionControls.showAllCards}
                 onToggleShowAll={collectionControls.setShowAllCards}
-                isAuthenticated={isAuthenticated}
+                isAuthentificated={isAuthentificated}
               />
             )}
           </div>
@@ -167,10 +173,11 @@ export default function Main() {
           toggleCardSelection={toggleCardSelection}
           maxCardsReached={cardCount >= maxCards}
           onControlsReady={setCollectionControls}
+          isAuthenticated={isAuthentificated}
         />
 
         {/* 3. PANNEAU DROIT */}
-        {isAuthenticated && (
+        {isAuthentificated && (
         <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
           <div className="w-55 h-full overflow-y-auto custom-scrollbar">
             <RightPanel
