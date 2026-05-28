@@ -56,7 +56,6 @@ async function fetchOpenBooster(
 }
 
 export interface UseBoosterCardsResult {
-  // 🌟 Typé avec CardData pour inclure proprement la propriété optionnelle isNew
   cards: (Card & { isNew?: boolean })[];
   isLoading: boolean;
   error: string | null;
@@ -132,7 +131,7 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
           throw new Error("Le booster sélectionné n'est plus disponible");
         }
 
-        // 🌟 1. RÉCUPÉRATION DE TA COLLECTION ACTUELLE (Pour comparer)
+        // RÉCUPÉRATION COLLECTION ACTUELLE
         const collectionResponse = await fetch(
           `${env.NEXT_PUBLIC_API_URL}/users/me/collection`,
           {
@@ -148,18 +147,16 @@ export function useBoosterCards(boosterId?: string): UseBoosterCardsResult {
         if (collectionResponse.ok) {
           const currentCollection =
             (await collectionResponse.json()) as CardData[];
-          // On stocke tous les identifiants uniques des cartes possédées
           ownedCardKeys = new Set(currentCollection.map((c) => c.slug || c.id));
         }
 
-        // 2. Récupération des cartes du booster ouvert
+        // Récupération des cartes du booster ouvert
         const fetchedCards = await fetchOpenBooster(
           targetBooster.booster.id,
           token,
         );
 
-        // 🌟 3. COMPARAISON ET INJECTION DU BADGE IS_NEW
-        // Si la carte ouverte n'est pas dans le Set de ta collection, alors isNew = true
+        // COMPARAISON ET INJECTION DU BADGE IS_NEW
         const mappedCards = fetchedCards.map((card) => ({
           ...card,
           isNew: !ownedCardKeys.has(card.slug || card.id),

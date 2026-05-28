@@ -2,22 +2,17 @@
 
 import { useState, useEffect } from "react";
 
-// Chemin vers ton composant Card
 import Card from "@/features/card/components/Card";
 import type { Card as CardType } from "@/features/card/schema/card.schema";
 
-// On étend temporairement le type si isNew n'est pas encore dans ton schéma strict
 interface ExtendedCardType extends CardType {
   isNew?: boolean;
 }
 
 export interface CardGridProps {
   cards: ExtendedCardType[];
-  /** Taille des cartes en pixels. */
   cardSize?: number;
-  /** Délai entre chaque carte qui apparaît (en secondes). */
   cascadeDelaySeconds?: number;
-  /** Callback optionnel sur le clic d'une carte. */
   onCardClick?: (card: CardType) => void;
 }
 
@@ -43,10 +38,6 @@ export function CardGrid({
     }
   };
 
-  /**
-   * Énorme effet de lueur colorée diffuse au survol (Glow)
-   * 100% géré par les ombres (shadow) de Tailwind.
-   */
   const getRarityHoverClasses = (rarity?: string) => {
     switch (rarity) {
       case "2":
@@ -134,15 +125,15 @@ export function CardGrid({
                   style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
-                    transformStyle: "preserve-3d", // 🌟 FIX FIREFOX
+                    transformStyle: "preserve-3d", // FIX FIREFOX
                   }}
                   className={`absolute inset-0 w-full h-full transition-all duration-700 ${
-                    isRevealed ? "z-0" : "z-10" // 🌟 FIX FIREFOX : On baisse le z-index quand c'est retourné
+                    isRevealed ? "z-0" : "z-10" // FIX FIREFOX
                   }`}
                 >
                   <div
                     style={{ backgroundImage: "url('/logo.webp')" }}
-                    className="w-full h-full bg-contain bg-center bg-no-repeat bg-[#f4f2ee] shadow-2xl rounded-[0.4em] border border-black overflow-hidden"
+                    className="w-full h-full bg-contain bg-center bg-no-repeat bg-simpson-light shadow-2xl rounded-[0.4em] border border-black overflow-hidden"
                   />
                 </div>
 
@@ -158,10 +149,10 @@ export function CardGrid({
                     isRevealed ? "z-10" : "z-0"
                   }`}
                 >
-                  {/* Ta carte d'origine */}
+                  {/* Carte d'origine */}
                   <Card card={card} size={cardSize} />
 
-                  {/* --- BADGE "NEW" : Visible UNIQUEMENT quand la carte est retournée 🌟 --- */}
+                  {/* BADGE "NEW" */}
                   {card.isNew && isRevealed && (
                     <span className="absolute -top-2 -right-2 z-30 bg-simpson-orange text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md border border-simpson-orange animate-bounce">
                       New
