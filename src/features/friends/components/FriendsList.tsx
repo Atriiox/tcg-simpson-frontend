@@ -194,7 +194,7 @@ export default function FriendsList() {
             friends.map((friend, i) => (
               <div
                 key={i}
-                className="flex flex-row items-center gap-4 w-full bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-4 rounded-xl border border-white/40 dark:border-white/10 shadow-md transition-all duration-200 hover:shadow-lg group relative"
+                className="flex flex-row items-center gap-1 w-full bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-4 rounded-xl border border-white/40 dark:border-white/10 shadow-md transition-all duration-200 hover:shadow-lg group relative"
               >
                 <button
                   onClick={() => setFriendToRemove(friend.pseudo)}
@@ -204,13 +204,13 @@ export default function FriendsList() {
                 </button>
 
                 <div className="shrink-0">
-                  <div className="w-16 h-16 rounded-full relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-24 h-24 relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
                     <Image
                       src={friend.avatar || "/defaultAvatar.webp"}
                       alt={friend.pseudo}
                       fill
-                      sizes="64px"
-                      className="object-cover"
+                      sizes="100px"
+                      className="object-contain"
                     />
                   </div>
                 </div>
