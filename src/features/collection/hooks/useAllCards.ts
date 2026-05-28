@@ -57,11 +57,6 @@ export function useAllCards(
   }, [search]);
 
   const fetchAllCards = async () => {
-    if (!token) {
-      setError("UNAUTHORIZED");
-      setIsLoading(false);
-      return;
-    }
 
     setIsLoading(true);
     setError(null);

@@ -23,6 +23,7 @@ interface FilterPanelProps {
   onSearchChange: (val: string) => void;
   showAllCards: boolean;
   onToggleShowAll: (showAll: boolean) => void;
+  isAuthenticated: boolean;
 }
 
 export default function FilterPanel({
@@ -33,6 +34,7 @@ export default function FilterPanel({
   onSearchChange,
   showAllCards,
   onToggleShowAll,
+  isAuthenticated,
 }: FilterPanelProps) {
 
   // Fonction simplifiée et corrigée pour vérifier si un élément est sélectionné
@@ -77,6 +79,7 @@ export default function FilterPanel({
       </div>
 
       {/*  Barre à Slide */}
+      {isAuthenticated && (
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-500 dark:border-simpson-dark">
         <span className="text-body font-medium text-simpson-dark dark:text-simpson-white">
           Voir les cartes non possédées :
@@ -104,11 +107,12 @@ export default function FilterPanel({
           {/* La bille blanche : Plus grande que le fond pour l'effet moderne/surélevé */}
           <span
             className={`absolute h-[1.6em] w-[1.6em] bg-white rounded-full shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 border border-gray-100 dark:border-transparent ${
-              showAllCards ? "translate-x-[1.6em]" : "translate-x-0"
+              showAllCards ? "taranslate-x-[1.6em]" : "translate-x-0"
             }`}
           />
         </label>
       </div>
+      )}
 
       {/* Groupes de filtres */}
       <div className="flex-1 space-y-6">

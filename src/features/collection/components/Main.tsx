@@ -10,6 +10,8 @@ import { useDeckBuilder } from "../hooks/useDeckBuilder";
 import BoosterOpener from "@/features/booster/boosterOpener/components/BoosterOpener";
 import { useReward } from "@/components/RewardContext";
 import { Filters } from "@/features/collection/hooks/useFilter";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface ActiveBoosterState {
   id: string;
@@ -34,6 +36,9 @@ export default function Main() {
   const [activeBooster, setActiveBooster] = useState<ActiveBoosterState | null>(null);
   const [collectionControls, setCollectionControls] = useState<CollectionControls | null>(null);
 
+  const token = useSelector((state: RootState) => state.user.token);
+  const isAuthenticated = !!token;
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const isNewUser = searchParams.get("newUser") === "true";
@@ -46,6 +51,12 @@ export default function Main() {
   useEffect(() => {
     if (isNewUser) triggerReward(100);
   }, [isNewUser]);
+
+  useEffect(() => {
+    if (!isAuthenticated && collectionControls) {
+      collectionControls.setShowAllCards(true);
+    }
+  }, [isAuthenticated, collectionControls]);
 
   const handleCloseBooster = () => {
     setShowBoosterModal(false);
@@ -133,6 +144,7 @@ export default function Main() {
                 onSearchChange={collectionControls.setSearch}
                 showAllCards={collectionControls.showAllCards}
                 onToggleShowAll={collectionControls.setShowAllCards}
+                isAuthenticated={isAuthenticated}
               />
             )}
           </div>
@@ -158,6 +170,7 @@ export default function Main() {
         />
 
         {/* 3. PANNEAU DROIT */}
+        {isAuthenticated && (
         <div className="relative z-10 border-l border-simpson-gray/10 dark:border-simpson-darklight/40 h-full overflow-hidden shadow-[-10px_0_20px_rgba(0,0,0,0.04)] dark:shadow-[-4px_0_24px_rgba(0,0,0,0.4)] bg-simpson-white dark:bg-simpson-dark">
           <div className="w-55 h-full overflow-y-auto custom-scrollbar">
             <RightPanel
@@ -184,6 +197,7 @@ export default function Main() {
             />
           </div>
         </div>
+        )}
 
         {/* 🔘 TOGGLE DROITE */}
         <button

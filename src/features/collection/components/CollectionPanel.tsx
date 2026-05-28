@@ -48,6 +48,7 @@ export default function CollectionPanel({
   const [search, setSearch] = useState<string>("");
 
   const token = useSelector((state: RootState) => state.user.token);
+  const isAuthenticated = !!token;
   const { money, updateMoney } = useMoney();
 
   const { filters, handleSelect, resetFilters } = useFilter();
@@ -243,11 +244,13 @@ export default function CollectionPanel({
             const quantity = cardQuantities[card.slug || card.id] || 0;
             const isOwned = ownedCardKeys.has(card.slug || card.id);
 
+            const shouldShowAsNotOwned = isAuthenticated && showAllCards && !isOwned;
+
             return (
               <div
                 key={card.id}
                 onClick={() => handleCardAction(card)}
-                className={`relative transition-all duration-300 rounded-2xl ${isCreatingDeck ? "cursor-pointer" : ""} ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} ${isDimmed ? "opacity-30 filter grayscale-20" : ""} ${showAllCards && !isOwned ? "opacity-30 filter grayscale-20" : ""}`}
+                className={`relative transition-all duration-300 rounded-2xl ${isCreatingDeck ? "cursor-pointer" : ""} ${isSelected ? "scale-[1.02]" : "hover:-translate-y-1.5"} ${isDimmed ? "opacity-30 filter grayscale-20" : ""} ${shouldShowAsNotOwned ? "opacity-30 filter grayscale-20" : ""}`}
                 style={{ width: `${cardSize}px` }}
               >
                 {isSelected && (
@@ -262,7 +265,7 @@ export default function CollectionPanel({
                 )}
 
                 {/* 🌟 CHANGEMENT ICI : Affiche le badge dès que quantity >= 1 */}
-                {!isSelected && quantity >= 1 && (
+                {!isSelected && isAuthenticated && quantity >= 1 && (
                   <div className="absolute -top-2 -right-2 z-20 min-w-6 h-6 px-1.5 bg-simpson-dark dark:bg-simpson-white text-white dark:text-simpson-dark rounded-full flex items-center justify-center border border-simpson-gray/20 shadow-md pointer-events-none font-black text-[11px]">
                     x{quantity}
                   </div>
