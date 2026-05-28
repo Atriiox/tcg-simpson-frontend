@@ -32,11 +32,11 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
 
   const formik = useFormik<ProfileFormValues>({
     initialValues: {
-      pseudo: profile?.pseudo || "", 
+      pseudo: profile?.pseudo || "",
       password: "********",
     },
     // 🌟 LE DUO GAGNANT : On reactive enableReinitialize mais SANS le useEffect intrusif d'avant
-    enableReinitialize: true, 
+    enableReinitialize: true,
     validationSchema: toFormikValidationSchema(profileSchema),
     onSubmit: async (values) => {
       const updateData: Partial<ProfileFormValues> = {};
@@ -127,8 +127,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
   };
 
   return (
-
-    <div className="relative z-50 pointer-events-auto w-full md:w-190 grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[85vh] overflow-y-auto p-2 text-black dark:text-white selection:bg-simpson-orange/20">
+    <div className="relative pointer-events-auto w-full md:w-190 grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[85vh] overflow-y-auto p-2 text-black dark:text-white selection:bg-simpson-orange/20">
       {/* ================= COLONNE GAUCHE : IDENTITÉ & STATS ================= */}
       <div className="flex flex-col gap-6 md:pr-2">
         {/* Header Profil */}
@@ -240,7 +239,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
       </div>
 
       {/* ================= COLONNE DROITE : COMPTE & CONFIGURATION ================= */}
-      <div className="relative z-50 flex flex-col gap-5 border-t md:border-t-0 md:border-l border-black/5 dark:border-white/5 pt-6 md:pt-0 md:pl-6 justify-between">
+      <div className="relative flex flex-col gap-5 border-t md:border-t-0 md:border-l border-black/5 dark:border-white/5 pt-6 md:pt-0 md:pl-6 justify-between">
         <div className="space-y-4">
           {/* NOM D'UTILISATEUR */}
           <div className="flex flex-col gap-1.5">
@@ -261,7 +260,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
                 type="text"
                 maxLength={PSEUDO_MAX}
                 disabled={isLoading}
-                className="w-full h-full border-none outline-none text-sm bg-transparent font-semibold cursor-text relative z-50"
+                className="w-full h-full border-none outline-none text-sm bg-transparent font-semibold cursor-text relative"
                 placeholder="Pseudo"
                 {...formik.getFieldProps("pseudo")}
               />
@@ -366,7 +365,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
                 readOnly={!isEditingPassword}
                 maxLength={PASSWORD_MAX}
                 disabled={isLoading}
-                className={`w-full h-full border-none outline-none text-sm bg-transparent font-semibold cursor-text relative z-50 ${
+                className={`w-full h-full border-none outline-none text-sm bg-transparent font-semibold cursor-text relative ${
                   !isEditingPassword
                     ? "opacity-40 tracking-widest font-mono text-xs"
                     : ""
@@ -392,7 +391,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
             <button
               type="button"
               onClick={() => dispatch(toggleTheme())}
-              className="group relative w-12 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-[#252532] border border-[#32303e] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] z-50"
+              className="group relative w-12 h-7 rounded-full p-0.5 transition-all duration-300 outline-none cursor-pointer bg-[#252532] border border-[#32303e] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
               aria-label="Changer de thème"
             >
               <div
@@ -413,7 +412,7 @@ export default function ProfileForm({ isOpen, onClose }: ProfileFormProps) {
         <button
           type="button"
           onClick={handleLogout}
-          className="w-full h-11 mt-4 flex items-center justify-center gap-2 text-red-500/90 hover:text-red-500 font-bold rounded-xl bg-red-500/4 hover:bg-red-500/8 border border-red-500/10 transition-all cursor-pointer text-xs tracking-wider z-50"
+          className="w-full h-11 mt-4 flex items-center justify-center gap-2 text-red-500/90 hover:text-red-500 font-bold rounded-xl bg-red-500/4 hover:bg-red-500/8 border border-red-500/10 transition-all cursor-pointer text-xs tracking-wider"
         >
           <FaSignOutAlt className="w-3.5 h-3.5" />
           Se déconnecter

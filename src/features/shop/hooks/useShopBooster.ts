@@ -110,7 +110,7 @@ export function useShopBooster(): UseShopBoosterResult {
           },
         );
         if (response.ok) {
-          // Met à jour instantanément le dictionnaire local
+        
           setOwnedBoosters((prev) => ({
             ...prev,
             [boosterId]: (prev[boosterId] || 0) + 1,
