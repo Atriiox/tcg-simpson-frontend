@@ -101,7 +101,7 @@ export default function Shop() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="flex flex-col items-center p-4 w-full max-w-72.5 bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-[360px]"
+                className="flex flex-col items-center p-4 w-full max-w-72.5 bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-90"
               />
             ))}
           </div>
