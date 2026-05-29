@@ -245,10 +245,24 @@
   background-position: 50% 184%;
 }
 .card.manjula-nahasapeemapetilon {
-  background-size: 110%;
+  background-size: 141%;
   background-position: 50% 85%;
 }
 .card.taverne-moe {
   background-size: 260%;
   background-position: 64% 100%;
+}
+.card.selma video {
+  height: 126%;
+  top: -35px;
+}
+.card.mona-simpson video {
+  height: 126%;
+  top: -35px;
+}
+.card.apu2 video {
+  height: 108%;
+  top: -20px;
+  object-fit: initial;
+  left: 0px;
 }
