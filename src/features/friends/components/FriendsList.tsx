@@ -10,7 +10,7 @@ import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 
 // Nombre total de cartes du TCG
-const TOTAL_CARDS_SET = 40;
+const TOTAL_CARDS_SET = 80;
 
 interface FriendFormValues {
   pseudo: string;

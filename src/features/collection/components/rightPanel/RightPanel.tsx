@@ -5,7 +5,7 @@ import Button from "@/components/ui/Button";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import {Deck} from "@/features/collection/schemas/deck.schema";
+import { Deck } from "@/features/collection/schemas/deck.schema";
 import DecksTab from "./DecksTab";
 import BoostersTab from "./BoostersTab";
 
@@ -94,7 +94,7 @@ export default function RightPanel({
   };
 
   return (
-    <div className="h-full flex flex-col bg-transparent relative select-none">
+    <div className="h-full flex flex-col bg-transparent relative select-none pt-8 md:pt-0">
       <div className="sticky top-0 z-20 bg-simpson-white dark:bg-simpson-darklight px-4 pt-4 pb-4 border-b border-simpson-gray/10 dark:border-white/5 flex flex-col items-center gap-3">
         <h2 className="text-center font-bold text-sm text-simpson-dark dark:text-simpson-white">
           {isCreatingDeck
