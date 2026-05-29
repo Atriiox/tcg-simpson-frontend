@@ -86,7 +86,7 @@ export default function Shop() {
           {/* Boosters grid skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center max-w-5xl mx-auto w-full">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col items-center p-4 w-full max-w-[290px] bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-[360px]" />
+              <div key={i} className="flex flex-col items-center p-4 w-full max-w-72.5 bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-90" />
             ))}
           </div>
         </div>
