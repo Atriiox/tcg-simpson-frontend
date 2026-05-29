@@ -39,7 +39,7 @@ function Card({ card, onClick, size = 200 }: CardProps) {
 
   return (
     <div
-      className={`${styles.card} ${styles[`type-${currentType}`] || ""} ${currentRarityClass} select-none`}
+      className={`${styles.card} ${styles[slug]} ${styles[`type-${currentType}`] || ""} ${currentRarityClass} select-none`}
       style={{
         backgroundImage: `url('${bgImageUrl}')`,
         width: `${size}px`,
