@@ -98,7 +98,7 @@ export default function FilterPanel({
               className={`absolute w-full h-[1.2em] rounded-full transition-colors duration-300 ${
                 showAllCards
                   ? "bg-simpson-orange" // Utilisation de ta variable ou #cd690b
-                  : "bg-simpson-orange/30 dark:bg-simpson-dark/50"
+                  : "bg-simpson-orange/30 dark:bg-simpson-gray"
               }`}
             />
 

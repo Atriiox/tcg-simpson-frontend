@@ -20,10 +20,21 @@ interface DonutPack {
 
 export default function Shop() {
   const { money: userDonuts, buyDonuts, updateReduxMoney } = useMoney();
-  const { boosters, ownedBoosters, isLoading: boostersLoading, error: boostersError, buyBooster } = useShopBooster();
+  const {
+    boosters,
+    ownedBoosters,
+    isLoading: boostersLoading,
+    error: boostersError,
+    buyBooster,
+  } = useShopBooster();
   const { triggerReward } = useReward();
 
-  const { isReady: dailyReady, formattedTime, isClaiming: isClaimingDaily, claimDailyDonuts } = useDailyMoney(() => {
+  const {
+    isReady: dailyReady,
+    formattedTime,
+    isClaiming: isClaimingDaily,
+    claimDailyDonuts,
+  } = useDailyMoney(() => {
     triggerReward(100);
   });
 
@@ -33,7 +44,9 @@ export default function Shop() {
   const [buyingBoosterId, setBuyingBoosterId] = useState<string | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
 
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleBuyBooster = async (booster: ShopBooster) => {
     if (userDonuts < booster.price || buyingBoosterId) return;
@@ -86,7 +99,10 @@ export default function Shop() {
           {/* Boosters grid skeleton */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 justify-items-center max-w-5xl mx-auto w-full">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col items-center p-4 w-full max-w-72.5 bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-90" />
+              <div
+                key={i}
+                className="flex flex-col items-center p-4 w-full max-w-72.5 bg-white/40 dark:bg-simpson-darklight/40 rounded-2xl border border-white/10 h-90"
+              />
             ))}
           </div>
         </div>
@@ -102,8 +118,12 @@ export default function Shop() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
           </div>
-          <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 font-bold tracking-wide uppercase">Erreur de connexion</p>
-          <p className="text-[11px] sm:text-xs text-simpson-gray dark:text-simpson-white/60 font-medium leading-relaxed">{boostersError}</p>
+          <p className="text-xs sm:text-sm text-red-600 dark:text-red-400 font-bold tracking-wide uppercase">
+            Erreur de connexion
+          </p>
+          <p className="text-[11px] sm:text-xs text-simpson-gray dark:text-simpson-white/60 font-medium leading-relaxed">
+            {boostersError}
+          </p>
         </div>
       </div>
     );
@@ -112,22 +132,24 @@ export default function Shop() {
   return (
     <div className="w-full flex-1 p-6 md:p-10 font-main text-simpson-dark dark:text-simpson-white select-none overflow-y-auto">
       <div className="max-w-6xl mx-auto space-y-4">
-        
         {/* HEADER COMPACT (Titre + Actions quotidiens/achats alignés) */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-simpson-gray/10 dark:border-white/10 pb-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">Boutique</h1>
-            <h2 className="text-xs font-medium text-simpson-gray mt-0.5">Échange tes donuts contre des boosters !</h2>
+            <h1 className="text-2xl font-bold tracking-tight text-simpson-orange dark:text-simpson-yellow">
+              Boutique
+            </h1>
+            <h2 className="text-xs font-medium text-simpson-gray mt-0.5">
+              Échange tes donuts contre des boosters !
+            </h2>
           </div>
-              <DailyBanner
-              isReady={dailyReady}
-              isMounted={isMounted}
-              isClaiming={isClaimingDaily}
-              formattedTime={formattedTime}
-              onClaim={claimDailyDonuts}
-            />
+          <DailyBanner
+            isReady={dailyReady}
+            isMounted={isMounted}
+            isClaiming={isClaimingDaily}
+            formattedTime={formattedTime}
+            onClaim={claimDailyDonuts}
+          />
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end">
-        
             <button
               onClick={() => setIsMoneyModalOpen(true)}
               className="flex items-center justify-center gap-2 px-4 h-11 bg-simpson-blue hover:bg-simpson-blue/90 text-white rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer w-full sm:w-auto"
@@ -150,8 +172,16 @@ export default function Shop() {
         />
       </div>
 
-      <BoosterDetailModal booster={detailBooster} onClose={() => setDetailBooster(null)} />
-      <MoneyModal isOpen={isMoneyModalOpen} isPurchasing={isPurchasing} onClose={() => setIsMoneyModalOpen(false)} onPurchase={handlePurchaseDonuts} />
+      <BoosterDetailModal
+        booster={detailBooster}
+        onClose={() => setDetailBooster(null)}
+      />
+      <MoneyModal
+        isOpen={isMoneyModalOpen}
+        isPurchasing={isPurchasing}
+        onClose={() => setIsMoneyModalOpen(false)}
+        onPurchase={handlePurchaseDonuts}
+      />
     </div>
   );
 }
