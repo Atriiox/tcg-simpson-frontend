@@ -9,9 +9,7 @@ import { useCollection } from "@/features/collection/hooks/useCollection";
 import { useMoney } from "@/features/shop/hooks/useMoney";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import {
-  useAllCards,
-} from "@/features/collection/hooks/useAllCards";
+import { useAllCards } from "@/features/collection/hooks/useAllCards";
 import type { Card } from "@/features/card/schema/card.schema";
 
 interface CollectionControls {
@@ -85,7 +83,6 @@ export default function CollectionPanel({
     });
   }, [filters, search, showAllCards]);
 
-  // 🌟 Premier chargement uniquement : si c'est vide ET que ça charge au tout début
   if (isLoading && displayedCards.length === 0 && !isModalOpen) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
@@ -118,7 +115,6 @@ export default function CollectionPanel({
     );
   }
 
-  // Affiche ce message uniquement si l'API a terminé de charger et qu'il n'y a vraiment rien
   if (displayedCards.length === 0 && !isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-transparent">
@@ -200,15 +196,18 @@ export default function CollectionPanel({
   };
 
   return (
-    <div className="flex-1 h-full overflow-hidden px-6 pt-6 bg-transparent flex flex-col select-none">
+    <div className="flex-1 h-full overflow-hidden px-4 sm:px-6 pt-4 sm:pt-6 bg-transparent flex flex-col select-none">
+      {/* HEADER RESPONSIVE : S'empile sur mobile, côte à côte sur écran plus large */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-simpson-dark/20 pb-4 shrink-0">
-        <h1 className="text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
+        <h1 className="text-base sm:text-subtitle font-black text-simpson-dark dark:text-simpson-white uppercase tracking-wider text-center sm:text-left">
           {isCreatingDeck ? "Sélectionne tes cartes" : title}{" "}
-          <span className="text-body font-bold text-simpson-gray ml-2">
+          <span className="text-xs sm:text-body font-bold text-simpson-gray ml-1 sm:ml-2">
             ({displayedCards.length})
           </span>
         </h1>
-        <div className="flex items-center gap-3 bg-white dark:bg-simpson-darklight p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent shadow-sm">
+        
+        {/* BLOC DE ZOOM RÉDUIT ET ADAPTÉ AUX SMARTPHONES */}
+        <div className="flex items-center gap-2 sm:gap-3 bg-white dark:bg-simpson-darklight p-1.5 sm:p-2 rounded-xl border border-simpson-gray/10 dark:border-transparent shadow-sm">
           <FiZoomIn size={14} className="text-simpson-gray" />
           <button
             onClick={handleZoomOut}
@@ -223,7 +222,7 @@ export default function CollectionPanel({
             max={MAX_SIZE}
             value={cardSize}
             onChange={(e) => setCardSize(Number(e.target.value))}
-            className="w-24 sm:w-32 h-1.5 bg-simpson-gray/20 rounded-lg appearance-none cursor-pointer accent-simpson-orange dark:accent-simpson-yellow"
+            className="w-20 sm:w-32 h-1.5 bg-simpson-gray/20 rounded-lg appearance-none cursor-pointer accent-simpson-orange dark:accent-simpson-yellow"
           />
           <button
             onClick={handleZoomIn}
@@ -235,10 +234,10 @@ export default function CollectionPanel({
         </div>
       </div>
 
-      <div className="flex-1 pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
-        {/* 🌟 Plus d'opacité changeante ni de pointer-events bloqués, l'affichage reste stable à 100% */}
+      {/* ZONE CONTENU SCROLLABLE */}
+      <div className="flex-1 pt-4 sm:pt-6 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden w-full">
         <div
-          className="grid gap-6 w-full justify-items-center justify-center content-start pb-10"
+          className="grid gap-4 sm:grid-gap-6 w-full justify-items-center justify-center content-start pb-24 md:pb-10"
           style={{ gridTemplateColumns: `repeat(auto-fill, ${cardSize}px)` }}
         >
           {uniqueDisplayed.map((card) => {

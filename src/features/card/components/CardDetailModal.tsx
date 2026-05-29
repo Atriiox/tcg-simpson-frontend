@@ -291,7 +291,7 @@ export default function CardDetailModal({
                               className="px-4 h-9 flex items-center gap-2 text-xs font-black uppercase tracking-wider rounded-xl bg-simpson-orange text-white hover:bg-simpson-orange/90 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer shadow-sm"
                             >
                               <FaCoins className="w-3 h-3 text-white" />
-                              Tout Vendre +{totalSellGain}
+                              Vendre tout les doublons +{totalSellGain}
                               <img
                                 src="/Donuts1.webp"
                                 alt="Donut"
