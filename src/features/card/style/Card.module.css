@@ -266,3 +266,6 @@
   object-fit: initial;
   left: 0px;
 }
+.card.tahiti-bob {
+  background-size: 56%;
+}
