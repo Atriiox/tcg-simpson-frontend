@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { RewardProvider } from "@/components/RewardContext";
 
 const fredokaVariable = localFont({
-  src: "./fonts/Fredoka-Variable.ttf",
+  src: "./fonts/fredoka-variable.ttf",
   weight: "300 700",
   style: "normal",
   variable: "--font-fredoka",
