@@ -69,12 +69,7 @@ export default function Profile({ isOpen, onClose }: ProfileProps) {
     router.push("/");
   };
 
-  const stats = profile?.stats || {
-    legendary: 0, legendaryTotal: 4,
-    rare: 0, rareTotal: 12,
-    common: 0, commonTotal: 24,
-    uniqueCards: 0, totalCards: 0,
-  };
+const stats = profile?.stats || { bySerie: [], uniqueCards: 0, totalCards: 0 };
 
   return (
     <div className="relative pointer-events-auto w-full md:w-190 grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[85vh] overflow-y-auto p-2 text-black dark:text-white selection:bg-simpson-orange/20">

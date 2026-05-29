@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react"; // 🌟 Ajout de useMemo
+import { useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "@/reducers/user";
 import { env } from "@/config/env";
@@ -19,28 +19,34 @@ export const useProfile = () => {
   const { collection, isLoading: loadingColl } = useCollection();
   const { cards: allSystemCards, isLoading: loadingCards } = useAllCards();
 
-  // 🎯 CALCUL DES STATS ET DU PROFIL CACHÉ (MEMOIZÉ)
-  // L'objet ne sera recréé QUE si l'une de ces dépendances change réellement.
   const profile = useMemo(() => {
     const totalCards = collection.length;
     const uniqueCardIds = Array.from(new Set(collection.map((c) => c.id)));
     const uniqueCardsCount = uniqueCardIds.length;
 
-    const getStatsByRarity = (rarityId: string) => {
-      const totalInSystem = allSystemCards.filter(
-        (c) => c.rarity === rarityId,
-      ).length;
+    const serieNames = [...new Set(allSystemCards.map((c) => c.serie.id_serie.name))];
 
-      const ownedUnique = allSystemCards.filter(
-        (c) => c.rarity === rarityId && uniqueCardIds.includes(c.id),
-      ).length;
+    const getStatsBySerie = (serieName: string) => {
+      const serieCards = allSystemCards.filter(
+        (c) => c.serie.id_serie.name === serieName
+      );
 
-      return { owned: ownedUnique, total: totalInSystem };
+      const getByRarity = (rarityId: string) => ({
+        owned: serieCards.filter(
+          (c) => c.rarity === rarityId && uniqueCardIds.includes(c.id)
+        ).length,
+        total: serieCards.filter((c) => c.rarity === rarityId).length,
+      });
+
+      return {
+        name: serieName,
+        legendary: getByRarity("3"),
+        rare: getByRarity("2"),
+        common: getByRarity("1"),
+        uniqueCards: serieCards.filter((c) => uniqueCardIds.includes(c.id)).length,
+        totalInSerie: serieCards.length,
+      };
     };
-
-    const legendaryStats = getStatsByRarity("3");
-    const rareStats = getStatsByRarity("2");
-    const commonStats = getStatsByRarity("1");
 
     return {
       pseudo: userState.pseudo,
@@ -49,21 +55,17 @@ export const useProfile = () => {
       avatar: userState.avatar,
       isDarkMode: userState.isDarkMode,
       stats: {
-        legendary: legendaryStats.owned,
-        legendaryTotal: legendaryStats.total || 4,
-        rare: rareStats.owned,
-        rareTotal: rareStats.total || 12,
-        common: commonStats.owned,
-        commonTotal: commonStats.total || 24,
+        bySerie: serieNames.map(getStatsBySerie),
         uniqueCards: uniqueCardsCount,
         totalCards: totalCards,
       },
     };
-  }, [userState, collection, allSystemCards]); // 🌟 Dépendances strictes
+  }, [userState, collection, allSystemCards]);
 
   const updateProfile = async (updates: {
     pseudo?: string;
     password?: string;
+    avatar?: string;
   }) => {
     setIsLoadingUpdate(true);
     setError(null);
@@ -86,14 +88,22 @@ export const useProfile = () => {
       return { ok: false, error: "NETWORK_ERROR" };
     }
 
-    const parsed = UpdateProfileResponseSchema.safeParse(await res.json());
+    const json = await res.json();
+
+    if (!res.ok) {
+      setError(json.error || "Erreur de mise à jour");
+      setIsLoadingUpdate(false);
+      return { ok: false, error: json.error };
+    }
+
+    const parsed = UpdateProfileResponseSchema.safeParse(json);
     if (!parsed.success) {
       setError("INVALID_RESPONSE");
       setIsLoadingUpdate(false);
       return { ok: false, error: "INVALID_RESPONSE" };
     }
+
     const data = parsed.data;
-  
     const currentEmail = userState.email || data.email;
 
     dispatch(
@@ -103,10 +113,7 @@ export const useProfile = () => {
         email: currentEmail ?? null,
         money: data.money ?? userState.money,
         avatar: data.avatar ?? userState.avatar,
-        theme:
-          typeof data.darkMode === "boolean"
-            ? data.darkMode
-            : userState.isDarkMode,
+        theme: typeof data.darkMode === "boolean" ? data.darkMode : userState.isDarkMode,
         countdownEnds: data.countdownEnds ?? userState.countdownEnds,
       }),
     );

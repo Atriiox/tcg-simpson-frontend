@@ -1,3 +1,4 @@
+// card.schema.ts (front)
 import { z } from "zod";
 
 export const CardTypeSchema = z.enum(["Personnage", "Terrain", "Objet"]);
@@ -12,7 +13,11 @@ export const CardSchema = z.object({
   PV: z.number(),
   description: z.string(),
   serie: z.object({
-    id_serie: z.object({ id: z.string(), name: z.string() }),
+    id_serie: z.object({
+      id: z.string(),
+      name: z.string(),
+      total: z.number(), // 👈
+    }),
     position: z.number(),
   }),
   family: z.object({
