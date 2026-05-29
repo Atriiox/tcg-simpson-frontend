@@ -68,7 +68,7 @@ export default function BoosterCard({
         {/* BLOC ACTION (Fusion Prix + Bouton) */}
         <div className="flex items-center gap-2 w-full bg-simpson-gray/5 dark:bg-white/5 p-1.5 rounded-xl border border-simpson-gray/5 dark:border-white/5">
           {/* Prix à gauche */}
-          <div className="flex flex-col items-center justify-center px-2 shrink-0 min-w-[58px]">
+          <div className="flex flex-col items-center justify-center px-2 shrink-0 min-w-14.5">
             <span className="text-[8px] font-bold text-simpson-gray/60 uppercase tracking-widest block -mb-0.5">Prix</span>
             <div className="flex items-center gap-0.5 font-black text-sm text-simpson-dark dark:text-simpson-white">
               <span>{isMounted ? booster.price : "--"}</span>

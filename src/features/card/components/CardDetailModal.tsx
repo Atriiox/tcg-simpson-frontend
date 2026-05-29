@@ -308,7 +308,7 @@ export default function CardDetailModal({
               <div className="mt-4 flex items-center justify-end gap-4 shrink-0">
                 <span className="text-body font-semibold text-simpson-dark dark:text-white text-right">
                   {card.serie?.id_serie?.name || "Série 1"} <br /> N°
-                  {card.serie?.position || 0}/50
+                  {card.serie?.position || 0}/40
                 </span>
               </div>
             </div>
