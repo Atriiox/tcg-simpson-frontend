@@ -202,7 +202,7 @@ export default function CardDetailModal({
                     {Array.from({ length: rarityCount }).map((_, i) => (
                       <img
                         key={i}
-                        src="/Donuts1.webp"
+                        src="/donuts1.webp"
                         alt="Donut Rarity"
                         className="w-4.5 h-4.5 shrink-0 object-contain select-none"
                       />
@@ -278,7 +278,7 @@ export default function CardDetailModal({
                             <FaCoins className="w-3 h-3 text-simpson-orange dark:text-simpson-yellow" />
                             Vendre 1 pour {singleSellGain}
                             <img
-                              src="/Donuts1.webp"
+                              src="/donuts1.webp"
                               alt="Donut"
                               className="w-4.5 h-4.5 inline object-contain align-middle"
                             />
@@ -293,7 +293,7 @@ export default function CardDetailModal({
                               <FaCoins className="w-3 h-3 text-white" />
                               Vendre tout les doublons +{totalSellGain}
                               <img
-                                src="/Donuts1.webp"
+                                src="/donuts1.webp"
                                 alt="Donut"
                                 className="w-4.5 h-4.5 inline object-contain align-middle"
                               />
