@@ -26,7 +26,7 @@ function Home() {
           />
         </div>
 
-        <div className="w-full max-w-md h-full flex flex-col items-center justify-center p-6 gap-6">
+        <div className="w-full max-w-md h-full max-h-fit flex flex-col items-center justify-center p-6 gap-6">
           <div className="flex-1 w-full max-h-[50vh] flex items-center justify-center">
             <Image
               className="w-full h-full object-contain"

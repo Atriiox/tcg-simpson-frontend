@@ -104,7 +104,7 @@ export default function CardDetailModal({
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-simpson-darklight border border-white/20 dark:border-simpson-dark w-full max-w-3xl rounded-3xl p-8 shadow-2xl relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 h-[90vh] overflow-y-auto text-black dark:text-white"
+        className="bg-white dark:bg-simpson-darklight border border-white/20 dark:border-simpson-dark w-full max-w-3xl rounded-3xl p-8 shadow-2xl relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200 h-[90dvh] overflow-y-auto text-black dark:text-white"
         onClick={(e) => e.stopPropagation()}
       >
         <button
