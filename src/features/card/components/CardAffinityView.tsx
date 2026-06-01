@@ -48,7 +48,7 @@ export default function CardAffinityView({
         <span className="text-sm font-bold">Retour</span>
       </button>
 
-      <div className="flex items-center justify-between w-full gap-4 flex-1 pt-8 px-2">
+      <div className="flex flex-column md:flex-row items-center justify-between w-full gap-4 flex-1 pt-8 px-2 overflow-y-auto">
         {/* Carte gauche */}
         <div className="flex-1 flex justify-center">
           <div className="relative flex flex-col items-center">

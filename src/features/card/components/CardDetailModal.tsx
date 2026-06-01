@@ -177,14 +177,14 @@ export default function CardDetailModal({
 
         {/* VUE CARTE */}
         {view === "card" && (
-          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-12 mt-2 flex-1 overflow-hidden">
+          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-12 mt-2 flex-1 overflow-y-auto">
             <div className="shrink-0 flex items-center">
               <div>
                 <CardComponent card={card} size={200} />
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col justify-between h-full py-1 overflow-y-auto pr-1">
+            <div className="flex-1 flex flex-col justify-between h-full py-1 pr-1">
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between flex-wrap gap-2 border-b border-simpson-light dark:border-simpson-dark pb-3">
                   <div className="flex items-center gap-3">
