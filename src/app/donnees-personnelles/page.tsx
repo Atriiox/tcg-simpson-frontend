@@ -6,10 +6,8 @@ export default function DonneesPersonnelles() {
   return (
     /* 🎯 Parfaitement adapté à ton layout : scroll interne fluide */
     <div className="flex-1 w-full h-full overflow-y-auto p-6 sm:p-12 font-main select-none">
-      
       {/* Container principal style Glassmorphism */}
       <div className="max-w-3xl mx-auto bg-white/60 dark:bg-simpson-darklight/60 backdrop-blur-md p-8 sm:p-10 rounded-xl border border-white/40 dark:border-white/10 shadow-xl mb-6">
-        
         {/* Titre principal */}
         <div className="text-center mb-10">
           <h1 className="text-title text-simpson-dark dark:text-simpson-white uppercase tracking-widest text-3xl font-black">
@@ -20,19 +18,27 @@ export default function DonneesPersonnelles() {
 
         {/* Contenu RGPD */}
         <div className="space-y-8 text-simpson-gray dark:text-simpson-white/80 text-sm sm:text-base leading-relaxed">
-          
           {/* SECTION 1 */}
           <section className="space-y-2">
             <h2 className="text-lg font-bold text-simpson-dark dark:text-simpson-white uppercase tracking-wider">
               1. Collecte des informations
             </h2>
             <p>
-              Dans le cadre de l'utilisation de notre Jeu de Cartes à Collectionner (TCG), nous collectons uniquement les informations nécessaires à la création de votre compte joueur et à la sauvegarde de votre progression :
+              Dans le cadre de l'utilisation de notre Jeu de Cartes à
+              Collectionner (TCG), nous collectons uniquement les informations
+              nécessaires à la création de votre compte joueur et à la
+              sauvegarde de votre progression :
             </p>
             <ul className="list-disc pl-6 space-y-1">
               <li>Votre pseudonyme (utilisé pour vous identifier en jeu).</li>
-              <li>Votre adresse e-mail (uniquement pour la sécurité de votre compte).</li>
-              <li>Vos données de jeu (inventaire de cartes, historique des boosters ouverts, solde de donuts).</li>
+              <li>
+                Votre adresse e-mail (uniquement pour la sécurité de votre
+                compte).
+              </li>
+              <li>
+                Vos données de jeu (inventaire de cartes, historique des
+                boosters ouverts, solde de donuts).
+              </li>
             </ul>
           </section>
 
@@ -41,16 +47,24 @@ export default function DonneesPersonnelles() {
             <h2 className="text-lg font-bold text-simpson-dark dark:text-simpson-white uppercase tracking-wider">
               2. Utilisation des données
             </h2>
-            <p>
-              Les données collectées nous servent exclusivement à :
-            </p>
+            <p>Les données collectées nous servent exclusivement à :</p>
             <ul className="list-disc pl-6 space-y-1">
-              <li>Gérer votre profil de joueur et synchroniser votre collection de cartes.</li>
-              <li>Sécuriser l'accès à votre espace utilisateur (authentification via Token).</li>
-              <li>Améliorer l'expérience visuelle et technique de l'application.</li>
+              <li>
+                Gérer votre profil de joueur et synchroniser votre collection de
+                cartes.
+              </li>
+              <li>
+                Sécuriser l'accès à votre espace utilisateur (authentification
+                via Token).
+              </li>
+              <li>
+                Améliorer l'expérience visuelle et technique de l'application.
+              </li>
             </ul>
             <p className="bg-simpson-light/40 dark:bg-simpson-dark/30 p-4 rounded-xl border border-simpson-gray/5 text-[13px] font-medium mt-2">
-              🔒 <strong>Zéro revente :</strong> Nous ne vendons, n'échangeons et ne transférons aucune de vos données personnelles à des tierces parties. Votre vie privée reste chez les Simpson.
+              🔒 <strong>Zéro revente :</strong> Nous ne vendons, n'échangeons
+              et ne transférons aucune de vos données personnelles à des tierces
+              parties. Votre vie privée reste chez les Simpson.
             </p>
           </section>
 
@@ -60,7 +74,11 @@ export default function DonneesPersonnelles() {
               3. Cookies et Stockage Local
             </h2>
             <p>
-              Cette application n'utilise aucun cookie publicitaire ou de pistage. Nous utilisons uniquement le stockage local (ou des cookies de session techniques) pour retenir votre jeton de connexion d'une visite à l'autre et vous éviter de devoir vous reconnecter manuellement.
+              Cette application n'utilise aucun cookie publicitaire ou de
+              pistage. Nous utilisons uniquement le stockage local (ou des
+              cookies de session techniques) pour retenir votre jeton de
+              connexion d'une visite à l'autre et vous éviter de devoir vous
+              reconnecter manuellement.
             </p>
           </section>
 
@@ -70,10 +88,15 @@ export default function DonneesPersonnelles() {
               4. Vos Droits (RGPD)
             </h2>
             <p>
-              Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d'un droit total d'accès, de rectification et de suppression de vos données. 
+              Conformément au Règlement Général sur la Protection des Données
+              (RGPD), vous disposez d'un droit total d'accès, de rectification
+              et de suppression de vos données.
             </p>
             <p>
-              Si vous souhaitez réinitialiser votre progression ou supprimer définitivement votre compte joueur de notre base de données, vous pouvez le faire directement depuis les paramètres de votre profil ou en contactant l'administrateur du projet.
+              Si vous souhaitez réinitialiser votre progression ou supprimer
+              définitivement votre compte joueur de notre base de données, vous
+              pouvez le faire directement depuis les paramètres de votre profil
+              ou en contactant l'administrateur du projet.
             </p>
           </section>
 
@@ -83,10 +106,13 @@ export default function DonneesPersonnelles() {
               5. Sécurité
             </h2>
             <p>
-              Nous mettons en œuvre une variété de mesures de sécurité pour préserver la sécurité de vos informations personnelles. Vos mots de passe de compte sont chiffrés dans nos bases de données et les communications avec notre API sont entièrement sécurisées via le protocole HTTPS.
+              Nous mettons en œuvre une variété de mesures de sécurité pour
+              préserver la sécurité de vos informations personnelles. Vos mots
+              de passe de compte sont chiffrés dans nos bases de données et les
+              communications avec notre API sont entièrement sécurisées via le
+              protocole HTTPS.
             </p>
           </section>
-
         </div>
 
         {/* Bouton de retour */}
@@ -98,7 +124,6 @@ export default function DonneesPersonnelles() {
             Retour au jeu
           </Link>
         </div>
-
       </div>
     </div>
   );
