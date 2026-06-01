@@ -41,7 +41,7 @@ export default function SignIn({ onSwitch }: Props) {
   });
 
   return (
-    <div className="p-2 w-sm m-auto">
+    <div className="p-2 w-full md:w-sm m-auto">
       <Image
         src="/poisson1.webp"
         alt="poisson authentification"
