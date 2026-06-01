@@ -28,13 +28,16 @@ export default function BoosterCard({
 }: BoosterCardProps) {
   return (
     <div className="flex flex-col items-center w-full bg-white/40 dark:bg-simpson-darklight/40 backdrop-blur-md p-4 rounded-2xl border border-white/40 dark:border-white/10 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 group relative">
-      
       {/* BADGES SUPERPOSÉS */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
         <div className="text-[10px] font-bold text-simpson-dark dark:text-simpson-white bg-white/80 dark:bg-simpson-darklight/80 backdrop-blur-sm px-2.5 py-0.5 rounded-md border border-black/5 dark:border-white/5 shadow-sm">
-          Possédé : <span className="text-simpson-orange dark:text-simpson-yellow">{owned}</span>
+          Possédé :{" "}
+          <span className="text-simpson-orange dark:text-simpson-yellow">
+            {owned}
+          </span>
         </div>
         <button
+          aria-label="Probabilité des cartes du booster"
           onClick={(e) => {
             e.stopPropagation();
             onDetail(booster);
@@ -61,7 +64,8 @@ export default function BoosterCard({
             {booster.name}
           </h3>
           <p className="text-[11px] font-medium text-simpson-gray dark:text-simpson-gray/80 mt-0.5">
-            Contient {booster.quantity || 5} carte{(booster.quantity || 5) > 1 ? "s" : ""}
+            Contient {booster.quantity || 5} carte
+            {(booster.quantity || 5) > 1 ? "s" : ""}
           </p>
         </div>
 
@@ -69,7 +73,9 @@ export default function BoosterCard({
         <div className="flex items-center gap-2 w-full bg-simpson-gray/5 dark:bg-white/5 p-1.5 rounded-xl border border-simpson-gray/5 dark:border-white/5">
           {/* Prix à gauche */}
           <div className="flex flex-col items-center justify-center px-2 shrink-0 min-w-14.5">
-            <span className="text-[8px] font-bold text-simpson-gray/60 uppercase tracking-widest block -mb-0.5">Prix</span>
+            <span className="text-[8px] font-bold text-simpson-gray/60 uppercase tracking-widest block -mb-0.5">
+              Prix
+            </span>
             <div className="flex items-center gap-0.5 font-black text-sm text-simpson-dark dark:text-simpson-white">
               <span>{isMounted ? booster.price : "--"}</span>
               <Image
@@ -88,9 +94,10 @@ export default function BoosterCard({
             onClick={() => onBuy(booster)}
             disabled={!canAfford || isBuying || isAnyBuying}
             className={`flex-1 h-9 text-[11px] font-black rounded-lg shadow-sm transition-all duration-300 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer uppercase tracking-wider
-              ${!canAfford 
-                ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed" 
-                : "bg-simpson-orange hover:bg-simpson-orange/90 text-simpson-white shadow-md shadow-simpson-orange/10"
+              ${
+                !canAfford
+                  ? "bg-simpson-gray/10 text-simpson-gray/40 dark:bg-white/5 dark:text-simpson-gray/50 cursor-not-allowed"
+                  : "bg-simpson-orange hover:bg-simpson-orange/90 text-simpson-white shadow-md shadow-simpson-orange/10"
               }
               ${isBuying || (isAnyBuying && !isBuying) ? "opacity-50 cursor-not-allowed" : ""}`}
           >
@@ -106,7 +113,6 @@ export default function BoosterCard({
           </button>
         </div>
       </div>
-
     </div>
   );
 }

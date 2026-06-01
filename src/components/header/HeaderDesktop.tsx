@@ -126,6 +126,7 @@ export default function HeaderDesktop({
             </div>
             <button
               onClick={onOpenProfile}
+              aria-label="Ouvrir les paramètres du profil"
               className="text-text/60 hover:text-simpson-orange dark:hover:text-simpson-yellow cursor-pointer transition-colors duration-200 outline-none"
             >
               <IoMdSettings size={22} />
