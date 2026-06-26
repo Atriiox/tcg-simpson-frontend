@@ -12,6 +12,7 @@ import { useReward } from "@/components/RewardContext";
 import { Filters } from "@/features/collection/hooks/useFilter";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { env } from "@/config/env";
 
 interface ActiveBoosterState {
   id: string;
@@ -52,12 +53,34 @@ export default function Main() {
   const boostersRefreshRef = useRef<(() => void) | null>(null);
   const { triggerReward } = useReward();
 
+  // Récupère un vrai booster disponible (avec un id) avant d'ouvrir la modale de bienvenue.
+  // Sans ça, activeBooster restait à null et BoosterOpener s'ouvrait avec un booster fantôme.
   useEffect(() => {
-    if (isMounted && isNewUser) {
-      setShowBoosterModal(true);
-      triggerReward(100);
-    }
-  }, [isMounted, isNewUser]);
+    if (!isMounted || !isNewUser || !token) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/users/me/boosters`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const boosters = await res.json();
+        const first = boosters.find((b: any) => b.number > 0)?.booster;
+        if (first && !cancelled) {
+          setActiveBooster({ id: first.id, name: first.name, slug: first.slug });
+          setShowBoosterModal(true);
+          triggerReward(100);
+        }
+      } catch {
+        // pas bloquant : pas de booster trouvé, la modale ne s'ouvre juste pas
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isMounted, isNewUser, token]);
 
   useEffect(() => {
     if (!isAuthentificated && collectionControls) {
