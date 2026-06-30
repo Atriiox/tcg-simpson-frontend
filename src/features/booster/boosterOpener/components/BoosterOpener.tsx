@@ -41,6 +41,8 @@ export default function BoosterOpener({
   } = useBoosterCards(boosterId);
 
   const [forceHideNext, setForceHideNext] = useState(false);
+  const [isSceneReady, setIsSceneReady] = useState(false);
+
   const displayBoosterName =
     initialBoosterName || boosterDetails?.name || "Nouveau booster !";
 
@@ -56,6 +58,7 @@ export default function BoosterOpener({
 
   useEffect(() => {
     setForceHideNext(false);
+    setIsSceneReady(false); 
   }, [boosterId]);
 
   const [dynamicCardSize, setDynamicCardSize] = useState<number>(100);
@@ -120,13 +123,15 @@ export default function BoosterOpener({
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col items-center justify-center p-6 sm:py-10 gap-4">
         {!hasCards && (
           <div className="w-full flex flex-col items-center justify-center my-auto">
-            <div className="w-full max-w-70 sm:max-w-85 aspect-3/4 flex justify-center items-center relative">
+            <div className="w-full max-w-70 sm:max-w-85 aspect-3/4 flex justify-center items-center relative" data-scene-ready={isSceneReady}>
+            
               <BoosterPack3D
                 ref={boosterRef}
                 imageUrl={currentImageUrl}
                 containerWidth="100%"
                 containerHeight="100%"
                 onOpen={handleBoosterOpen}
+                onSceneReady={() => setIsSceneReady(true)}
               />
             </div>
             {isLoading && (
