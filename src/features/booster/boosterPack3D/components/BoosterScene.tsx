@@ -3,7 +3,7 @@
  */
 import { useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import type { BoosterTextures, Tilt } from "../schema/booster.schema";
 import { BoosterMesh } from "./BoosterMesh";
@@ -14,6 +14,7 @@ export interface BoosterSceneProps {
   isOpening: boolean;
   tilt: Tilt;
   textures: BoosterTextures | null;
+  onSceneReady?: () => void; 
 }
 
 function RendererDisposer() {
@@ -26,11 +27,24 @@ function RendererDisposer() {
   return null;
 }
 
+function SceneReadyWatcher({ onReady }: { onReady?: () => void }) {
+  const { active, progress } = useProgress();
+
+  useEffect(() => {
+    if (!active && progress === 100) {
+      onReady?.();
+    }
+  }, [active, progress, onReady]);
+
+  return null;
+}
+
 export function BoosterScene({
   tearProgress,
   isOpening,
   tilt,
   textures,
+  onSceneReady
 }: BoosterSceneProps): React.JSX.Element {
   return (
     <Canvas
@@ -48,6 +62,7 @@ export function BoosterScene({
       }}
     >
       <RendererDisposer />
+      <SceneReadyWatcher onReady={onSceneReady} />
 
       <Environment preset="city" />
 

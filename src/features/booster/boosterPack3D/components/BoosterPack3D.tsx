@@ -59,6 +59,8 @@ export interface BoosterPack3DProps {
   errorFallback?: ReactNode;
   /** Hint affiche sous le booster (overridable). */
   hintLabel?: ReactNode;
+  /** Callback appele quand la scene est prête. */
+  onSceneReady?: () => void;
 }
 
 const DEFAULT_LOADING_FALLBACK = (
@@ -78,6 +80,7 @@ export const BoosterPack3D = forwardRef<
     containerHeight = 720,
     openThresholdPercent = 90,
     onOpen,
+    onSceneReady,
     loadingFallback = DEFAULT_LOADING_FALLBACK,
     errorFallback,
     hintLabel,
@@ -144,6 +147,7 @@ export const BoosterPack3D = forwardRef<
           isOpening={isOpening}
           tilt={tilt}
           textures={textures}
+          onSceneReady={onSceneReady} 
         />
       </div>
 
