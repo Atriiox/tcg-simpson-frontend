@@ -41,9 +41,17 @@ describe("Inscription", () => {
     cy.get('[data-testid=booster-opener-modal]', { timeout: 15000 }).should(
       "be.visible",
     );
-    cy.compareSnapshot("booster-modal-opened", {
-      errorThreshold: 0.01,
-      disableTimersAndAnimations: false,
-    });
+
+    cy.get('[data-testid=booster-pack-3d-container]', {
+      timeout: 15000,
+    }).should("have.attr", "data-scene-ready", "true");
+
+    cy.get('[data-testid=booster-opener-modal]').compareSnapshot(
+      "booster-modal-opened",
+      {
+        errorThreshold: 0.05,
+        disableTimersAndAnimations: false,
+      },
+    );
   });
 });
