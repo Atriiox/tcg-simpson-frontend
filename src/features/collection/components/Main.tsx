@@ -89,6 +89,7 @@ export default function Main() {
   }, [isAuthentificated, collectionControls]);
 
   const handleCloseBooster = () => {
+    console.trace("🔴 handleCloseBooster appelé");
     setShowBoosterModal(false);
     setActiveBooster(null);
     router.replace("/collection");
