@@ -45,7 +45,7 @@ export default function RegisterForm({ onSwitch }: Props) {
   });
 
   return (
-    <div className="p-2 w-full md:w-sm m-auto">
+    <div className="p-2 w-full md:w-sm m-auto" data-testid="register-form">
       <Image
         src="/poisson1.webp"
         alt="poisson authentification"
@@ -76,6 +76,7 @@ export default function RegisterForm({ onSwitch }: Props) {
             placeholder="Entre ton pseudo"
             maxLength={PSEUDO_MAX}
             className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+            data-testid="register-pseudo-input"
             {...formik.getFieldProps("pseudo")}
           />
         </div>
@@ -87,7 +88,10 @@ export default function RegisterForm({ onSwitch }: Props) {
             {formik.values.pseudo.length}/{PSEUDO_MAX}
           </span>
           {formik.touched.pseudo && formik.errors.pseudo && (
-            <p className="text-red-500 text-xs truncate">
+            <p
+              className="text-red-500 text-xs truncate"
+              data-testid="register-pseudo-error"
+            >
               {formik.errors.pseudo}
             </p>
           )}
@@ -112,13 +116,17 @@ export default function RegisterForm({ onSwitch }: Props) {
             placeholder="Entre ton email"
             maxLength={254}
             className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+            data-testid="register-email-input"
             {...formik.getFieldProps("email")}
           />
         </div>
 
         <div className="h-5 mt-0.5 flex items-center">
           {formik.touched.email && formik.errors.email && (
-            <p className="text-red-500 text-xs truncate">
+            <p
+              className="text-red-500 text-xs truncate"
+              data-testid="register-email-error"
+            >
               {formik.errors.email}
             </p>
           )}
@@ -143,6 +151,7 @@ export default function RegisterForm({ onSwitch }: Props) {
             placeholder="Entre ton mot de passe"
             maxLength={PASSWORD_MAX}
             className="flex-1 border-none bg-transparent outline-none py-2.5 text-medium text-text placeholder-text/40"
+            data-testid="register-password-input"
             {...formik.getFieldProps("password")}
           />
         </div>
@@ -154,7 +163,10 @@ export default function RegisterForm({ onSwitch }: Props) {
             {formik.values.password.length}/{PASSWORD_MAX}
           </span>
           {formik.touched.password && formik.errors.password && (
-            <p className="text-red-500 text-xs truncate">
+            <p
+              className="text-red-500 text-xs truncate"
+              data-testid="register-password-error"
+            >
               {formik.errors.password}
             </p>
           )}
@@ -167,6 +179,7 @@ export default function RegisterForm({ onSwitch }: Props) {
         disabled={formik.isSubmitting}
         className="w-full py-2.5 mb-4"
         type="submit"
+        data-testid="register-submit-button"
       >
         {formik.isSubmitting ? "Inscription..." : "S'inscrire"}
       </Button>
@@ -178,6 +191,7 @@ export default function RegisterForm({ onSwitch }: Props) {
           onClick={onSwitch}
           className="text-simpson-lightblue font-semibold hover:underline cursor-pointer"
           type="button"
+          data-testid="register-switch-button"
         >
           Se connecter
         </button>

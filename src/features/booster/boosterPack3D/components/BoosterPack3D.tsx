@@ -155,6 +155,7 @@ export const BoosterPack3D = forwardRef<
       <div
         className="absolute inset-0 z-2 cursor-grab"
         style={{ touchAction: "none" }}
+        data-testid="booster-drag-overlay"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}

@@ -49,9 +49,6 @@ export function CardGrid({
     }
   };
 
-  /**
-   * Style pour les badges textuels de rareté en dessous des cartes
-   */
   const getRarityBadge = (rarity?: string) => {
     switch (rarity) {
       case "2":
@@ -83,6 +80,7 @@ export function CardGrid({
         return (
           <div
             key={`${card.slug}-${index}`}
+            data-testid="card-item"
             style={{
               transitionDelay: `${index * cascadeDelaySeconds}s`,
               animation:
@@ -102,7 +100,6 @@ export function CardGrid({
               }}
             />
 
-            {/* --- CONTENEUR PERSPECTIVE --- */}
             <div
               style={{
                 width: cardSize,
@@ -111,7 +108,6 @@ export function CardGrid({
               }}
               className="bg-transparent"
             >
-              {/* --- LE CONTENEUR DU FLIP & HOVER GLOW --- */}
               <div
                 style={{
                   transformStyle: "preserve-3d",
@@ -120,15 +116,14 @@ export function CardGrid({
                 className={`w-full h-full relative transition-transform duration-700 ease-[cubic-bezier(0.175,0.885,0.32,1.1)] cursor-pointer rounded-[0.4em] ${hoverClasses}`}
                 onClick={() => handleCardClick(index, card)}
               >
-                {/* --- FACE A : LE DOS DE LA CARTE --- */}
                 <div
                   style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
-                    transformStyle: "preserve-3d", // FIX FIREFOX
+                    transformStyle: "preserve-3d",
                   }}
                   className={`absolute inset-0 w-full h-full transition-all duration-700 ${
-                    isRevealed ? "z-0" : "z-10" // FIX FIREFOX
+                    isRevealed ? "z-0" : "z-10"
                   }`}
                 >
                   <div
@@ -137,7 +132,6 @@ export function CardGrid({
                   />
                 </div>
 
-                {/* --- FACE B : LA CARTE RÉVÉLÉE --- */}
                 <div
                   style={{
                     backfaceVisibility: "hidden",
@@ -149,10 +143,8 @@ export function CardGrid({
                     isRevealed ? "z-10" : "z-0"
                   }`}
                 >
-                  {/* Carte d'origine */}
                   <Card card={card} size={cardSize} />
 
-                  {/* BADGE "NEW" */}
                   {card.isNew && isRevealed && (
                     <span className="absolute -top-2 -right-2 z-30 bg-simpson-orange text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md border border-simpson-orange animate-bounce">
                       New
@@ -162,7 +154,6 @@ export function CardGrid({
               </div>
             </div>
 
-            {/* --- BADGE DE RARETÉ FIXE --- */}
             <span
               className={`text-[10px] sm:text-xs uppercase tracking-widest px-3 py-1 rounded-full border shadow-sm font-bold transition-all duration-500 transform ${
                 isRevealed

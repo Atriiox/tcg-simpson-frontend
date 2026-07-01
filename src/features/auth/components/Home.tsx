@@ -39,12 +39,17 @@ function Home() {
           </div>
 
           <div className="flex flex-col gap-4 w-full max-w-xs items-center shrink-0">
-            <Button onClick={() => setModal("connect")} className="w-full">
+            <Button
+              onClick={() => setModal("connect")}
+              className="w-full"
+              data-testid="home-connect-button"
+            >
               Se connecter
             </Button>
             <button
               className="cursor-pointer border-b border-text/60 text-sm pb-0.5 hover:text-simpson-orange dark:hover:text-simpson-jaune transition-colors duration-200"
               onClick={() => setModal("register")}
+              data-testid="home-register-button"
             >
               Pas encore de compte ? S'inscrire
             </button>
