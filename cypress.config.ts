@@ -15,5 +15,15 @@ export default defineConfig({
     },
     viewportWidth: 1280,
     viewportHeight: 800,
+    reporter: "cypress-multi-reporters",
+    reporterOptions: {
+      reporterEnabled: "spec, mochawesome",
+      mochawesomeReporterOptions: {
+        reportDir: "cypress/reports",
+        overwrite: false,
+        html: false,   // on génère d'abord le JSON par run
+        json: true,
+      },
+    },
   },
 });
