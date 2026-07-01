@@ -7,10 +7,11 @@ export default defineConfig({
     screenshotsFolder: "./cypress/snapshots/actual",
     expose: {
       visualRegressionType: "regression",
+      apiUrl: "http://localhost:3000",
     },
     setupNodeEvents(on, config) {
       configureVisualRegression(on);
-      // hooks pour plus tard (ex: reset DB via tasks Cypress) si besoin
+      return config;
     },
     viewportWidth: 1280,
     viewportHeight: 800,
